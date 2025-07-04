@@ -1,83 +1,78 @@
 # Capitally 💰
 
-## 📌 Introduzione
+## Lang [EN]: [en](https://github.com/msistori/capitally/blob/main/README.md) | [it](https://github.com/msistori/capitally/blob/main/README_it.md)
 
-Capitally è un'applicazione web pensata per gestire in modo semplice e intuitivo le tue spese personali e monitorare i tuoi investimenti, offrendo una panoramica completa e in tempo reale della tua salute finanziaria. Ideale sia per privati che vogliono tenere sotto controllo le proprie finanze, sia per piccole imprese che necessitano di strumenti efficienti per monitorare entrate e uscite.
+## 📌 Introduction
 
-## 🎯 Obiettivi del progetto
+Capitally is a web application designed to help you easily and intuitively manage your personal expenses and track your investments, providing a complete and real-time overview of your financial health. It is ideal for both individuals looking to keep their finances under control and small businesses that need efficient tools to monitor income and expenses.
 
-* Fornire una gestione efficace e intuitiva delle spese e degli investimenti.
-* Aiutare utenti e piccole imprese a prendere decisioni finanziarie consapevoli.
+## 🎯 Project Goals
 
-## ✨ Funzionalità
+* Provide effective and intuitive management of expenses and investments.
+* Help users and small businesses make informed financial decisions.
+
+## ✨ Features
 
 ### Must-have ✅
 
-* **Categorizzazione delle spese**:
-
-  * Automatica (con possibile futura implementazione AI)
-  * Manuale (personalizzabile dall'utente)
+* **Expense Categorization**:
+  * Automatic (with potential future AI implementation)
+  * Manual (customizable by the user)
 * **Budget Planner**:
-
-  * Definizione budget mensili/annuali
-  * Monitoraggio in tempo reale del budget disponibile
-* **Dashboard Investimenti**:
-
-  * Tracking automatico e aggiornamenti in tempo reale
-  * Panoramica intuitiva delle performance
+  * Set monthly/annual budgets
+  * Real-time budget tracking
+* **Investment Dashboard**:
+  * Automatic tracking and real-time updates
+  * Intuitive overview of performance
 
 ### Nice-to-have 🌟
 
-* **Grafici interattivi**:
+* **Interactive Charts**:
+  * Graphical visualization of expenses and investments
+* **Reporting**:
+  * Automatic generation of financial reports (PDF, Excel)
+* **Simulations and Forecasts**:
+  * Simulation of future financial scenarios
 
-  * Visualizzazione grafica di spese e investimenti
-* **Reportistica**:
+### Future Options 🚀
 
-  * Generazione automatica report finanziari (PDF, Excel)
-* **Simulazioni e previsioni**:
+* **Open Banking Integration**:
+  * Direct connection to bank accounts for automatic transactionEntity synchronization
 
-  * Simulazione scenari finanziari futuri
+## 🛠️ Technologies Used
 
-### Opzioni Future 🚀
+| Component | Technologies                         |
+| --------- | ------------------------------------ |
+| Backend   | Java, Spring Boot, Spring Security   |
+| Frontend  | Angular, HTML5, CSS3, Chart.js       |
+| Database  | PostgreSQL/MySQL                     |
+| Deployment| Docker, GitHub Actions               |
 
-* **Integrazione Open Banking**:
+## 🚧 Project Setup
 
-  * Collegamento diretto al conto bancario per sincronizzazione automatica delle transazioni
-
-## 🛠️ Tecnologie Utilizzate
-
-| Componente | Tecnologie                         |
-| ---------- | ---------------------------------- |
-| Backend    | Java, Spring Boot, Spring Security |
-| Frontend   | Angular, HTML5, CSS3, Chart.js     |
-| Database   | PostgreSQL/MySQL                   |
-| Deployment | Docker, GitHub Actions             |
-
-## 🚧 Setup del Progetto
-
-### Prerequisiti
+### Prerequisites
 
 * Java 17
 * Maven
 * Node.js (LTS)
-* Database PostgreSQL/MySQL
+* PostgreSQL/MySQL Database
 
-### Installazione rapida
+### Quick Installation
 
-1. Clona il repository
+1. Clone the repository
 
 ```bash
-git clone https://github.com/tuousername/capitally.git
+git clone https://github.com/msistori/capitally.git
 ```
 
-2. Avvia il backend (Spring Boot)
+2. Start the backend (Spring Boot)
 
 ```bash
 cd backend
 mvn spring-boot:run
 ```
 
-3. Avvia il frontend (Angular)
+3. Start the frontend (Angular)
 
 ```bash
 cd frontend
@@ -87,15 +82,15 @@ npm start
 
 ## 🎨 UI/UX
 
-La UI è progettata per essere semplice, intuitiva e responsive, garantendo un'esperienza utente fluida su ogni dispositivo.
+The UI is designed to be simple, intuitive, and responsive, ensuring a smooth user experience across all devices.
 
-## 📈 Target
+## 📈 Target Audience
 
-* **Privati** interessati a gestire le proprie finanze in modo efficace.
-* **Piccole imprese e freelance** che desiderano monitorare entrate e uscite con precisione.
+* **Individuals** who want to effectively manage their finances.
+* **Small businesses and freelancers** looking to monitor income and expenses with precision.
 
 ## 📅 Roadmap
 
-* Prima versione MVP (Must-have functionalities)
-* Versione successiva con funzionalità avanzate (grafici, reportistica)
-* Implementazione futura dell'Open Banking e possibili app mobile
+* First MVP release (Must-have functionalities)
+* Next version with advanced features (charts, reporting)
+* Future implementation of Open Banking and potential mobile apps
