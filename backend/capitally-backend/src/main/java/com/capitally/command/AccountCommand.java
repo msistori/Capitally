@@ -48,6 +48,10 @@ public class AccountCommand {
         return accountMapper.mapAccountEntityToDTO(accountRepository.save(existing));
     }
 
+    public void deleteAccount(BigInteger id) {
+        accountRepository.deleteById(id);
+    }
+
     private Specification<AccountEntity> buildSpecification(BigInteger userId, String name, String type,
                                                             BigDecimal minBalance, BigDecimal maxBalance) {
         return (root, query, cb) -> {

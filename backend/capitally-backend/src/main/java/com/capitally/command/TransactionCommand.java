@@ -67,6 +67,10 @@ public class TransactionCommand {
         return transactionMapper.mapTransactionEntityToDTO(transactionRepository.save(existing));
     }
 
+    public void deleteTransaction(BigInteger id) {
+        transactionRepository.deleteById(id);
+    }
+
     private Specification<TransactionEntity> buildSpecification(BigInteger userId, BigInteger accountId, BigInteger categoryId,
                                                                 LocalDate startDate, LocalDate endDate,
                                                                 BigDecimal minAmount, BigDecimal maxAmount) {

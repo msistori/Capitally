@@ -45,4 +45,10 @@ public class TransactionController {
     public ResponseEntity<TransactionResponseDTO> putTransaction(@PathVariable BigInteger id, @RequestBody TransactionRequestDTO dto) {
         return ResponseEntity.ok(transactionCommand.putTransaction(id, dto));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTransaction(@PathVariable BigInteger id) {
+        transactionCommand.deleteTransaction(id);
+        return ResponseEntity.noContent().build();
+    }
 }

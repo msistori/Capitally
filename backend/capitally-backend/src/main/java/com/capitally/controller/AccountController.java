@@ -39,4 +39,10 @@ public class AccountController {
     public ResponseEntity<AccountResponseDTO> putAccount(@PathVariable BigInteger id, @RequestBody AccountRequestDTO dto) {
         return ResponseEntity.ok(accountCommand.putAccount(id, dto));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAccount(@PathVariable BigInteger id) {
+        accountCommand.deleteAccount(id);
+        return ResponseEntity.noContent().build();
+    }
 }

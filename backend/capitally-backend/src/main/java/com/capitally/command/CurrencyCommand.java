@@ -46,6 +46,10 @@ public class CurrencyCommand {
         return currencyMapper.mapCurrencyEntityToDTO(currencyRepository.save(newCurrency));
     }
 
+    public void deleteCurrency(String code) {
+        currencyRepository.deleteById(code);
+    }
+
     private Specification<CurrencyEntity> buildSpecification(String name, String code) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();

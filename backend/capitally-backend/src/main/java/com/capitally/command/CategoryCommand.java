@@ -48,6 +48,10 @@ public class CategoryCommand {
         return categoryMapper.mapCategoryEntityToDTO(categoryRepository.save(existing));
     }
 
+    public void deleteCategory(BigInteger id) {
+        categoryRepository.deleteById(id);
+    }
+
     private Specification<CategoryEntity> buildSpecification(String macrocategory, String category, CategoryType categoryType) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();

@@ -35,4 +35,10 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> putUser(@PathVariable BigInteger id, @RequestBody UserRequestDTO dto) {
         return ResponseEntity.ok(userCommand.putUser(id, dto));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable BigInteger id) {
+        userCommand.deleteUser(id);
+        return ResponseEntity.noContent().build();
+    }
 }

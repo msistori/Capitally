@@ -47,6 +47,10 @@ public class UserCommand {
         return userMapper.mapUserEntityToDTO(userRepository.save(existing));
     }
 
+    public void deleteUser(BigInteger id) {
+        userRepository.deleteById(id);
+    }
+
     private Specification<UserEntity> buildSpecification(String name, String email) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();

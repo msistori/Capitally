@@ -34,4 +34,10 @@ public class CurrencyController {
     public ResponseEntity<CurrencyResponseDTO> putCurrency(@PathVariable String code, @RequestBody CurrencyRequestDTO dto) {
         return ResponseEntity.ok(currencyCommand.putCurrency(code, dto));
     }
+
+    @DeleteMapping("/{code}")
+    public ResponseEntity<Void> deleteCurrency(@PathVariable String code) {
+        currencyCommand.deleteCurrency(code);
+        return ResponseEntity.noContent().build();
+    }
 }

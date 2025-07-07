@@ -37,4 +37,10 @@ public class CategoryController {
     public ResponseEntity<CategoryResponseDTO> putCategory(@PathVariable BigInteger id, @RequestBody CategoryRequestDTO dto) {
         return ResponseEntity.ok(categoryCommand.putCategory(id, dto));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCategory(@PathVariable BigInteger id) {
+        categoryCommand.deleteCategory(id);
+        return ResponseEntity.noContent().build();
+    }
 }
