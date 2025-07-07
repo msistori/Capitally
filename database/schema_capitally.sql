@@ -1,7 +1,7 @@
 
--- =============================
--- SCHEMA CAPITALLY
--- =============================
+-- ======================================
+-- CAPITALLY DATABASE SCHEMA - FINAL VERSION
+-- ======================================
 
 -- Currencies
 CREATE TABLE currencies (
@@ -24,13 +24,13 @@ CREATE TABLE accounts (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     initial_balance DECIMAL(15,2) DEFAULT 0.00,
-    currency_code VARCHAR(3) REFERENCES currencies(code),
+    currency VARCHAR(3) REFERENCES currencies(code),
     account_type VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- User-Account relationship
+-- User-Account relation
 CREATE TABLE user_accounts (
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     account_id INTEGER REFERENCES accounts(id) ON DELETE CASCADE,
@@ -40,9 +40,9 @@ CREATE TABLE user_accounts (
 -- Categories
 CREATE TABLE categories (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    category_type VARCHAR(20) CHECK (category_type IN ('Income', 'Expense')) NOT NULL,
-    subcategory VARCHAR(100),
+    category_type VARCHAR(20) CHECK (category_type IN ('INCOME', 'EXPENSE')) NOT NULL,
+    macrocategory VARCHAR(100) NOT NULL,
+    category VARCHAR(100) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -53,7 +53,7 @@ CREATE TABLE transactions (
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     account_id INTEGER REFERENCES accounts(id) ON DELETE CASCADE,
     amount DECIMAL(12,2) NOT NULL,
-    currency_code VARCHAR(3) REFERENCES currencies(code),
+    currency VARCHAR(3) REFERENCES currencies(code),
     date DATE NOT NULL,
     description VARCHAR(255),
     category_id INTEGER REFERENCES categories(id),
@@ -81,9 +81,9 @@ CREATE TABLE budgets (
 CREATE TABLE investment_instruments (
     id SERIAL PRIMARY KEY,
     name VARCHAR(150) NOT NULL,
-    symbol VARCHAR(50),
     type VARCHAR(50),
-    exchange VARCHAR(50)
+    exchange VARCHAR(50),
+    symbol VARCHAR(50)
 );
 
 -- Investments
@@ -95,7 +95,7 @@ CREATE TABLE investments (
     quantity DECIMAL(12,4),
     unit_price DECIMAL(15,4),
     fees DECIMAL(12,2),
-    currency_code VARCHAR(3) REFERENCES currencies(code),
+    currency VARCHAR(3) REFERENCES currencies(code),
     operation_date DATE NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -117,7 +117,7 @@ CREATE TABLE assets (
     type VARCHAR(50),
     purchase_value DECIMAL(15,2),
     current_value DECIMAL(15,2),
-    currency_code VARCHAR(3) REFERENCES currencies(code),
+    currency VARCHAR(3) REFERENCES currencies(code),
     purchase_date DATE,
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

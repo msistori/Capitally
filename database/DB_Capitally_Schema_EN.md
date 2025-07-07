@@ -1,8 +1,6 @@
 
 # 📦 Capitally - Database Schema (English Version)
 
-This document describes the full logical schema of the Capitally project, using English naming conventions.
-
 ---
 
 ## 🔵 Main Tables
@@ -21,7 +19,7 @@ This document describes the full logical schema of the Capitally project, using 
 - `id` (PK)
 - `name`
 - `initial_balance`
-- `currency_code` (FK → currencies.code)
+- `currency` (FK)
 - `account_type` (e.g., checking, savings, investment)
 - `created_at`
 - `updated_at`
@@ -29,32 +27,28 @@ This document describes the full logical schema of the Capitally project, using 
 ---
 
 ### 🔗 user_accounts
-Many-to-many relationship between users and accounts.
-
-- `user_id` (FK → users.id)
-- `account_id` (FK → accounts.id)
+- `user_id` (FK)
+- `account_id` (FK)
 - PK: (`user_id`, `account_id`)
 
 ---
 
 ### 🗂️ categories
 - `id` (PK)
-- `name`
 - `category_type` (Income/Expense)
-- `subcategory` (nullable)
+- `macrocategory`
+- `category`
 - `created_at`
 - `updated_at`
 
 ---
 
 ### 💸 transactions
-Includes both standard and recurring transactions.
-
 - `id` (PK)
 - `user_id` (FK)
 - `account_id` (FK)
 - `amount`
-- `currency_code` (FK → currencies.code)
+- `currency` (FK)
 - `date`
 - `description`
 - `category_id` (FK)
@@ -82,15 +76,13 @@ Includes both standard and recurring transactions.
 ### 📈 investment_instruments
 - `id` (PK)
 - `name`
-- `symbol`
 - `type` (ETF, Stock, Crypto, etc.)
 - `exchange`
+- `symbol`
 
 ---
 
 ### 💼 investments
-Represents a single buy or sell operation.
-
 - `id` (PK)
 - `user_id` (FK)
 - `instrument_id` (FK)
@@ -98,7 +90,7 @@ Represents a single buy or sell operation.
 - `quantity`
 - `unit_price`
 - `fees`
-- `currency_code` (FK)
+- `currency` (FK)
 - `operation_date`
 - `created_at`
 - `updated_at`
@@ -120,7 +112,7 @@ Represents a single buy or sell operation.
 - `type` (Home, Car, Object, etc.)
 - `purchase_value`
 - `current_value`
-- `currency_code` (FK)
+- `currency` (FK)
 - `purchase_date`
 - `description`
 - `created_at`
@@ -152,7 +144,3 @@ Represents a single buy or sell operation.
 - `investment_instruments` 1:N `investments`, `investment_values`
 - `currencies` 1:N in `accounts`, `transactions`, `investments`, `assets`
 - `currencies` 1:N `exchange_rates`
-
----
-
-*Automatically generated schema documentation.*

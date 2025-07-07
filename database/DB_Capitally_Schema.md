@@ -1,6 +1,7 @@
 
 # 📦 Capitally - Schema Database
 
+---
 
 ## 🔵 Tabelle principali
 
