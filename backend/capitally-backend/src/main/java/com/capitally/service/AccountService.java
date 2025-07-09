@@ -1,4 +1,4 @@
-package com.capitally.command;
+package com.capitally.service;
 
 import com.capitally.core.entity.AccountEntity;
 import com.capitally.core.repository.AccountRepository;
@@ -8,7 +8,7 @@ import com.capitally.model.response.AccountResponseDTO;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -18,9 +18,9 @@ import java.util.List;
 import static com.capitally.utils.CapitallyUtils.addIfNotNull;
 import static com.capitally.utils.CapitallyUtils.buildLikePredicate;
 
-@Component
+@Service
 @RequiredArgsConstructor
-public class AccountCommand {
+public class AccountService {
 
     private final AccountRepository accountRepository;
     private final AccountMapper accountMapper;

@@ -1,4 +1,4 @@
-package com.capitally.command;
+package com.capitally.service;
 
 import com.capitally.core.entity.CategoryEntity;
 import com.capitally.core.enums.CategoryType;
@@ -9,7 +9,7 @@ import com.capitally.model.response.CategoryResponseDTO;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -18,9 +18,9 @@ import java.util.List;
 import static com.capitally.utils.CapitallyUtils.addIfNotNull;
 import static com.capitally.utils.CapitallyUtils.buildLikePredicate;
 
-@Component
+@Service
 @RequiredArgsConstructor
-public class CategoryCommand {
+public class CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;

@@ -1,4 +1,4 @@
-package com.capitally.command;
+package com.capitally.service;
 
 import com.capitally.core.entity.CurrencyEntity;
 import com.capitally.core.repository.CurrencyRepository;
@@ -8,7 +8,7 @@ import com.capitally.model.response.CurrencyResponseDTO;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +16,9 @@ import java.util.List;
 import static com.capitally.utils.CapitallyUtils.addIfNotNull;
 import static com.capitally.utils.CapitallyUtils.buildLikePredicate;
 
-@Component
+@Service
 @RequiredArgsConstructor
-public class CurrencyCommand {
+public class CurrencyService {
 
     private final CurrencyMapper currencyMapper;
     private final CurrencyRepository currencyRepository;

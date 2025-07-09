@@ -1,9 +1,9 @@
 package com.capitally.controller;
 
-import com.capitally.command.CategoryCommand;
 import com.capitally.core.enums.CategoryType;
 import com.capitally.model.request.CategoryRequestDTO;
 import com.capitally.model.response.CategoryResponseDTO;
+import com.capitally.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +16,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryController {
 
-    private final CategoryCommand categoryCommand;
+    private final CategoryService categoryService;
 
     @PostMapping
     public ResponseEntity<CategoryResponseDTO> postCategory(@RequestBody CategoryRequestDTO input) {
-        CategoryResponseDTO response = categoryCommand.postCategory(input);
+        CategoryResponseDTO response = categoryService.postCategory(input);
         return ResponseEntity.ok(response);
     }
 
@@ -30,17 +30,17 @@ public class CategoryController {
             @RequestParam(required = false) String category,
             @RequestParam(required = false) CategoryType categoryType
     ) {
-        return ResponseEntity.ok(categoryCommand.getCategories(macrocategory, category, categoryType));
+        return ResponseEntity.ok(categoryService.getCategories(macrocategory, category, categoryType));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CategoryResponseDTO> putCategory(@PathVariable BigInteger id, @RequestBody CategoryRequestDTO dto) {
-        return ResponseEntity.ok(categoryCommand.putCategory(id, dto));
+        return ResponseEntity.ok(categoryService.putCategory(id, dto));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable BigInteger id) {
-        categoryCommand.deleteCategory(id);
+        categoryService.deleteCategory(id);
         return ResponseEntity.noContent().build();
     }
 }
