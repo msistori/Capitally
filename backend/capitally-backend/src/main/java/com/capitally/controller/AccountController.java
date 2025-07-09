@@ -1,8 +1,8 @@
 package com.capitally.controller;
 
-import com.capitally.command.AccountCommand;
 import com.capitally.model.request.AccountRequestDTO;
 import com.capitally.model.response.AccountResponseDTO;
+import com.capitally.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +16,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AccountController {
 
-    private final AccountCommand accountCommand;
+    private final AccountService accountService;
 
     @PostMapping
     public ResponseEntity<AccountResponseDTO> postAccount(@RequestBody AccountRequestDTO input) {
-        AccountResponseDTO response = accountCommand.postAccount(input);
+        AccountResponseDTO response = accountService.postAccount(input);
         return ResponseEntity.ok(response);
     }
 
@@ -32,17 +32,17 @@ public class AccountController {
             @RequestParam(required = false) BigDecimal minBalance,
             @RequestParam(required = false) BigDecimal maxBalance
     ) {
-        return ResponseEntity.ok(accountCommand.getAccounts(userId, name, type, minBalance, maxBalance));
+        return ResponseEntity.ok(accountService.getAccounts(userId, name, type, minBalance, maxBalance));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<AccountResponseDTO> putAccount(@PathVariable BigInteger id, @RequestBody AccountRequestDTO dto) {
-        return ResponseEntity.ok(accountCommand.putAccount(id, dto));
+        return ResponseEntity.ok(accountService.putAccount(id, dto));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAccount(@PathVariable BigInteger id) {
-        accountCommand.deleteAccount(id);
+        accountService.deleteAccount(id);
         return ResponseEntity.noContent().build();
     }
 }

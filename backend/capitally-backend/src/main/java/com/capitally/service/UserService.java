@@ -1,4 +1,4 @@
-package com.capitally.command;
+package com.capitally.service;
 
 import com.capitally.core.entity.UserEntity;
 import com.capitally.core.repository.UserRepository;
@@ -8,7 +8,7 @@ import com.capitally.model.response.UserResponseDTO;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -17,9 +17,9 @@ import java.util.List;
 import static com.capitally.utils.CapitallyUtils.addIfNotNull;
 import static com.capitally.utils.CapitallyUtils.buildLikePredicate;
 
-@Component
+@Service
 @RequiredArgsConstructor
-public class UserCommand {
+public class UserService {
 
     private final UserMapper userMapper;
     private final UserRepository userRepository;

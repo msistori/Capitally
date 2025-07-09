@@ -1,8 +1,8 @@
 package com.capitally.controller;
 
-import com.capitally.command.CurrencyCommand;
 import com.capitally.model.request.CurrencyRequestDTO;
 import com.capitally.model.response.CurrencyResponseDTO;
+import com.capitally.service.CurrencyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,11 +14,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CurrencyController {
 
-    private final CurrencyCommand currencyCommand;
+    private final CurrencyService currencyService;
 
     @PostMapping
     public ResponseEntity<CurrencyResponseDTO> saveCurrency(@RequestBody CurrencyRequestDTO input) {
-        CurrencyResponseDTO response = currencyCommand.saveCurrency(input);
+        CurrencyResponseDTO response = currencyService.saveCurrency(input);
         return ResponseEntity.ok(response);
     }
 
@@ -27,17 +27,17 @@ public class CurrencyController {
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String code
     ) {
-        return ResponseEntity.ok(currencyCommand.getCurrencies(name, code));
+        return ResponseEntity.ok(currencyService.getCurrencies(name, code));
     }
 
     @PutMapping("/{code}")
     public ResponseEntity<CurrencyResponseDTO> putCurrency(@PathVariable String code, @RequestBody CurrencyRequestDTO dto) {
-        return ResponseEntity.ok(currencyCommand.putCurrency(code, dto));
+        return ResponseEntity.ok(currencyService.putCurrency(code, dto));
     }
 
     @DeleteMapping("/{code}")
     public ResponseEntity<Void> deleteCurrency(@PathVariable String code) {
-        currencyCommand.deleteCurrency(code);
+        currencyService.deleteCurrency(code);
         return ResponseEntity.noContent().build();
     }
 }

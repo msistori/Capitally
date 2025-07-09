@@ -1,8 +1,8 @@
 package com.capitally.controller;
 
-import com.capitally.command.TransactionCommand;
 import com.capitally.model.request.TransactionRequestDTO;
 import com.capitally.model.response.TransactionResponseDTO;
+import com.capitally.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,11 +17,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TransactionController {
 
-    private final TransactionCommand transactionCommand;
+    private final TransactionService transactionService;
 
     @PostMapping
     public ResponseEntity<TransactionResponseDTO> postTransaction(@RequestBody TransactionRequestDTO input) {
-        TransactionResponseDTO response = transactionCommand.postTransaction(input);
+        TransactionResponseDTO response = transactionService.postTransaction(input);
         return ResponseEntity.ok(response);
     }
 
@@ -35,7 +35,7 @@ public class TransactionController {
             @RequestParam(required = false) BigDecimal minAmount,
             @RequestParam(required = false) BigDecimal maxAmount
     ) {
-        List<TransactionResponseDTO> response = transactionCommand.getTransactions(
+        List<TransactionResponseDTO> response = transactionService.getTransactions(
                 userId, accountId, categoryId, startDate, endDate, minAmount, maxAmount
         );
         return ResponseEntity.ok(response);
@@ -43,12 +43,12 @@ public class TransactionController {
 
     @PutMapping("/{id}")
     public ResponseEntity<TransactionResponseDTO> putTransaction(@PathVariable BigInteger id, @RequestBody TransactionRequestDTO dto) {
-        return ResponseEntity.ok(transactionCommand.putTransaction(id, dto));
+        return ResponseEntity.ok(transactionService.putTransaction(id, dto));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTransaction(@PathVariable BigInteger id) {
-        transactionCommand.deleteTransaction(id);
+        transactionService.deleteTransaction(id);
         return ResponseEntity.noContent().build();
     }
 }
