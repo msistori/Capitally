@@ -49,7 +49,7 @@ public class TransactionService {
 
         return transactionRepository.findAll(spec).stream()
                 .map(transactionMapper::mapTransactionEntityToDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public TransactionResponseDTO putTransaction(BigInteger id, TransactionRequestDTO dto) {

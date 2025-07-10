@@ -1,7 +1,7 @@
 package com.capitally.service;
 
 import com.capitally.core.entity.CategoryEntity;
-import com.capitally.core.enums.CategoryType;
+import com.capitally.core.enums.CategoryTypeEnum;
 import com.capitally.core.repository.CategoryRepository;
 import com.capitally.mapper.CategoryMapper;
 import com.capitally.model.request.CategoryRequestDTO;
@@ -30,8 +30,8 @@ public class CategoryService {
         return categoryMapper.mapCategoryEntityToDTO(categoryRepository.save(entity));
     }
 
-    public List<CategoryResponseDTO> getCategories(String macrocategory, String category, CategoryType categoryType) {
-        Specification<CategoryEntity> spec = buildSpecification(macrocategory, category, categoryType);
+    public List<CategoryResponseDTO> getCategories(String macroCategory, String category, CategoryTypeEnum categoryType) {
+        Specification<CategoryEntity> spec = buildSpecification(macroCategory, category, categoryType);
         return categoryRepository.findAll(spec).stream()
                 .map(categoryMapper::mapCategoryEntityToDTO)
                 .toList();
@@ -42,7 +42,7 @@ public class CategoryService {
                 .orElseThrow(() -> new IllegalArgumentException("Category not found"));
 
         existing.setCategoryType(dto.getCategoryType());
-        existing.setMacrocategory(dto.getMacrocategory());
+        existing.setMacroCategory(dto.getMacroCategory());
         existing.setCategory(dto.getCategory());
 
         return categoryMapper.mapCategoryEntityToDTO(categoryRepository.save(existing));
@@ -52,11 +52,11 @@ public class CategoryService {
         categoryRepository.deleteById(id);
     }
 
-    private Specification<CategoryEntity> buildSpecification(String macrocategory, String category, CategoryType categoryType) {
+    private Specification<CategoryEntity> buildSpecification(String macroCategory, String category, CategoryTypeEnum categoryType) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            addIfNotNull(predicates, macrocategory, () -> buildLikePredicate(cb, root.get("macrocategory"), macrocategory));
+            addIfNotNull(predicates, macroCategory, () -> buildLikePredicate(cb, root.get("macroCategory"), macroCategory));
             addIfNotNull(predicates, category, () -> buildLikePredicate(cb, root.get("category"), category));
             addIfNotNull(predicates, categoryType, () -> cb.equal(root.get("categoryType"), categoryType));
 

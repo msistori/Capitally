@@ -3,18 +3,16 @@ package com.capitally.core.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "currencies")
+@Table(name = "t_currency")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CurrencyEntity {
+public class CurrencyEntity extends AuditableEntity {
     @Id
     private String code;
     private String name;

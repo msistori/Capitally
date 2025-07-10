@@ -1,22 +1,20 @@
 package com.capitally.core.entity;
 
-import com.capitally.core.enums.AccountType;
+import com.capitally.core.enums.AccountTypeEnum;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "accounts")
+@Table(name = "t_account")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AccountEntity {
+public class AccountEntity extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "account_seq")
     @SequenceGenerator(name = "account_seq", sequenceName = "account_seq", allocationSize = 1)
@@ -25,12 +23,12 @@ public class AccountEntity {
     private String name;
     private BigDecimal initialBalance;
 
-    @OneToOne
-    @JoinColumn(name = "currency_code")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "currency", referencedColumnName = "code")
     private CurrencyEntity currency;
 
     @Enumerated(EnumType.STRING)
-    private AccountType accountType;
+    private AccountTypeEnum accountType;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

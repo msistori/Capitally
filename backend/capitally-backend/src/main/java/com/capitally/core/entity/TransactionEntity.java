@@ -1,22 +1,20 @@
 package com.capitally.core.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "transactions")
+@Table(name = "t_transaction")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TransactionEntity {
+public class TransactionEntity extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transaction_seq")
     @SequenceGenerator(name = "transaction_seq", sequenceName = "transaction_seq", allocationSize = 1)
