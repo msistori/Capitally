@@ -1,6 +1,6 @@
 package com.capitally.core.enums;
 
-public enum AccountType {
+public enum AccountTypeEnum {
     CURRENT_ACCOUNT,
     SAVINGS_ACCOUNT,
     INVESTMENT_ACCOUNT

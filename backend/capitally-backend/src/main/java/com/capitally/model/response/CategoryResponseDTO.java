@@ -1,6 +1,6 @@
 package com.capitally.model.response;
 
-import com.capitally.core.enums.CategoryType;
+import com.capitally.core.enums.CategoryTypeEnum;
 import lombok.Data;
 
 import java.math.BigInteger;
@@ -8,7 +8,7 @@ import java.math.BigInteger;
 @Data
 public class CategoryResponseDTO {
     private BigInteger id;
-    private String macrocategory;
+    private String macroCategory;
     private String category;
-    private CategoryType categoryType;
+    private CategoryTypeEnum categoryType;
 }

@@ -1,21 +1,19 @@
 package com.capitally.core.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigInteger;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "users")
+@Table(name = "t_user")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserEntity {
+public class UserEntity extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
     @SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)

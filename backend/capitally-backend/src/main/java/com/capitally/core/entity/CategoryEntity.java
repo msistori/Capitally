@@ -1,29 +1,27 @@
 package com.capitally.core.entity;
 
-import com.capitally.core.enums.CategoryType;
+import com.capitally.core.enums.CategoryTypeEnum;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigInteger;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "categories")
+@Table(name = "t_category")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CategoryEntity {
+public class CategoryEntity extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "category_seq")
-    @SequenceGenerator(name = "category_seq", sequenceName = "category_seq", allocationSize = 1)
+    @SequenceGenerator(name = "category_seq", sequenceName = "categories_id_seq", allocationSize = 1)
     private BigInteger id;
 
     @Enumerated(EnumType.STRING)
-    private CategoryType categoryType;
+    private CategoryTypeEnum categoryType;
 
-    private String macrocategory;
+    private String macroCategory;
     private String category;
 }

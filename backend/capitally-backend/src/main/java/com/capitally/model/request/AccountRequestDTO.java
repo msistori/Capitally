@@ -1,6 +1,6 @@
 package com.capitally.model.request;
 
-import com.capitally.core.enums.AccountType;
+import com.capitally.core.enums.AccountTypeEnum;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -11,6 +11,6 @@ public class AccountRequestDTO {
     private String name;
     private BigDecimal initialBalance;
     private String currency;
-    private AccountType accountType;
+    private AccountTypeEnum accountType;
     private BigInteger userId;
 }

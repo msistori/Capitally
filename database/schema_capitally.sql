@@ -4,13 +4,13 @@
 -- ======================================
 
 -- Currencies
-CREATE TABLE currencies (
+CREATE TABLE t_currency (
     code VARCHAR(3) PRIMARY KEY,
     name VARCHAR(50) NOT NULL
 );
 
 -- Users
-CREATE TABLE users (
+CREATE TABLE t_user (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(150) UNIQUE NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE users (
 );
 
 -- Accounts
-CREATE TABLE accounts (
+CREATE TABLE t_account (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     initial_balance DECIMAL(15,2) DEFAULT 0.00,
@@ -31,14 +31,14 @@ CREATE TABLE accounts (
 );
 
 -- User-Account relation
-CREATE TABLE user_accounts (
+CREATE TABLE t_user_account (
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     account_id INTEGER REFERENCES accounts(id) ON DELETE CASCADE,
     PRIMARY KEY (user_id, account_id)
 );
 
 -- Categories
-CREATE TABLE categories (
+CREATE TABLE t_category (
     id SERIAL PRIMARY KEY,
     category_type VARCHAR(20) CHECK (category_type IN ('INCOME', 'EXPENSE')) NOT NULL,
     macrocategory VARCHAR(100) NOT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE categories (
 );
 
 -- Transactions
-CREATE TABLE transactions (
+CREATE TABLE t_transaction (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     account_id INTEGER REFERENCES accounts(id) ON DELETE CASCADE,
@@ -66,7 +66,7 @@ CREATE TABLE transactions (
 );
 
 -- Budgets
-CREATE TABLE budgets (
+CREATE TABLE t_budget (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     category_id INTEGER REFERENCES categories(id),
@@ -78,7 +78,7 @@ CREATE TABLE budgets (
 );
 
 -- Investment Instruments
-CREATE TABLE investment_instruments (
+CREATE TABLE t_investment_instrument (
     id SERIAL PRIMARY KEY,
     name VARCHAR(150) NOT NULL,
     type VARCHAR(50),
@@ -87,7 +87,7 @@ CREATE TABLE investment_instruments (
 );
 
 -- Investments
-CREATE TABLE investments (
+CREATE TABLE t_investment (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     instrument_id INTEGER REFERENCES investment_instruments(id),
@@ -102,7 +102,7 @@ CREATE TABLE investments (
 );
 
 -- Investment Values
-CREATE TABLE investment_values (
+CREATE TABLE t_investment_value (
     id SERIAL PRIMARY KEY,
     instrument_id INTEGER REFERENCES investment_instruments(id) ON DELETE CASCADE,
     value DECIMAL(15,4) NOT NULL,
@@ -110,7 +110,7 @@ CREATE TABLE investment_values (
 );
 
 -- Assets
-CREATE TABLE assets (
+CREATE TABLE t_asset (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     name VARCHAR(100),
@@ -125,7 +125,7 @@ CREATE TABLE assets (
 );
 
 -- Exchange Rates
-CREATE TABLE exchange_rates (
+CREATE TABLE t_exchange_rate (
     from_currency VARCHAR(3) REFERENCES currencies(code),
     to_currency VARCHAR(3) REFERENCES currencies(code),
     rate DECIMAL(18,8),

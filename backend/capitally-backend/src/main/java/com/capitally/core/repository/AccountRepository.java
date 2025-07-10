@@ -6,7 +6,11 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigInteger;
+import java.util.List;
 
 @Repository
 public interface AccountRepository extends JpaRepository<AccountEntity, BigInteger>, JpaSpecificationExecutor<AccountEntity> {
+
+    List<AccountEntity> findByUserId(BigInteger userId);
+
 }
