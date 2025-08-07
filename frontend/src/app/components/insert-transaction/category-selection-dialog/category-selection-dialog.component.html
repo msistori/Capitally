@@ -1,0 +1,15 @@
+<h2>Seleziona categoria</h2>
+<mat-dialog-content class="category-dialog">
+  <button *ngFor="let cat of categories" (click)="selectCategory(cat.name)" class="category-button">
+    <img [src]="cat.icon" [alt]="cat.name" />
+  </button>
+
+  <button class="category-button add" (click)="addNewCategory()">
+    <img [src]="plus.icon" [alt]="plus.name" />
+    <span>Aggiungi nuova</span>
+  </button>
+</mat-dialog-content>
+
+<mat-dialog-actions class="actions">
+  <button mat-stroked-button color="warn" (click)="cancel()">Annulla</button>
+</mat-dialog-actions>

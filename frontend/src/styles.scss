@@ -1,5 +1,149 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$pri-hues: (
+  50:  #caf0f8,
+  100: #caf0f8,
+  200: #caf0f8,
+  300: #caf0f8,
+  400: #caf0f8,
+  500: #005f73,
+  600: #005f73,
+  700: #005f73,
+  800: #005f73,
+  900: #005f73,
+  A100: #caf0f8,
+  A200: #caf0f8,
+  A400: #caf0f8,
+  A700: #005f73,
+  contrast: (
+    50:   #005f73,
+    100:  #005f73,
+    200:  #005f73,
+    300:  #005f73,
+    400:  #ffffff,
+    500:  #ffffff,
+    600:  #ffffff,
+    700:  #ffffff,
+    800:  #ffffff,
+    900:  #ffffff,
+    A100: #005f73,
+    A200: #005f73,
+    A400: #ffffff,
+    A700: #ffffff
+  )
+);
+
+$acc-hues: (
+  50:  #caf0f8,
+  100: #caf0f8,
+  200: #caf0f8,
+  300: #caf0f8,
+  400: #caf0f8,
+  500: #caf0f8,
+  600: #caf0f8,
+  700: #caf0f8,
+  800: #caf0f8,
+  900: #caf0f8,
+  A100: #caf0f8,
+  A200: #caf0f8,
+  A400: #caf0f8,
+  A700: #caf0f8,
+  contrast: (
+    50:   #005f73,
+    100:  #005f73,
+    200:  #005f73,
+    300:  #005f73,
+    400:  #005f73,
+    500:  #005f73,
+    600:  #ffffff,
+    700:  #ffffff,
+    800:  #ffffff,
+    900:  #ffffff,
+    A100: #005f73,
+    A200: #005f73,
+    A400: #005f73,
+    A700: #ffffff
+  )
+);
+
+$primary: mat.define-palette($pri-hues, 500, 100, 700);
+$accent:  mat.define-palette($acc-hues, 200, 100, 700);
+$warn:    mat.$red-palette;
+
+$theme: mat.define-light-theme((
+  color: (
+    primary: $primary,
+    accent:  $accent,
+    warn:    $warn
+  )
+));
+
+@include mat.button-theme($theme);
+@include mat.form-field-theme($theme);
+@include mat.input-theme($theme);
+@include mat.slide-toggle-theme($theme);
+
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+:root {
+  --footer-h: 3.5rem;
+}
+
+.cdk-overlay-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  .cdk-overlay-pane {
+    pointer-events: all;
+  }
+}
+
+.cdk-overlay-pane.add-transaction-modal-panel {
+  position: fixed !important;
+  left: 0;
+  right: 0;
+  bottom: var(--footer-h);
+  max-height: calc(100vh - (var(--footer-h) * 2));
+  margin-inline: auto;
+  overflow: visible;
+}
+
+.mat-mdc-button,
+.mat-mdc-flat-button,
+.mat-mdc-raised-button,
+.mat-mdc-stroked-button {
+  &:hover {
+    background-color: inherit !important;
+    box-shadow: none !important;
+  }
+  --mdc-ripple-press-opacity: 0 !important;
+}
+
+.currency-panel .mat-mdc-select-arrow {
+  display: none;
+}
+
+.cdk-overlay-container .account-panel-class .mdc-list-item__primary-text {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+mat-form-field.description-field {
+  --mdc-filled-text-field-container-color: transparent;
+  --mdc-filled-text-field-disabled-container-color: transparent;
+  --mdc-form-field-state-layer-color: transparent;
+  --mdc-form-field-hover-state-layer-opacity: 0;
+  --mdc-form-field-focus-state-layer-opacity: 0;
+}
+
+mat-form-field.description-field .mat-mdc-text-field-flex .mat-mdc-text-field-state-layer {
+  background-color: transparent;
 }

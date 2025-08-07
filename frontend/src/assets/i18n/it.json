@@ -1,0 +1,52 @@
+{
+  "APP": { "TITLE": "Capitally" },
+  "FORM": {
+    "AMOUNT": "Importo",
+    "CURRENCY": "Valuta",
+    "TYPE": { "INCOME": "Entrata", "EXPENSE": "Uscita" },
+    "CATEGORY": "Categoria",
+    "DATE": "Data",
+    "TODAY": "Oggi",
+    "YESTERDAY": "Ieri",
+    "DESCRIPTION": "Descrizione",
+    "RECURRING": {
+      "LABEL": "Transazione ricorrente",
+      "PERIOD": "Frequenza",
+      "COUNT": "Numero di periodi",
+      "END_DATE": "Fine ricorrenza",
+      "WEEKLY": "Settimanale",
+      "MONTHLY": "Mensile",
+      "YEARLY": "Annuale"
+    },
+    "SUBMIT": "Salva"
+  },
+  "CATEGORY": {
+    "SHOPPING": "Vestiti",
+    "FOOD": "Ristorante",
+    "TRANSPORT": "Benzina",
+    "SUBSCRIPTIONS": "Spotify",
+    "SALARY": "Stipendio",
+    "TRAVEL": "Aerei",
+    "HEALTH": "Farmacia",
+    "OTHER": "Altre"
+  },
+  "CATEGORY_MACRO": {
+    "SHOPPING": "Shopping",
+    "FOOD": "Cibo",
+    "TRANSPORT": "Trasporti",
+    "SUBSCRIPTIONS": "Abbonamenti",
+    "SALARY": "Lavoro",
+    "TRAVEL": "Viaggi",
+    "HEALTH": "Salute"
+  },
+  "TRANSACTION": {
+    "RECENT_TRANSACTIONS_TITLE": "Ultime Transazioni"
+  },
+  "BALANCE": {
+    "BALANCE_TITLE": "Saldo Totale"
+  },
+  "MONTHLY_SUMMARY": {
+    "MONTHLY_SUMMARY_TITLE": "Entrate / Uscite Mensili",
+    "NO_DATA": "Nessun Dato Mensile"
+  }
+}

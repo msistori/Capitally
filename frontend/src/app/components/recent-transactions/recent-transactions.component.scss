@@ -1,0 +1,58 @@
+.recent-transactions {
+  h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: #374151;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    padding: 0.4rem;
+    background: #ffffff;
+    border-radius: 0.75rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+
+  .tx-info {
+    display: flex;
+    flex-direction: column;
+
+    .tx-description {
+      font-weight: 500;
+      color: #111827;
+    }
+
+    .tx-date {
+      font-size: 0.75rem;
+      color: #6b7280;
+    }
+  }
+
+  .tx-amount {
+    font-weight: bold;
+    font-size: 1rem;
+
+    &.positive {
+      color: #10b981;
+    }
+
+    &.negative {
+      color: #ef4444;
+    }
+  }
+
+  :host {
+    display: block;
+    height: 100%;
+    overflow-y: auto;
+  }
+}

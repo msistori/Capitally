@@ -1,0 +1,16 @@
+<section class="recent-transactions">
+  <h3>{{ 'TRANSACTION.RECENT_TRANSACTIONS_TITLE' | translate }}</h3>
+  <ul>
+    <li *ngFor="let tx of transactions">
+      <div class="tx-info">
+        <span class="tx-description">{{ tx.description }}</span>
+        <span class="tx-date">{{ tx.date | date:'shortDate' }}</span>
+      </div>
+      <div class="tx-amount" [ngClass]="{
+        'positive': tx.transactionType === TransactionTypeEnum.INCOME,
+        'negative': tx.transactionType === TransactionTypeEnum.EXPENSE }">
+        {{ tx.amount | currency: 'EUR':'symbol' }}
+      </div>
+    </li>
+  </ul>
+</section>

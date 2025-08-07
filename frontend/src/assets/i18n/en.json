@@ -1,0 +1,52 @@
+{
+  "APP": { "TITLE": "Capitally" },
+  "FORM": {
+    "AMOUNT": "Amount",
+    "CURRENCY": "Currency",
+    "TYPE": { "INCOME": "Income", "EXPENSE": "Expense" },
+    "CATEGORY": "Category",
+    "DATE": "Date",
+    "TODAY": "Today",
+    "YESTERDAY": "Yesterday",
+    "DESCRIPTION": "Description",
+    "RECURRING": {
+      "LABEL": "Recurring transaction",
+      "PERIOD": "Frequency",
+      "COUNT": "Number of periods",
+      "END_DATE": "Recurrence end",
+      "WEEKLY": "Weekly",
+      "MONTHLY": "Monthly",
+      "YEARLY": "Yearly"
+    },
+    "SUBMIT": "Save"
+  },
+  "CATEGORY": {
+    "SHOPPING": "Shopping",
+    "FOOD": "Restaurant",
+    "TRANSPORT": "Fuel",
+    "SUBSCRIPTIONS": "Spotify",
+    "SALARY": "Salary",
+    "TRAVEL": "Flights",
+    "HEALTH": "Pharmacy",
+    "OTHER": "Other"
+  },
+  "CATEGORY_MACRO": {
+    "SHOPPING": "Shopping",
+    "FOOD": "Food",
+    "TRANSPORT": "Transport",
+    "SUBSCRIPTIONS": "Subscriptions",
+    "SALARY": "Work",
+    "TRAVEL": "Travel",
+    "HEALTH": "Health"
+  },
+  "TRANSACTION": {
+    "RECENT_TRANSACTIONS_TITLE": "Recent Transactions"
+  },
+  "BALANCE": {
+    "BALANCE_TITLE": "Total Balance"
+  },
+  "MONTHLY_SUMMARY": {
+    "MONTHLY_SUMMARY_TITLE": "Monthly Income / Expense",
+    "NO_DATA": "No Monthly Data"
+  }
+}

@@ -1,0 +1,43 @@
+.category-dialog {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+
+  .category-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5rem;
+    border-radius: 0.75rem;
+    border: 1px solid #ccc;
+    background-color: #f8f8f8;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    img {
+      width: 32px;
+      height: 32px;
+      margin-bottom: 0.25rem;
+    }
+
+    &:hover {
+      background-color: #e0e0e0;
+    }
+
+    &.add {
+      background-color: #e6f5e6;
+      font-weight: bold;
+
+      .plus {
+        font-size: 1.5rem;
+      }
+    }
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem;
+}

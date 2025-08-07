@@ -1,0 +1,100 @@
+<form *ngIf="form" [formGroup]="form" (ngSubmit)="submit()" class="form">
+
+  <!-- Amount & currency -->
+  <div class="amount-currency">
+    <input matInput type="number" step="1" formControlName="amount" class="amount-field" placeholder="0" />
+
+    <mat-select formControlName="currencyCode" panelClass="currency-panel-class" class="currency-panel">
+      <mat-option *ngFor="let cur of currencies" [value]="cur.code" class="currency-item">{{ cur.code }}</mat-option>
+    </mat-select>
+  </div>
+
+  <!-- Account -->
+  <mat-select class="account-field" panelClass="account-panel-class" formControlName="accountId" placeholder="Conto">
+    <mat-option *ngFor="let acc of accounts" class="account-option" [value]="acc.id">{{ acc.name }}</mat-option>
+  </mat-select>
+
+  <!-- Date picker -->
+  <div class="calendar-card">
+    <div class="cal-header">
+      <button type="button" (click)="prevWeek()"><img [src]="utils.getIcon('arrow-left')" alt="<" /></button>
+      <div class="month-label">
+        {{ form.get('date')!.value | date:'MMMM yyyy' }}
+      </div>
+      <button type="button" (click)="nextWeek()"><img [src]="utils.getIcon('arrow-right')" alt=">" /></button>
+    </div>
+
+    <div class="weekdays">
+      <span *ngFor="let wd of weekDays">{{ wd }}</span>
+    </div>
+
+    <div class="week">
+      <span class="day" *ngFor="let d of currentWeek" [class.empty]="!d" [class.selected]="isSelected(d)"
+        (click)="selectDay(d)">
+        {{ d?.getDate() }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Income / expense -->
+  <mat-button-toggle-group formControlName="transactionType" class="type-toggle" appearance="legacy">
+    <mat-button-toggle type="button" value="INCOME">{{ 'FORM.TYPE.INCOME' | translate }}</mat-button-toggle>
+    <mat-button-toggle type="button" value="EXPENSE">{{ 'FORM.TYPE.EXPENSE' | translate }}</mat-button-toggle>
+  </mat-button-toggle-group>
+
+  <!-- Categories -->
+  <div class="category-selector">
+    <button *ngFor="let cat of recentCategories" class="category-item"
+      [class.active]="selectedCategory === cat.category" (click)="selectCategory(cat)" type="button">
+      <span class="category-item-macro">{{ cat.macroCategory }}</span>
+      <img [src]="utils.getIcon(cat.iconName)" [alt]="cat.category" />
+      <span>{{ cat.category }}</span>
+    </button>
+
+    <button type="button" class="category-more" [class.active]="selectedCategory === plus.name"
+      (click)="openAllCategories()">
+      <img [src]="plus.icon" [alt]="plus.name" />
+      <span>{{ plus.name | translate }}</span>
+    </button>
+  </div>
+
+  <!-- Description -->
+  <mat-form-field appearance="fill" class="description-field">
+    <mat-label>{{ 'FORM.DESCRIPTION' | translate }}</mat-label>
+    <input matInput rows="2" formControlName="description" class="description-input" />
+  </mat-form-field>
+
+  <!-- Recurring -->
+  <div class="recurring-section">
+    <mat-slide-toggle formControlName="isRecurring" class="recurring-toggle">
+      {{ 'FORM.RECURRING.LABEL' | translate }}
+    </mat-slide-toggle>
+
+    <div class="recurring-fields" *ngIf="form.get('isRecurring')?.value">
+      <mat-form-field appearance="fill">
+        <mat-label>{{ 'FORM.RECURRING.PERIOD' | translate }}</mat-label>
+        <mat-select formControlName="recurringPeriod">
+          <mat-option value="WEEKLY"> {{ 'FORM.RECURRING.WEEKLY' | translate }} </mat-option>
+          <mat-option value="MONTHLY">{{ 'FORM.RECURRING.MONTHLY' | translate }} </mat-option>
+          <mat-option value="YEARLY"> {{ 'FORM.RECURRING.YEARLY' | translate }} </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>{{ 'FORM.RECURRING.COUNT' | translate }}</mat-label>
+        <input matInput type="number" formControlName="recurringCount" />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>{{ 'FORM.RECURRING.END_DATE' | translate }}</mat-label>
+        <input matInput [matDatepicker]="recEndPicker" formControlName="recurringEndDate" />
+        <mat-datepicker-toggle matSuffix [for]="recEndPicker"></mat-datepicker-toggle>
+        <mat-datepicker #recEndPicker></mat-datepicker>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <button mat-raised-button color="#005f73" class="submit-button">
+    {{ 'FORM.SUBMIT' | translate }}
+  </button>
+</form>
