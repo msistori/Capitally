@@ -1,6 +1,6 @@
 package com.capitally.controller;
 
-import com.capitally.core.enums.CategoryTypeEnum;
+import com.capitally.core.enums.CategoryType;
 import com.capitally.model.request.CategoryRequestDTO;
 import com.capitally.model.response.CategoryResponseDTO;
 import com.capitally.service.CategoryService;
@@ -28,9 +28,10 @@ public class CategoryController {
     public ResponseEntity<List<CategoryResponseDTO>> getCategories(
             @RequestParam(required = false) String macroCategory,
             @RequestParam(required = false) String category,
-            @RequestParam(required = false) CategoryTypeEnum categoryType
-    ) {
-        return ResponseEntity.ok(categoryService.getCategories(macroCategory, category, categoryType));
+            @RequestParam(required = false) String iconName,
+            @RequestParam(required = false) BigInteger userId
+            ) {
+        return ResponseEntity.ok(categoryService.getCategories(macroCategory, category, iconName, userId));
     }
 
     @PutMapping("/{id}")

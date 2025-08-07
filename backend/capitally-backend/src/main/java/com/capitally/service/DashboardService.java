@@ -3,7 +3,7 @@ package com.capitally.service;
 import com.capitally.core.entity.AccountEntity;
 import com.capitally.core.entity.TransactionEntity;
 import com.capitally.core.entity.view.MonthlyTransactionReportView;
-import com.capitally.core.enums.CategoryTypeEnum;
+import com.capitally.core.enums.TransactionTypeEnum;
 import com.capitally.core.repository.AccountRepository;
 import com.capitally.core.repository.MonthlyTransactionReportViewRepository;
 import com.capitally.core.repository.TransactionRepository;
@@ -40,12 +40,12 @@ public class DashboardService {
                 .findByIdUserIdAndIdMonthBetween(userId, startMonth, endMonth);
 
         List<MonthlyTotalDTO> income = reports.stream()
-                .filter(r -> "Income".equalsIgnoreCase(r.getId().getCategoryType()))
+                .filter(r -> "Income".equalsIgnoreCase(r.getId().getTransactionType()))
                 .map(r -> new MonthlyTotalDTO(r.getId().getMonth(), r.getTotal()))
                 .toList();
 
         List<MonthlyTotalDTO> expenses = reports.stream()
-                .filter(r -> "Expense".equalsIgnoreCase(r.getId().getCategoryType()))
+                .filter(r -> "Expense".equalsIgnoreCase(r.getId().getTransactionType()))
                 .map(r -> new MonthlyTotalDTO(r.getId().getMonth(), r.getTotal()))
                 .toList();
 
@@ -58,20 +58,22 @@ public class DashboardService {
         Map<String, BigDecimal> balancePerCurrency = new HashMap<>();
 
         for (AccountEntity account : userAccounts) {
-            String currency = account.getCurrency().getCode();
             BigDecimal initialBalance = Optional.ofNullable(account.getInitialBalance()).orElse(BigDecimal.ZERO);
 
-            BigDecimal transactionSum = transactionRepository.findAllByAccountId(account.getId()).stream()
-                    .map(transaction -> {
-                        BigDecimal amount = transaction.getAmount();
-                        CategoryTypeEnum categoryType = transaction.getCategory().getCategoryType();
-                        return CategoryTypeEnum.EXPENSE.equals(categoryType) ? amount.negate() : amount;
-                    })
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            Map<String, BigDecimal> transactionSumsByCurrency = transactionRepository.findAllByAccountId(account.getId()).stream()
+                    .collect(Collectors.groupingBy(
+                            t -> t.getCurrency().getCode(),
+                            Collectors.reducing(BigDecimal.ZERO, t -> {
+                                BigDecimal amount = t.getAmount();
+                                return TransactionTypeEnum.EXPENSE.equals(t.getTransactionType()) ? amount.negate() : amount;
+                            }, BigDecimal::add)
+                    ));
 
-            BigDecimal accountBalance = initialBalance.add(transactionSum);
-
-            balancePerCurrency.merge(currency, accountBalance, BigDecimal::add);
+            for (Map.Entry<String, BigDecimal> entry : transactionSumsByCurrency.entrySet()) {
+                String currency = entry.getKey();
+                BigDecimal total = initialBalance.add(entry.getValue());
+                balancePerCurrency.merge(currency, total, BigDecimal::add);
+            }
         }
 
         return balancePerCurrency.entrySet().stream()
@@ -85,29 +87,34 @@ public class DashboardService {
         Map<String, Map<String, BigDecimal>> monthlyCurrencyMovements = new TreeMap<>();
 
         for (AccountEntity account : userAccounts) {
-            String currency = account.getCurrency().getCode();
             BigDecimal initialBalance = Optional.ofNullable(account.getInitialBalance()).orElse(BigDecimal.ZERO);
             LocalDate createdAt = Optional.ofNullable(account.getCreatedAt()).map(LocalDateTime::toLocalDate).orElse(startDate);
             String creationMonth = YearMonth.from(createdAt).toString();
 
-            monthlyCurrencyMovements
-                    .computeIfAbsent(creationMonth, m -> new HashMap<>())
-                    .merge(currency, initialBalance, BigDecimal::add);
-
             List<TransactionEntity> transactions = transactionRepository.findAllByAccountId(account.getId());
 
-            for (TransactionEntity t : transactions) {
-                LocalDate date = t.getDate();
-                if (date == null || date.isBefore(startDate) || date.isAfter(endDate)) continue;
+            Map<String, List<TransactionEntity>> byCurrency = transactions.stream()
+                    .collect(Collectors.groupingBy(t -> t.getCurrency().getCode()));
 
-                String month = YearMonth.from(date).toString();
-                BigDecimal signedAmount = CategoryTypeEnum.EXPENSE.equals(t.getCategory().getCategoryType())
-                        ? t.getAmount().negate()
-                        : t.getAmount();
-
+            for (Map.Entry<String, List<TransactionEntity>> entry : byCurrency.entrySet()) {
+                String currency = entry.getKey();
                 monthlyCurrencyMovements
-                        .computeIfAbsent(month, m -> new HashMap<>())
-                        .merge(currency, signedAmount, BigDecimal::add);
+                        .computeIfAbsent(creationMonth, m -> new HashMap<>())
+                        .merge(currency, initialBalance, BigDecimal::add);
+
+                for (TransactionEntity t : entry.getValue()) {
+                    LocalDate date = t.getDate();
+                    if (date == null || date.isBefore(startDate) || date.isAfter(endDate)) continue;
+
+                    String month = YearMonth.from(date).toString();
+                    BigDecimal signedAmount = TransactionTypeEnum.EXPENSE.equals(t.getTransactionType())
+                            ? t.getAmount().negate()
+                            : t.getAmount();
+
+                    monthlyCurrencyMovements
+                            .computeIfAbsent(month, m -> new HashMap<>())
+                            .merge(currency, signedAmount, BigDecimal::add);
+                }
             }
         }
 
@@ -115,8 +122,8 @@ public class DashboardService {
         LocalDate maxEnd = endDate.isAfter(today) ? today : endDate;
         List<String> allMonths = getAllMonthsBetween(startDate, maxEnd);
 
-        Set<String> allCurrencies = userAccounts.stream()
-                .map(a -> a.getCurrency().getCode())
+        Set<String> allCurrencies = monthlyCurrencyMovements.values().stream()
+                .flatMap(m -> m.keySet().stream())
                 .collect(Collectors.toSet());
 
         Map<String, BigDecimal> runningPerCurrency = new HashMap<>();
@@ -155,7 +162,7 @@ public class DashboardService {
         Map<String, Map<String, BigDecimal>> totals = new HashMap<>();
 
         for (TransactionEntity t : transactions) {
-            if (t.getCategory() == null || t.getCategory().getCategoryType() != CategoryTypeEnum.EXPENSE) continue;
+            if (t.getCategory() == null || t.getTransactionType() != TransactionTypeEnum.EXPENSE) continue;
 
             String macro = t.getCategory().getMacroCategory();
             String currency = t.getCurrency().getCode();
@@ -218,6 +225,41 @@ public class DashboardService {
                     return occurrences.stream();
                 })
                 .toList();
+    }
+
+    public DashboardOverviewResponseDTO getDashboardOverview(BigInteger userId) {
+        YearMonth currentMonth = YearMonth.now();
+        LocalDate startOfMonth = currentMonth.atDay(1);
+        LocalDate endOfMonth = currentMonth.atEndOfMonth();
+
+        List<CurrentBalanceResponseDTO> balances = getCurrentBalancePerCurrency(userId);
+        Map<String, BigDecimal> totalBalance = balances.stream()
+                .collect(Collectors.toMap(
+                        CurrentBalanceResponseDTO::getCurrency,
+                        CurrentBalanceResponseDTO::getTotalBalance,
+                        BigDecimal::add
+                ));
+
+        List<TransactionEntity> transactions = transactionRepository.findByUserIdAndDateBetween(userId, startOfMonth, endOfMonth);
+        BigDecimal totalIncome = BigDecimal.ZERO;
+        BigDecimal totalExpense = BigDecimal.ZERO;
+
+        for (TransactionEntity tx : transactions) {
+            if (TransactionTypeEnum.INCOME.equals(tx.getTransactionType())) {
+                totalIncome = totalIncome.add(tx.getAmount());
+            } else if (TransactionTypeEnum.EXPENSE.equals(tx.getTransactionType())) {
+                totalExpense = totalExpense.add(tx.getAmount());
+            }
+        }
+
+        int recurringCount = getUpcomingRecurringTransactions(userId, endOfMonth).size();
+
+        return new DashboardOverviewResponseDTO(
+                totalBalance,
+                totalIncome,
+                totalExpense,
+                recurringCount
+        );
     }
 
 }

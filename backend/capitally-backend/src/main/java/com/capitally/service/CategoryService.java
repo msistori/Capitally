@@ -1,7 +1,6 @@
 package com.capitally.service;
 
 import com.capitally.core.entity.CategoryEntity;
-import com.capitally.core.enums.CategoryTypeEnum;
 import com.capitally.core.repository.CategoryRepository;
 import com.capitally.mapper.CategoryMapper;
 import com.capitally.model.request.CategoryRequestDTO;
@@ -30,8 +29,8 @@ public class CategoryService {
         return categoryMapper.mapCategoryEntityToDTO(categoryRepository.save(entity));
     }
 
-    public List<CategoryResponseDTO> getCategories(String macroCategory, String category, CategoryTypeEnum categoryType) {
-        Specification<CategoryEntity> spec = buildSpecification(macroCategory, category, categoryType);
+    public List<CategoryResponseDTO> getCategories(String macroCategory, String category, String iconName, BigInteger userId) {
+        Specification<CategoryEntity> spec = buildSpecification(macroCategory, category, iconName, userId);
         return categoryRepository.findAll(spec).stream()
                 .map(categoryMapper::mapCategoryEntityToDTO)
                 .toList();
@@ -41,7 +40,6 @@ public class CategoryService {
         CategoryEntity existing = categoryRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Category not found"));
 
-        existing.setCategoryType(dto.getCategoryType());
         existing.setMacroCategory(dto.getMacroCategory());
         existing.setCategory(dto.getCategory());
 
@@ -52,14 +50,10 @@ public class CategoryService {
         categoryRepository.deleteById(id);
     }
 
-    private Specification<CategoryEntity> buildSpecification(String macroCategory, String category, CategoryTypeEnum categoryType) {
-        return (root, query, cb) -> {
-            List<Predicate> predicates = new ArrayList<>();
-
+    private Specification<CategoryEntity> buildSpecification(String macroCategory, String category, String iconName, BigInteger userId) {
             addIfNotNull(predicates, macroCategory, () -> buildLikePredicate(cb, root.get("macroCategory"), macroCategory));
-            addIfNotNull(predicates, category, () -> buildLikePredicate(cb, root.get("category"), category));
-            addIfNotNull(predicates, categoryType, () -> cb.equal(root.get("categoryType"), categoryType));
-
+            addIfNotNull(predicates, iconName, () -> buildLikePredicate(cb, root.get("iconName"), iconName));
+            addIfNotNull(predicates, userId, () -> cb.equal(root.get("user").get("id"), userId));
             return cb.and(predicates.toArray(new Predicate[0]));
         };
     }

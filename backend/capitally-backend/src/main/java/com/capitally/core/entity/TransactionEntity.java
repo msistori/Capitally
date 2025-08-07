@@ -1,5 +1,6 @@
 package com.capitally.core.entity;
 
+import com.capitally.core.enums.TransactionTypeEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -40,6 +41,9 @@ public class TransactionEntity extends AuditableEntity {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private CategoryEntity category;
+
+    @Enumerated(EnumType.STRING)
+    private TransactionTypeEnum transactionType;
 
     private Boolean isRecurring;
     private String recurrencePeriod;

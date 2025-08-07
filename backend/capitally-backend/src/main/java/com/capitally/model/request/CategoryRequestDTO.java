@@ -1,11 +1,13 @@
 package com.capitally.model.request;
 
-import com.capitally.core.enums.CategoryTypeEnum;
 import lombok.Data;
+
+import java.math.BigInteger;
 
 @Data
 public class CategoryRequestDTO {
-    private String macroCategory;
+    private String macrocategory;
     private String category;
-    private CategoryTypeEnum categoryType;
+    private String iconName;
+    private BigInteger userId;
 }

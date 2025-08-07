@@ -10,7 +10,6 @@ import java.math.BigInteger;
 public class AccountRequestDTO {
     private String name;
     private BigDecimal initialBalance;
-    private String currency;
     private AccountTypeEnum accountType;
     private BigInteger userId;
 }

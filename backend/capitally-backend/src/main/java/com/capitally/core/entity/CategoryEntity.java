@@ -1,12 +1,13 @@
 package com.capitally.core.entity;
 
-import com.capitally.core.enums.CategoryTypeEnum;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigInteger;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "t_category")
 @Data
@@ -19,9 +20,11 @@ public class CategoryEntity extends AuditableEntity {
     @SequenceGenerator(name = "category_seq", sequenceName = "categories_id_seq", allocationSize = 1)
     private BigInteger id;
 
-    @Enumerated(EnumType.STRING)
-    private CategoryTypeEnum categoryType;
-
     private String macroCategory;
     private String category;
+    private String iconName;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 }

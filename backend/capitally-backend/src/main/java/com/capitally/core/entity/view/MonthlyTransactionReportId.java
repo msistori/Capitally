@@ -16,5 +16,5 @@ public class MonthlyTransactionReportId implements Serializable {
 
     private BigInteger userId;
     private String month;
-    private String categoryType;
+    private String transactionType;
 }
