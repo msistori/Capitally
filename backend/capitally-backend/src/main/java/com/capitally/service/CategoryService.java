@@ -51,7 +51,11 @@ public class CategoryService {
     }
 
     private Specification<CategoryEntity> buildSpecification(String macroCategory, String category, String iconName, BigInteger userId) {
+        return (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
             addIfNotNull(predicates, macroCategory, () -> buildLikePredicate(cb, root.get("macroCategory"), macroCategory));
+            addIfNotNull(predicates, category, () -> buildLikePredicate(cb, root.get("category"), category));
             addIfNotNull(predicates, iconName, () -> buildLikePredicate(cb, root.get("iconName"), iconName));
             addIfNotNull(predicates, userId, () -> cb.equal(root.get("user").get("id"), userId));
             return cb.and(predicates.toArray(new Predicate[0]));

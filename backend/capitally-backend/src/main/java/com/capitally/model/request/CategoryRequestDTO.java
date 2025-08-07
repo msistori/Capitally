@@ -6,7 +6,7 @@ import java.math.BigInteger;
 
 @Data
 public class CategoryRequestDTO {
-    private String macrocategory;
+    private String macroCategory;
     private String category;
     private String iconName;
     private BigInteger userId;

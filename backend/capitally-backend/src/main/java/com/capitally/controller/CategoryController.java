@@ -1,6 +1,5 @@
 package com.capitally.controller;
 
-import com.capitally.core.enums.CategoryType;
 import com.capitally.model.request.CategoryRequestDTO;
 import com.capitally.model.response.CategoryResponseDTO;
 import com.capitally.service.CategoryService;
