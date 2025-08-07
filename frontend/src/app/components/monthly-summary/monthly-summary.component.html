@@ -1,0 +1,12 @@
+<section class="monthly-summary">
+  <h3>{{ 'MONTHLY_SUMMARY.MONTHLY_SUMMARY_TITLE' | translate }}</h3>
+  <div class="chart-container">
+    <canvas
+      baseChart
+      type="doughnut"
+      [data]="chartData"
+      [options]="chartOptions"
+      [plugins]="chartPlugins">
+    </canvas>
+  </div>
+</section>

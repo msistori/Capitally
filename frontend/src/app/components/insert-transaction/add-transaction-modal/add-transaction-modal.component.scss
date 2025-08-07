@@ -1,0 +1,108 @@
+.form-insert-transaction {
+  color: #005f73;
+  padding: 0.5rem;
+}
+
+.modal-header {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-between;
+  align-items: flex-end;
+  position: relative;
+  padding: 0.5rem 0.5rem;
+  height: 3rem;
+
+  .title {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 600;
+    text-align: center;
+    width: max-content;
+  }
+
+  .close-btn {
+    padding: 1rem;
+    height: 48px;
+    width: 48px;
+  }
+}
+
+:host {
+  overflow: visible;
+  position: relative;
+  z-index: auto;
+  isolation: isolate;
+}
+
+::ng-deep .cdk-overlay-pane:has(.currency-panel-class) {
+  position: absolute;
+  box-shadow: 0px 2px 8px #005f73;
+  background-color: #ffffff;
+  color: #005f73;
+  font-weight: bold;
+  border-radius: .5rem;
+
+  .currency-panel-class {
+    padding: 0;
+  }
+}
+
+::ng-deep .cdk-overlay-pane:has(.account-panel-class) {
+  position: absolute;
+  box-shadow: 0px 2px 8px #005f73;
+  background-color: #ffffff;
+  color: #005f73;
+  font-weight: bold;
+  margin-top: .7rem;
+  margin-left: -.7rem;
+  border-radius: .5rem;
+
+  .account-panel-class {
+    padding: 0;
+  }
+}
+
+
+::ng-deep .add-transaction-modal-panel {
+  .mat-mdc-dialog-container {
+    .mdc-dialog__container {
+      .mat-mdc-dialog-surface {
+        border-radius: 2rem 2rem 0 0;
+      }
+    }
+  }
+
+  @media (max-width: 599px) {
+    max-width: 100% !important;
+  }
+}
+
+.currency-panel.mat-mdc-select-panel {
+  margin-top: 0.25rem;
+  background-color: #ffffff;
+  box-shadow: 0px 2px 8px #005f73;
+  border-radius: 0.5rem;
+  padding: 0.25rem 0;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.currency-panel .mat-mdc-option {
+  font-size: 1.2rem;
+  padding: 0.75rem 1rem;
+}
+
+:host ::ng-deep .cdk-overlay-pane.add-transaction-modal-panel button[mat-dialog-close] .mat-mdc-button-persistent-ripple,
+:host ::ng-deep .cdk-overlay-pane.add-transaction-modal-panel button[mat-dialog-close] .mat-ripple,
+:host ::ng-deep .cdk-overlay-pane.add-transaction-modal-panel button[mat-dialog-close] .mdc-icon-button__ripple {
+  display: none;
+}
+
+:host ::ng-deep .cdk-overlay-pane.add-transaction-modal-panel button[mat-dialog-close].mat-mdc-icon-button {
+  background-color: transparent;
+  box-shadow: none;
+}

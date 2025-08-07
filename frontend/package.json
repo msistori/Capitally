@@ -1,0 +1,45 @@
+{
+  "name": "frontend",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "npx ng serve",
+    "build": "ng build",
+    "test": "ng test",
+    "lint": "ng lint"
+  },
+  "private": true,
+  "dependencies": {
+    "@ngx-translate/core": "^17.0.0",
+    "@ngx-translate/http-loader": "^17.0.0",
+    "chart.js": "^4.5.0",
+    "chartjs-plugin-datalabels": "^2.2.0",
+    "ng2-charts": "^5.0.4",
+    "rxjs": "^7.8.1",
+    "tslib": "^2.6.2",
+    "zone.js": "^0.14.3"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^17.3.10",
+    "@angular-devkit/core": "^17.3.10",
+    "@angular-devkit/schematics": "^17.3.10",
+    "@angular/animations": "^17.3.10",
+    "@angular/cdk": "^17.3.10",
+    "@angular/cli": "^17.3.10",
+    "@angular/common": "^17.3.10",
+    "@angular/compiler": "^17.3.10",
+    "@angular/compiler-cli": "^17.3.10",
+    "@angular/core": "^17.3.10",
+    "@angular/forms": "^17.3.10",
+    "@angular/material": "^17.3.10",
+    "@angular/platform-browser": "^17.3.10",
+    "@angular/platform-browser-dynamic": "^17.3.10",
+    "@angular/router": "^17.3.10",
+    "jasmine-core": "^5.1.1",
+    "karma": "^6.4.2",
+    "karma-chrome-launcher": "^3.2.0",
+    "karma-coverage": "^2.2.0",
+    "karma-jasmine": "^5.1.0",
+    "typescript": "~5.4.3"
+  }
+}
