@@ -11,7 +11,6 @@ public class AccountResponseDTO {
     private BigInteger id;
     private String name;
     private BigDecimal initialBalance;
-    private String currency;
     private AccountTypeEnum accountType;
     private BigInteger userId;
 }

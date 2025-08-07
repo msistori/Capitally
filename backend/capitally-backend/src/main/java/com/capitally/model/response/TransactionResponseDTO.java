@@ -1,5 +1,6 @@
 package com.capitally.model.response;
 
+import com.capitally.core.enums.TransactionTypeEnum;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -16,6 +17,7 @@ public class TransactionResponseDTO {
     private LocalDate date;
     private String description;
     private BigInteger categoryId;
+    private TransactionTypeEnum transactionType;
     private Boolean isRecurring;
     private String recurrencePeriod;
     private BigInteger recurrenceInterval;

@@ -6,8 +6,8 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "t_account")
 @Data
@@ -22,10 +22,6 @@ public class AccountEntity extends AuditableEntity {
 
     private String name;
     private BigDecimal initialBalance;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "currency", referencedColumnName = "code")
-    private CurrencyEntity currency;
 
     @Enumerated(EnumType.STRING)
     private AccountTypeEnum accountType;

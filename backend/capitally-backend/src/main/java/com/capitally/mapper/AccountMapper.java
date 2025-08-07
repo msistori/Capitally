@@ -9,10 +9,8 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface AccountMapper {
     @Mapping(source = "user.id", target = "userId")
-    @Mapping(source = "currency.code", target = "currency")
     AccountResponseDTO mapAccountEntityToDTO(AccountEntity entity);
 
     @Mapping(source = "userId", target = "user.id")
-    @Mapping(source = "currency", target = "currency.code")
     AccountEntity mapAccountDTOToEntity(AccountRequestDTO dto);
 }

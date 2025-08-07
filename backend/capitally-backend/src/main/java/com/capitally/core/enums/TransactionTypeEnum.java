@@ -1,6 +1,6 @@
 package com.capitally.core.enums;
 
-public enum CategoryTypeEnum {
+public enum TransactionTypeEnum {
     INCOME,
     EXPENSE
 }
