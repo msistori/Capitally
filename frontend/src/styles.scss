@@ -89,20 +89,17 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: 'Inter', sans-serif;
 }
 
-:root {
-  --footer-h: 3.5rem;
-}
+:root { --footer-h: 3.5rem; }
 
 .cdk-overlay-container {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  .cdk-overlay-pane {
-    pointer-events: all;
-  }
+
+  .cdk-overlay-pane { pointer-events: all; }
 }
 
 .cdk-overlay-pane.add-transaction-modal-panel {
@@ -126,11 +123,15 @@ html, body {
   --mdc-ripple-press-opacity: 0 !important;
 }
 
-.currency-panel .mat-mdc-select-arrow {
-  display: none;
-}
+.currency-panel .mat-mdc-select-arrow { display: none; }
 
 .cdk-overlay-container .account-panel-class .mdc-list-item__primary-text {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+.cdk-overlay-container .recurring-period-panel-class .mdc-list-item__primary-text {
   display: block;
   width: 100%;
   text-align: center;
@@ -142,8 +143,18 @@ mat-form-field.description-field {
   --mdc-form-field-state-layer-color: transparent;
   --mdc-form-field-hover-state-layer-opacity: 0;
   --mdc-form-field-focus-state-layer-opacity: 0;
+
+  .mdc-text-field--filled         { background: transparent; }
+  .mat-mdc-form-field-focus-overlay { background: transparent; }
+
+  .mdc-line-ripple                { background: #005f73; }
+  .mdc-text-field__input          { color: #005f73; caret-color: #005f73; }
+
+  .mdc-floating-label,
+  &.mat-focused .mdc-floating-label { color: #005f73; }
 }
 
-mat-form-field.description-field .mat-mdc-text-field-flex .mat-mdc-text-field-state-layer {
-  background-color: transparent;
+mat-form-field.description-field
+  .mat-mdc-text-field-flex .mat-mdc-text-field-state-layer {
+  background: transparent;
 }

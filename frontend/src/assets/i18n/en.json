@@ -3,6 +3,7 @@
   "FORM": {
     "AMOUNT": "Amount",
     "CURRENCY": "Currency",
+    "ACCOUNT": "Account",
     "TYPE": { "INCOME": "Income", "EXPENSE": "Expense" },
     "CATEGORY": "Category",
     "DATE": "Date",
@@ -12,11 +13,25 @@
     "RECURRING": {
       "LABEL": "Recurring transaction",
       "PERIOD": "Frequency",
-      "COUNT": "Number of periods",
+      "COUNT": "Frequency of periods",
       "END_DATE": "Recurrence end",
       "WEEKLY": "Weekly",
       "MONTHLY": "Monthly",
-      "YEARLY": "Yearly"
+      "YEARLY": "Yearly",
+      "DAILY": "Daily",
+      "TWO_DAYS": "Every 2 days",
+      "TEN_DAYS": "Every 10 days",
+      "TWELVE_DAYS": "Every 12 days",
+      "FIFTEEN_DAYS": "Every 15 days",
+      "THIRTY_DAYS": "Every 30 days",
+      "THIRTY_ONE_DAYS": "Every 31 days",
+      "TWO_WEEKS": "Every 2 weeks",
+      "FOUR_WEEKS": "Every 4 weeks",
+      "TWO_MONTHS": "Every 2 months",
+      "THREE_MONTHS": "Every 3 months",
+      "FOUR_MONTHS": "Every 4 months",
+      "SIX_MONTHS": "Every 6 months",
+      "TWO_YEARS": "Every 2 years"
     },
     "SUBMIT": "Save"
   },

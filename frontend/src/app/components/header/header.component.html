@@ -3,7 +3,14 @@
     <img src="assets/logo_white.svg" alt="Capitally logo" class="logo" />
     <span class="title">Capitally</span>
   </div>
-  <div class="user-icon">
-    <i class="fa fa-user-circle"></i>
+  
+  <!-- selettore lingua -->
+  <div class="language-toggle">
+    <button
+      *ngFor="let lang of availableLanguages"
+      (click)="changeLanguage(lang)"
+      [class.active]="currentLang === lang">
+      {{ lang === 'it' ? 'IT' : 'EN' }}
+    </button>
   </div>
 </header>

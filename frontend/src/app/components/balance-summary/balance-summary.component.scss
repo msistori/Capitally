@@ -1,11 +1,7 @@
 .balance-summary {
-  background: #caf0f8;
   padding: 1.5rem;
   border-radius: 1rem;
   text-align: center;
-  border: 1px solid;
-  border-color: #005f73;
-
 
   h2 {
     margin: 0;
@@ -14,9 +10,9 @@
   }
 
   .balance-amount {
-    font-size: 2rem;
+    font-size: 2.5rem;
     font-weight: bold;
     color: #005f73;
-    margin-top: 0.5rem;
+    margin: 0;
   }
 }

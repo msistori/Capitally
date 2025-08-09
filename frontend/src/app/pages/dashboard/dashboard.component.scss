@@ -1,10 +1,14 @@
 .dashboard-container {
   display: flex;
   flex-direction: column;
-  padding: 1rem;
+  padding: .5rem 1rem;
   gap: 0.5rem;
-  height: 100vh;
+  height: 100%;
   box-sizing: border-box;
+  background-image: url("./../../../assets/pattern.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 
   app-balance-summary,
   app-monthly-summary {
@@ -14,30 +18,5 @@
   app-recent-transactions {
     flex-grow: 1;
     overflow-y: auto;
-  }
-
-  /* toggle lingua */
-  .language-toggle {
-    display: flex;
-    gap: 0.5rem;
-    margin: 0.25rem 0 0.5rem;
-
-    button {
-      background: none;
-      border: 1px solid currentColor;
-      border-radius: 4px;
-      padding: 0.25rem 0.75rem;
-      cursor: pointer;
-      font: inherit;
-
-      &:hover {
-        background: rgba(0, 0, 0, 0.06);
-      }
-
-      &.active {
-        font-weight: 600;
-        text-decoration: underline;
-      }
-    }
   }
 }

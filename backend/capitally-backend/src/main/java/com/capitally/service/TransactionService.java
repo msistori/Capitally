@@ -1,5 +1,6 @@
 package com.capitally.service;
 
+import com.capitally.core.entity.AuditableEntity;
 import com.capitally.core.entity.TransactionEntity;
 import com.capitally.core.repository.*;
 import com.capitally.mapper.TransactionMapper;
@@ -14,6 +15,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static com.capitally.utils.CapitallyUtils.addIfNotNull;
@@ -47,6 +49,7 @@ public class TransactionService {
         Specification<TransactionEntity> spec = buildSpecification(userId, accountId, categoryId, startDate, endDate, minAmount, maxAmount);
 
         return transactionRepository.findAll(spec).stream()
+                .sorted(Comparator.comparing(AuditableEntity::getUpdatedAt).reversed())
                 .map(transactionMapper::mapTransactionEntityToDTO)
                 .toList();
     }
@@ -60,7 +63,6 @@ public class TransactionService {
         existing.setDescription(dto.getDescription());
         existing.setIsRecurring(dto.getIsRecurring());
         existing.setRecurrencePeriod(dto.getRecurrencePeriod());
-        existing.setRecurrenceInterval(dto.getRecurrenceInterval());
         existing.setRecurrenceEndDate(dto.getRecurrenceEndDate());
 
         return transactionMapper.mapTransactionEntityToDTO(transactionRepository.save(existing));

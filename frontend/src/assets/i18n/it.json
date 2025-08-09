@@ -3,6 +3,7 @@
   "FORM": {
     "AMOUNT": "Importo",
     "CURRENCY": "Valuta",
+    "ACCOUNT": "Conto",
     "TYPE": { "INCOME": "Entrata", "EXPENSE": "Uscita" },
     "CATEGORY": "Categoria",
     "DATE": "Data",
@@ -12,11 +13,25 @@
     "RECURRING": {
       "LABEL": "Transazione ricorrente",
       "PERIOD": "Frequenza",
-      "COUNT": "Numero di periodi",
+      "COUNT": "Frequenza periodi",
       "END_DATE": "Fine ricorrenza",
       "WEEKLY": "Settimanale",
       "MONTHLY": "Mensile",
-      "YEARLY": "Annuale"
+      "YEARLY": "Annuale",
+      "DAILY": "Giornaliera",
+      "TWO_DAYS": "Ogni 2 giorni",
+      "TEN_DAYS": "Ogni 10 giorni",
+      "TWELVE_DAYS": "Ogni 12 giorni",
+      "FIFTEEN_DAYS": "Ogni 15 giorni",
+      "THIRTY_DAYS": "Ogni 30 giorni",
+      "THIRTY_ONE_DAYS": "Ogni 31 giorni",
+      "TWO_WEEKS": "Ogni 2 settimane",
+      "FOUR_WEEKS": "Ogni 4 settimane",
+      "TWO_MONTHS": "Ogni 2 mesi",
+      "THREE_MONTHS": "Ogni 3 mesi",
+      "FOUR_MONTHS": "Ogni 4 mesi",
+      "SIX_MONTHS": "Ogni 6 mesi",
+      "TWO_YEARS": "Ogni 2 anni"
     },
     "SUBMIT": "Salva"
   },

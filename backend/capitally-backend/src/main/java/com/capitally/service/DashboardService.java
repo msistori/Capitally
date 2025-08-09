@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -184,23 +185,19 @@ public class DashboardService {
         return result;
     }
 
-    public List<UpcomingRecurringTransactionResponseDTO> getUpcomingRecurringTransactions(BigInteger userId, LocalDate untilDate) {
+    public List<UpcomingRecurringTransactionResponseDTO> getUpcomingRecurringTransactions(
+            BigInteger userId, LocalDate untilDate) {
+
         List<TransactionEntity> recurring = transactionRepository.findByUserIdAndIsRecurringTrue(userId);
         LocalDate today = LocalDate.now();
 
         return recurring.stream()
                 .filter(tx -> tx.getDate() != null && !tx.getDate().isAfter(untilDate))
-                .filter(tx -> tx.getRecurrenceInterval() != null && tx.getRecurrencePeriod() != null)
+                .filter(tx -> tx.getRecurrencePeriod() != null)
                 .flatMap(tx -> {
                     List<UpcomingRecurringTransactionResponseDTO> occurrences = new ArrayList<>();
                     LocalDate next = tx.getDate();
-                    TemporalUnit unit = switch (tx.getRecurrencePeriod().toUpperCase()) {
-                        case "DAYS" -> ChronoUnit.DAYS;
-                        case "WEEKS" -> ChronoUnit.WEEKS;
-                        case "MONTHS" -> ChronoUnit.MONTHS;
-                        default -> null;
-                    };
-                    if (unit == null) return Stream.empty();
+                    Period step = tx.getRecurrencePeriod().step();
 
                     LocalDate end = Optional.ofNullable(tx.getRecurrenceEndDate())
                             .filter(d -> d.isBefore(untilDate))
@@ -214,12 +211,11 @@ public class DashboardService {
                                     tx.getCurrency().getCode(),
                                     next,
                                     tx.getRecurrencePeriod(),
-                                    tx.getRecurrenceInterval().intValue(),
                                     tx.getCategory().getCategory(),
                                     tx.getAccount().getName()
                             ));
                         }
-                        next = next.plus(tx.getRecurrenceInterval().longValue(), unit);
+                        next = next.plus(step);
                     }
 
                     return occurrences.stream();

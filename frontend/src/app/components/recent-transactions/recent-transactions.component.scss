@@ -1,8 +1,15 @@
 .recent-transactions {
+    backdrop-filter: blur(16px);
+    background-color: #ffffff1a;
+    border: 1px solid rgba(209, 213, 219, .3);
+    border-radius: 1rem;
+    padding: 0 .5rem;
+    
   h3 {
     font-size: 1.1rem;
     margin-bottom: 0.5rem;
-    color: #374151;
+    color: #005f73;
+    text-align: center;
   }
 
   ul {
@@ -13,13 +20,15 @@
 
   li {
     padding: 0.4rem;
-    background: #ffffff;
     border-radius: 0.75rem;
     margin-bottom: 0.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    backdrop-filter: blur(16px);
+    background-color: #ffffff1a;
+    border: 1px solid rgba(209, 213, 219, .3);
+    border-radius: 1rem;
   }
 
   .tx-info {
@@ -27,13 +36,13 @@
     flex-direction: column;
 
     .tx-description {
-      font-weight: 500;
-      color: #111827;
+      font-weight: bold;
+      color: #005f73;
     }
 
     .tx-date {
       font-size: 0.75rem;
-      color: #6b7280;
+      color: #005f73;
     }
   }
 
@@ -42,11 +51,11 @@
     font-size: 1rem;
 
     &.positive {
-      color: #10b981;
+      color: #1ee9a6;
     }
 
     &.negative {
-      color: #ef4444;
+      color: #bf1f23;
     }
   }
 

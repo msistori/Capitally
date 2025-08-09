@@ -4,16 +4,6 @@
     [totalBalance]="overviewData?.totalBalancePerCurrency?.['EUR'] ?? 0">
   </app-balance-summary>
 
-  <!-- selettore lingua -->
-  <div class="language-toggle">
-    <button
-      *ngFor="let lang of availableLanguages"
-      (click)="changeLanguage(lang)"
-      [class.active]="currentLang === lang">
-      {{ lang === 'it' ? 'IT' : 'EN' }}
-    </button>
-  </div>
-
   <!-- riepilogo mese -->
   <app-monthly-summary
     *ngIf="overviewData"

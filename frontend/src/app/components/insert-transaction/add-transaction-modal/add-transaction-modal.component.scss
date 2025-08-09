@@ -66,6 +66,26 @@
   }
 }
 
+::ng-deep .recurring-period-frequency {
+  display: flex;
+  gap: 1rem;
+}
+
+::ng-deep .cdk-overlay-pane:has(.recurring-period-panel-class) {
+  position: absolute;
+  box-shadow: 0px 2px 8px #005f73;
+  background-color: #ffffff;
+  color: #005f73;
+  font-weight: bold;
+  margin-top: .7rem;
+  margin-left: -.7rem;
+  border-radius: .5rem;
+
+  .recurring-period-panel-class {
+    padding: 0;
+  }
+}
+
 
 ::ng-deep .add-transaction-modal-panel {
   .mat-mdc-dialog-container {

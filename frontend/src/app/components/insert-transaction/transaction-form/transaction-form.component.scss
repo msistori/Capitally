@@ -45,7 +45,8 @@ $form-secondary: #caf0f8;
 
   }
 
-  .account-field {
+  .account-field,
+  .recurring-period-field {
     font-size: 1.5rem;
     font-weight: 800;
     text-align: center;
@@ -63,6 +64,13 @@ $form-secondary: #caf0f8;
     max-width: 80%;
     width: 80%;
     margin: 1rem auto;
+    text-align: center;
+
+    .recurring-end-date-label {
+      font-weight: bold;
+      font-size: 1.5rem;
+      margin: .5rem;
+    }
 
     .cal-header {
       display: flex;
@@ -132,7 +140,7 @@ $form-secondary: #caf0f8;
   .mat-button-toggle {
     flex: 1;
     text-align: center;
-    padding: 1rem;
+    padding: .9rem;
     border-radius: .5rem;
     border: 0.5px solid currentColor;
 
@@ -213,17 +221,11 @@ $form-secondary: #caf0f8;
   }
 }
 
-.description-field {
-  display: flex;
-  flex-direction: column;
-}
-
 .description-input {
   color: $form-primary !important;
   position: absolute;
   font-size: 1.7rem !important;
 }
-
 
 .recurring-section {
   .recurring-toggle {
@@ -254,7 +256,8 @@ $form-secondary: #caf0f8;
 }
 
 .currency-item,
-.account-option {
+.account-option,
+.recurring-period-option {
   border-top: 1px solid $form-primary;
   border-radius: .5rem;
   text-align: center;
@@ -280,24 +283,18 @@ $form-secondary: #caf0f8;
   display: none;
 }
 
-::ng-deep
-.recurring-toggle.mat-mdc-slide-toggle.mat-mdc-slide-toggle-checked:not(.mat-disabled)
-  .mdc-switch__shadow {
+::ng-deep .recurring-toggle.mat-mdc-slide-toggle.mat-mdc-slide-toggle-checked:not(.mat-disabled) .mdc-switch__shadow {
   background-color: $form-primary;
 }
-::ng-deep
-.recurring-toggle.mat-mdc-slide-toggle.mat-mdc-slide-toggle-checked:not(.mat-disabled)
-  .mdc-switch__track::after {
+
+::ng-deep .recurring-toggle.mat-mdc-slide-toggle.mat-mdc-slide-toggle-checked:not(.mat-disabled) .mdc-switch__track::after {
   background-color: $form-secondary !important;
 }
 
-::ng-deep
-.recurring-toggle.mat-mdc-slide-toggle:not(.mat-mdc-slide-toggle-checked)
-  .mdc-switch__shadow {
+::ng-deep .recurring-toggle.mat-mdc-slide-toggle:not(.mat-mdc-slide-toggle-checked) .mdc-switch__shadow {
   background-color: $form-primary;
 }
-::ng-deep
-.recurring-toggle.mat-mdc-slide-toggle:not(.mat-mdc-slide-toggle-checked)
-  .mdc-switch__track::before {
+
+::ng-deep .recurring-toggle.mat-mdc-slide-toggle:not(.mat-mdc-slide-toggle-checked) .mdc-switch__track::before {
   background-color: rgba($form-primary, 0.3);
 }

@@ -10,18 +10,19 @@
   </div>
 
   <!-- Account -->
-  <mat-select class="account-field" panelClass="account-panel-class" formControlName="accountId" placeholder="Conto">
+  <mat-select class="account-field" panelClass="account-panel-class" formControlName="accountId"
+    placeholder="{{ 'FORM.ACCOUNT' | translate }}">
     <mat-option *ngFor="let acc of accounts" class="account-option" [value]="acc.id">{{ acc.name }}</mat-option>
   </mat-select>
 
   <!-- Date picker -->
   <div class="calendar-card">
     <div class="cal-header">
-      <button type="button" (click)="prevWeek()"><img [src]="utils.getIcon('arrow-left')" alt="<" /></button>
+      <button type="button" (click)="prevWeek('date')"><img [src]="utils.getIcon('arrow-left')" alt="<" /></button>
       <div class="month-label">
         {{ form.get('date')!.value | date:'MMMM yyyy' }}
       </div>
-      <button type="button" (click)="nextWeek()"><img [src]="utils.getIcon('arrow-right')" alt=">" /></button>
+      <button type="button" (click)="nextWeek('date')"><img [src]="utils.getIcon('arrow-right')" alt=">" /></button>
     </div>
 
     <div class="weekdays">
@@ -29,8 +30,8 @@
     </div>
 
     <div class="week">
-      <span class="day" *ngFor="let d of currentWeek" [class.empty]="!d" [class.selected]="isSelected(d)"
-        (click)="selectDay(d)">
+      <span class="day" *ngFor="let d of currentWeekDate" [class.empty]="!d" [class.selected]="isSelected(d, 'date')"
+        (click)="selectDay(d, 'date')">
         {{ d?.getDate() }}
       </span>
     </div>
@@ -71,26 +72,34 @@
     </mat-slide-toggle>
 
     <div class="recurring-fields" *ngIf="form.get('isRecurring')?.value">
-      <mat-form-field appearance="fill">
-        <mat-label>{{ 'FORM.RECURRING.PERIOD' | translate }}</mat-label>
-        <mat-select formControlName="recurringPeriod">
-          <mat-option value="WEEKLY"> {{ 'FORM.RECURRING.WEEKLY' | translate }} </mat-option>
-          <mat-option value="MONTHLY">{{ 'FORM.RECURRING.MONTHLY' | translate }} </mat-option>
-          <mat-option value="YEARLY"> {{ 'FORM.RECURRING.YEARLY' | translate }} </mat-option>
-        </mat-select>
-      </mat-form-field>
+      <mat-select formControlName="recurringPeriod" class="recurring-period-field"
+        panelClass="recurring-period-panel-class" placeholder="{{ 'FORM.RECURRING.PERIOD' | translate }}">
+        <mat-option *ngFor="let period of recurrencePeriods" [value]="period">
+          {{ ('FORM.RECURRING.' + period) | translate }}
+        </mat-option>
+      </mat-select>
 
-      <mat-form-field appearance="fill">
-        <mat-label>{{ 'FORM.RECURRING.COUNT' | translate }}</mat-label>
-        <input matInput type="number" formControlName="recurringCount" />
-      </mat-form-field>
+      <div class="calendar-card">
+        <mat-label class="recurring-end-date-label">{{ 'FORM.RECURRING.END_DATE' | translate }}</mat-label>
+        <div class="cal-header">
+          <button type="button" (click)="prevWeek('recurringEndDate')"><img [src]="utils.getIcon('arrow-left')" alt="<" /></button>
+          <div class="month-label">
+            {{ form.get('recurringEndDate')!.value | date:'MMMM yyyy' }}
+          </div>
+          <button type="button" (click)="nextWeek('recurringEndDate')"><img [src]="utils.getIcon('arrow-right')" alt=">" /></button>
+        </div>
 
-      <mat-form-field appearance="fill">
-        <mat-label>{{ 'FORM.RECURRING.END_DATE' | translate }}</mat-label>
-        <input matInput [matDatepicker]="recEndPicker" formControlName="recurringEndDate" />
-        <mat-datepicker-toggle matSuffix [for]="recEndPicker"></mat-datepicker-toggle>
-        <mat-datepicker #recEndPicker></mat-datepicker>
-      </mat-form-field>
+        <div class="weekdays">
+          <span *ngFor="let wd of weekDays">{{ wd }}</span>
+        </div>
+
+        <div class="week">
+          <span class="day" *ngFor="let d of currentWeekRecurringEndDate" [class.empty]="!d" [class.selected]="isSelected(d, 'recurringEndDate')"
+            (click)="selectDay(d, 'recurringEndDate')">
+            {{ d?.getDate() }}
+          </span>
+        </div>
+      </div>
     </div>
   </div>
 
