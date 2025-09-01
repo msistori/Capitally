@@ -16,7 +16,7 @@ export class HeaderComponent {
       this.translate.addLangs(this.availableLanguages);
       const saved = localStorage.getItem('lang');
       const browser = this.translate.getBrowserLang();
-      const fallback = 'it';
+      const fallback = 'en';
       const initLang = saved && this.availableLanguages.includes(saved)
         ? saved
         : browser && this.availableLanguages.includes(browser) ? browser : fallback;

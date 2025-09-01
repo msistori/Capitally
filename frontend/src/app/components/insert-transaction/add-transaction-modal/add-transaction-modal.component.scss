@@ -99,6 +99,10 @@
   @media (max-width: 599px) {
     max-width: 100% !important;
   }
+
+  @media (min-width: 1200px) {
+    max-width: 40vw !important;
+  }
 }
 
 .currency-panel.mat-mdc-select-panel {

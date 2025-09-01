@@ -9,5 +9,26 @@
 .content {
   flex: 1 1 auto;
   overflow-y: auto;
+  min-height: 0; /* allow children to size without forcing page scroll */
   -webkit-overflow-scrolling: touch;
+}
+
+.app-shell {
+  height: 100%;
+}
+
+.app-shell.dimmed {
+  filter: brightness(.8);
+  transition: filter .15s ease;
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (min-width: 1024px) {
+  .content {
+    /* On desktop, prevent page scroll; children manage overflow */
+    overflow: hidden;
+    min-height: 0;
+    height: calc(100vh - (var(--footer-h) * 2));
+  }
 }

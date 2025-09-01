@@ -30,18 +30,23 @@ const DoughnutCenterLogo = {
   styleUrls: ['./monthly-summary.component.scss']
 })
 export class MonthlySummaryComponent implements OnChanges {
-  @Input() income = 0;
-  @Input() expense = 0;
+  @Input() income: { [currencyCode: string]: number } = {};
+  @Input() expense: { [currencyCode: string]: number } = {};
+  defaultCurrency = 'EUR';
+
   @ViewChild(BaseChartDirective) chart?: BaseChartDirective<'doughnut'>;
+
   private noDataLabel: string;
+  private isNoData = true;
 
   public chartData: ChartConfiguration<'doughnut'>['data'] = {
-    labels: ['Income', 'Expense'],
+    labels: ['NO_DATA'],
     datasets: [{
-      data: [0, 0],
-      backgroundColor: ['#22c55e', '#ef4444'],
-      hoverBorderWidth: 7,
-      hoverBorderColor: ['#22c55e', '#ef4444']
+      label: 'NO_DATA',
+      data: [1],
+      backgroundColor: ['#005f73'],
+      borderWidth: 0,
+      hoverBorderWidth: 0
     }]
   };
 
@@ -57,16 +62,14 @@ export class MonthlySummaryComponent implements OnChanges {
         color: '#fff',
         font: { weight: 'bold', size: 14 },
         formatter: (value, ctx) => {
-          const labels = ctx.chart.data.labels as string[];
-          if (labels.length === 1 && labels[0] === 'No data') {
-            return this.noDataLabel;
-          }
-          return value
-            .toLocaleString('it-IT', {
-              style: 'currency',
-              currency: 'EUR',
-              maximumFractionDigits: 0
-            });
+          const isNoData = ctx.dataset?.label === 'NO_DATA';
+          if (isNoData) return this.noDataLabel;
+          const n = Number(value ?? 0);
+          return n.toLocaleString('it-IT', {
+            style: 'currency',
+            currency: this.defaultCurrency,
+            maximumFractionDigits: 0
+          });
         }
       }
     }
@@ -76,26 +79,47 @@ export class MonthlySummaryComponent implements OnChanges {
 
   constructor(private translate: TranslateService) {
     this.noDataLabel = this.translate.instant('MONTHLY_SUMMARY.NO_DATA');
+    this.translate.onLangChange.subscribe(() => {
+      this.noDataLabel = this.translate.instant('MONTHLY_SUMMARY.NO_DATA');
+      if (this.isNoData) this.setNoDataState();
+      this.chart?.update();
+    });
   }
 
   ngOnChanges(): void {
-    const zero = this.income === 0 && this.expense === 0;
-    if (zero) {
-      this.chartData.labels = ['No data'];
-      this.chartData.datasets = [{
+    const incomeVal = Number(this.income?.[this.defaultCurrency] ?? 0);
+    const expenseVal = Number(this.expense?.[this.defaultCurrency] ?? 0);
+    this.isNoData = incomeVal === 0 && expenseVal === 0;
+
+    if (this.isNoData) {
+      this.setNoDataState();
+    } else {
+      this.chartData = {
+        labels: ['Income', 'Expense'],
+        datasets: [{
+          label: 'DATA',
+          data: [incomeVal, expenseVal],
+          backgroundColor: ['#22c55e', '#ef4444'],
+          hoverBorderWidth: 7,
+          borderWidth: 0,
+          hoverBorderColor: ['#22c55e', '#ef4444']
+        }]
+      };
+    }
+
+    this.chart?.update();
+  }
+
+  private setNoDataState(): void {
+    this.chartData = {
+      labels: ['NO_DATA'],
+      datasets: [{
+        label: 'NO_DATA',
         data: [1],
         backgroundColor: ['#005f73'],
+        borderWidth: 0,
         hoverBorderWidth: 0
-      }];
-    } else {
-      this.chartData.labels = ['Income', 'Expense'];
-      this.chartData.datasets = [{
-        data: [this.income, this.expense],
-        backgroundColor: ['#22c55e', '#ef4444'],
-        hoverBorderWidth: 7,
-        hoverBorderColor: ['#22c55e', '#ef4444']
-      }];
-    }
-    this.chart?.update();
+      }]
+    };
   }
 }

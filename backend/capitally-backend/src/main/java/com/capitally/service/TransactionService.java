@@ -49,7 +49,7 @@ public class TransactionService {
         Specification<TransactionEntity> spec = buildSpecification(userId, accountId, categoryId, startDate, endDate, minAmount, maxAmount);
 
         return transactionRepository.findAll(spec).stream()
-                .sorted(Comparator.comparing(AuditableEntity::getUpdatedAt).reversed())
+                .sorted(Comparator.comparing(TransactionEntity::getDate).reversed())
                 .map(transactionMapper::mapTransactionEntityToDTO)
                 .toList();
     }

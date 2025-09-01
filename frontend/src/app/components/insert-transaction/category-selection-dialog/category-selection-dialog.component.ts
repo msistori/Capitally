@@ -1,6 +1,17 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { map, startWith } from 'rxjs/operators';
+import { CategoryModel } from 'src/app/models/category.model';
+import { CategoryService } from 'src/app/services/category.service';
 import { Utils } from '../../utils';
+import { DuplicateCategoryAlertComponent } from 'src/app/alerts/duplicate-category-alert/duplicate-category-alert.component';
+
+type DialogData = {
+  categories: CategoryModel[];
+  selectedCategoryId?: number | null;
+  userId: number;
+};
 
 @Component({
   selector: 'app-category-selection-dialog',
@@ -8,106 +19,213 @@ import { Utils } from '../../utils';
   styleUrls: ['./category-selection-dialog.component.scss']
 })
 export class CategorySelectionDialogComponent implements OnInit {
-  plus: any;
-  categories: any[] = [];
+  categories: CategoryModel[] = [];
+  selectedCategoryId?: number | null;
+  userId!: number;
+
+  grouped: Record<string, CategoryModel[]> = {};
+  macros: string[] = [];
+  search = '';
+
+  creating = false;
+  editing = false;
+  mode: 'create' | 'edit' = 'create';
+  editingCategoryId: number | undefined;
+
+  createForm!: FormGroup;
+  editTargetCtrl = new FormControl<number | null>(null);
+
+  filteredMacros: string[] = [];
+  iconNames: string[] = [];
+  pickedIcon?: string;
 
   constructor(
-    public dialogRef: MatDialogRef<CategorySelectionDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { selectedCategory: string },
-    private utils: Utils
-  ) { }
+    public dialogRef: MatDialogRef<CategorySelectionDialogComponent, CategoryModel | null>,
+    private dialog: MatDialog,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    private fb: FormBuilder,
+    private categoryService: CategoryService,
+    public utils: Utils
+  ) {}
 
   ngOnInit(): void {
-    /*const base = './../../../../assets';
-    this.categories = [
-      { name: 'Shopping', icon: this.getIcon(this.name) },
-      { name: 'Food', icon: base + '/icons/food.svg' },
-      { name: 'Transport', icon: base + '/icons/transport.svg' },
-      { name: 'Subscr', icon: base + '/icons/subscribe.svg' },
-      { name: 'Salary', icon: base + '/icons/salary.svg' },
-      { name: 'Transfer', icon: base + '/icons/transfer.svg' },
-      { name: 'Rent', icon: base + '/icons/rent.svg' },
-      { name: 'Health', icon: base + '/icons/' + + '.svg' },
-    ];*/
+    this.categories = [...(this.data?.categories ?? [])];
+    this.selectedCategoryId = this.data?.selectedCategoryId ?? null;
+    this.userId = this.data?.userId;
 
-    this.plus = { name: 'Add Other', icon: this.utils.getIcon('plus') };
-    this.categories = this.getIconNames().map(name => ({
-      name,
-      icon: this.utils.getIcon(name)
-    }));
+    this.buildGroups();
+
+    this.createForm = this.fb.group({
+      macroCategory: ['', [Validators.required, Validators.maxLength(40)]],
+      category: ['', [Validators.required, Validators.maxLength(40)]],
+      iconName: ['']
+    });
+
+    this.iconNames = this.getIconNames();
+
+    const allMacros = Array.from(new Set(this.categories.map(c => c.macroCategory)))
+      .filter(Boolean)
+      .sort();
+
+    this.createForm.get('macroCategory')!.valueChanges.pipe(
+      startWith(this.createForm.get('macroCategory')!.value || ''),
+      map(v => (v || '').toString().toLowerCase()),
+      map(v => allMacros.filter(m => m.toLowerCase().includes(v)))
+    ).subscribe(list => this.filteredMacros = list);
   }
 
-  selectCategory(name: string): void {
-    this.dialogRef.close(name);
+  private buildGroups(): void {
+    const byMacro: Record<string, CategoryModel[]> = {};
+    for (const c of this.categories) {
+      const k = c.macroCategory || 'Other';
+      if (!byMacro[k]) byMacro[k] = [];
+      byMacro[k].push(c);
+    }
+    Object.keys(byMacro).forEach(k => byMacro[k].sort((a, b) => a.category.localeCompare(b.category)));
+    this.grouped = byMacro;
+    this.macros = Object.keys(byMacro).sort((a, b) => a.localeCompare(b));
   }
 
-  addNewCategory(): void {
-    const newCat = prompt('Nome nuova categoria:');
-    if (newCat) {
-      this.dialogRef.close(newCat);
+  filter(items: CategoryModel[]): CategoryModel[] {
+    const q = this.search.trim().toLowerCase();
+    if (!q) return items;
+    return items.filter(c =>
+      c.category.toLowerCase().includes(q) ||
+      (c.macroCategory || '').toLowerCase().includes(q)
+    );
+  }
+
+  getFilteredByMacro(macro: string): CategoryModel[] {
+    return this.filter(this.grouped[macro] || []);
+  }
+
+  trackById = (_: number, c: CategoryModel) => c.id;
+
+  selectExisting(cat: CategoryModel): void {
+    this.dialogRef.close(cat);
+  }
+
+  toggleCreate(): void {
+    if (this.creating && this.mode === 'create') {
+      this.resetFlag();
+      return;
+    }
+    this.switchToCreate();
+  }
+
+  switchToCreate(): void {
+    this.mode = 'create';
+    this.creating = true;
+    this.editingCategoryId = undefined;
+    this.pickedIcon = undefined;
+    this.createForm.reset({ macroCategory: '', category: '', iconName: '' });
+  }
+  
+  toggleEdit(): void {
+    if (this.editing && this.mode === 'edit') {
+      this.resetFlag();
+      return;
+    }
+    this.switchToEdit();
+  }
+
+  switchToEdit(): void {
+    this.mode = 'edit';
+    this.editing = true;
+    this.creating = true;
+    this.editingCategoryId = undefined;
+    this.pickedIcon = undefined;
+    this.createForm.reset({ macroCategory: '', category: '', iconName: '' });
+    this.editTargetCtrl.setValue(null);
+  }
+
+  resetFlag(): void {
+    this.creating = false;
+    this.editing = false;
+  }
+
+  onEditTargetChange(id: number | null): void {
+    if (id == null) return;
+    const cat = this.categories.find(c => c.id === id);
+    if (cat) this.applyEditTarget(cat);
+  }
+
+  applyEditTarget(cat: CategoryModel): void {
+    if (!cat) return;
+    this.editingCategoryId = cat.id;
+    this.pickedIcon = cat.iconName || undefined;
+    this.createForm.setValue({
+      macroCategory: cat.macroCategory,
+      category: cat.category,
+      iconName: cat.iconName
+    });
+  }
+
+  pickIcon(name: string): void {
+    this.pickedIcon = name;
+    this.createForm.get('iconName')!.setValue(name);
+  }
+
+  submitForm(): void {
+    if (this.createForm.invalid) return;
+
+    const payload: CategoryModel = {
+      macroCategory: this.createForm.value.macroCategory.trim(),
+      category: this.createForm.value.category.trim(),
+      iconName: (this.createForm.value.iconName || '').trim(),
+      userId: this.userId
+    };
+
+    const duplicate = this.categories.some(c =>
+      c.macroCategory.toLowerCase() === payload.macroCategory.toLowerCase() &&
+      c.category.toLowerCase() === payload.category.toLowerCase() &&
+      c.id !== this.editingCategoryId
+    );
+
+    if (duplicate) {
+      const ref = this.dialog.open(DuplicateCategoryAlertComponent, {
+        data: { macroCategory: payload.macroCategory, category: payload.category }
+      });
+      ref.afterClosed().subscribe(result => {
+        if (result === 'modify') {
+          const existing = this.categories.find(c =>
+            c.macroCategory.toLowerCase() === payload.macroCategory.toLowerCase() &&
+            c.category.toLowerCase() === payload.category.toLowerCase()
+          );
+          if (existing) {
+            this.mode = 'edit';
+            this.creating = true;
+            this.applyEditTarget(existing);
+          }
+        }
+      });
+      return;
+    }
+
+    if (this.mode === 'edit' && this.editingCategoryId !== undefined) {
+      payload.id = this.editingCategoryId;
+      this.categoryService.putCategory(payload, this.editingCategoryId).subscribe({
+        next: updated => this.dialogRef.close(updated),
+        error: err => console.error('Update error', err)
+      });
+    } else {
+      this.categoryService.postCategory(payload).subscribe({
+        next: created => this.dialogRef.close(created),
+        error: err => console.error('Create category error', err)
+      });
     }
   }
 
   cancel(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(null);
   }
 
-  getIconNames(): string[] {
+  private getIconNames(): string[] {
     return [
-      'Shopping',
-      'Smartphone',
-      'Spanner',
-      'Stadium',
-      'Subscribe',
-      'Taxi',
-      'Ticket',
-      'Tooth',
-      'Transfer',
-      'Washing-machine',
-      'Watch',
-      'Wifi',
-      'Animal',
-      'Bank',
-      'Barbell',
-      'Barber',
-      'Bike',
-      'Bill',
-      'Book',
-      'Camera',
-      'Car',
-      'Card-holder',
-      'Car-insurance',
-      'Car-wash',
-      'Charger',
-      'Cigar',
-      'Clothes',
-      'Cocktail',
-      'Coffee',
-      'Coin',
-      'Diamond',
-      'Dices',
-      'Flower',
-      'Food',
-      'Football',
-      'Fuel',
-      'Games',
-      'Gift',
-      'Health',
-      'Metro',
-      'Mic',
-      'Money-bag',
-      'Motorbike',
-      'Parking',
-      'Pc',
-      'Plane',
-      'Plus',
-      'Police',
-      'Popcorn',
-      'Receipt',
-      'Salary',
-      'Ship',
-      'Shoes'
+      'Shopping','Smartphone','Spanner','Stadium','Subscribe','Taxi','Ticket','Tooth','Transfer','Washing-machine','Watch','Wifi',
+      'Animal','Bank','Barbell','Barber','Bike','Bill','Book','Camera','Car','Card-holder','Car-insurance','Car-wash','Charger',
+      'Cigar','Clothes','Cocktail','Coffee','Coin','Diamond','Dices','Flower','Food','Football','Fuel','Games','Gift','Health',
+      'Metro','Mic','Money-bag','Motorbike','Parking','Pc','Plane','Plus','Police','Popcorn','Receipt','Salary','Ship','Shoes'
     ];
-
   }
 }

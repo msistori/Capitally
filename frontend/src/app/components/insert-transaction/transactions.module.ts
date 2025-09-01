@@ -20,6 +20,7 @@ import { CategorySelectionDialogComponent } from './category-selection-dialog/ca
 import { MAT_DATE_FORMATS, DateAdapter } from '@angular/material/core';
 import { CustomDateAdapter } from './../../adapters/custom-date-adapter';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -57,7 +58,8 @@ export const MY_DATE_FORMATS = {
     FormsModule,
     MatSlideToggleModule,
     TranslateModule,
-    MatChipsModule
+    MatChipsModule,
+    MatAutocompleteModule
   ],
   exports: [AddTransactionFabComponent],
   providers: [

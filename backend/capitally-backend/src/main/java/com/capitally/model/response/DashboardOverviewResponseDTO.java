@@ -10,7 +10,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class DashboardOverviewResponseDTO {
     private Map<String, BigDecimal> totalBalancePerCurrency;
-    private BigDecimal totalIncomeThisMonth;
-    private BigDecimal totalExpenseThisMonth;
+    private Map<String, BigDecimal>  totalIncomeThisMonth;
+    private Map<String, BigDecimal>  totalExpenseThisMonth;
     private int upcomingRecurringCount;
 }

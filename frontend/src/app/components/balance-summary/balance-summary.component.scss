@@ -4,15 +4,43 @@
   text-align: center;
 
   h2 {
-    margin: 0;
+    margin: 0 0 .5rem 0;
     font-size: 1rem;
     color: #005f73;
   }
 
-  .balance-amount {
+  .balance-total {
     font-size: 2.5rem;
-    font-weight: bold;
+    font-weight: 800;
     color: #005f73;
+    margin: 0 0 .75rem 0;
+  }
+
+  .per-currency {
+    list-style: none;
+    padding: 0;
     margin: 0;
+    display: grid;
+    gap: .25rem;
+
+    li {
+      display: flex;
+      justify-content: center;
+      font-weight: 600;
+      color: #005f73;
+      gap: 2rem;
+
+      .code { opacity: .8; }
+      .amt { white-space: nowrap; }
+    }
+  }
+
+  @media (min-width: 1024px) {
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    background-color: rgba(255, 255, 255, 0.42);
+    border: 1px solid rgba(209, 213, 219, 0.5);
+    border-radius: 1rem;
+    transform: scale(2);
   }
 }

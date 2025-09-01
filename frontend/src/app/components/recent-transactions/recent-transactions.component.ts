@@ -32,7 +32,7 @@ export class RecentTransactionsComponent implements OnInit, OnDestroy {
   private loadTransactions(): void {
     this.transactionService.getTransactions(this.userId).subscribe(res => {
       this.transactions = res
-        .slice(0, 4);
+        .slice(0, 5);
     });
   }
 }

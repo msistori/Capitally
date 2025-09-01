@@ -1,5 +1,5 @@
 export interface CategoryModel {
-  id: number;
+  id?: number;
   macroCategory: string;
   category: string;
   iconName: string;

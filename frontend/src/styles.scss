@@ -92,7 +92,33 @@ html, body {
   font-family: 'Inter', sans-serif;
 }
 
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: url('assets/pattern.svg') center / cover no-repeat;
+  z-index: -1;
+  pointer-events: none;
+}
+
 :root { --footer-h: 3.5rem; }
+
+#app-preloader {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  z-index: 10000;
+}
+#app-preloader img {
+  width: 64px;
+  height: 64px;
+  animation: spin .9s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.body-lock { overflow: hidden; }
 
 .cdk-overlay-container {
   position: fixed;
@@ -112,6 +138,16 @@ html, body {
   overflow: visible;
 }
 
+.cdk-overlay-pane.view-all-categories-modal-panel {
+  position: fixed !important;
+  left: 0;
+  right: 0;
+  bottom: var(--footer-h);
+  max-height: 72vh;
+  margin-inline: auto;
+  overflow: visible;
+}
+
 .mat-mdc-button,
 .mat-mdc-flat-button,
 .mat-mdc-raised-button,
@@ -125,17 +161,14 @@ html, body {
 
 .currency-panel .mat-mdc-select-arrow { display: none; }
 
-.cdk-overlay-container .account-panel-class .mdc-list-item__primary-text {
+.cdk-overlay-container .account-panel-class .mdc-list-item__primary-text,
+.cdk-overlay-container .recurring-period-panel-class .mdc-list-item__primary-text,
+.cdk-overlay-container .cap-autocomplete .mdc-list-item__primary-text {
   display: block;
   width: 100%;
   text-align: center;
 }
 
-.cdk-overlay-container .recurring-period-panel-class .mdc-list-item__primary-text {
-  display: block;
-  width: 100%;
-  text-align: center;
-}
 
 mat-form-field.description-field {
   --mdc-filled-text-field-container-color: transparent;

@@ -19,11 +19,8 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -157,32 +154,45 @@ public class DashboardService {
         return months;
     }
 
-    public List<ExpenseBreakdownResponseDTO> getExpenseBreakdown(BigInteger userId, LocalDate startDate, LocalDate endDate) {
-        List<TransactionEntity> transactions = transactionRepository.findByUserIdAndDateBetween(userId, startDate, endDate);
+    public List<IncomeExpenseBreakdownResponseDTO> getIncomeExpenseBreakdown(
+            BigInteger userId,
+            LocalDate startDate,
+            LocalDate endDate,
+            TransactionTypeEnum transactionType) {
 
-        Map<String, Map<String, BigDecimal>> totals = new HashMap<>();
+        List<TransactionEntity> txs = transactionRepository.findByUserIdAndDateBetween(userId, startDate, endDate);
 
-        for (TransactionEntity t : transactions) {
-            if (t.getCategory() == null || t.getTransactionType() != TransactionTypeEnum.EXPENSE) continue;
+        Map<TransactionTypeEnum, Map<String, Map<String, BigDecimal>>> totals = new EnumMap<>(TransactionTypeEnum.class);
+
+        for (TransactionEntity t : txs) {
+            TransactionTypeEnum type = t.getTransactionType();
+            if (transactionType != null && type != transactionType) continue;
 
             String macro = t.getCategory().getMacroCategory();
             String currency = t.getCurrency().getCode();
-            BigDecimal amount = Optional.ofNullable(t.getAmount()).orElse(BigDecimal.ZERO);
+            BigDecimal amount = t.getAmount() != null ? t.getAmount() : BigDecimal.ZERO;
 
             totals
-                    .computeIfAbsent(macro, m -> new HashMap<>())
+                      .computeIfAbsent(type, k -> new HashMap<>())
+                    .computeIfAbsent(macro, k -> new HashMap<>())
                     .merge(currency, amount, BigDecimal::add);
         }
 
-        List<ExpenseBreakdownResponseDTO> result = new ArrayList<>();
-        for (Map.Entry<String, Map<String, BigDecimal>> entry : totals.entrySet()) {
-            String macroCategory = entry.getKey();
-            for (Map.Entry<String, BigDecimal> inner : entry.getValue().entrySet()) {
-                result.add(new ExpenseBreakdownResponseDTO(macroCategory, inner.getKey(), inner.getValue()));
-            }
-        }
-
-        return result;
+        return totals.entrySet().stream()
+                .flatMap(typeEntry -> typeEntry.getValue().entrySet().stream()
+                        .flatMap(macroEntry -> macroEntry.getValue().entrySet().stream()
+                                .map(currEntry -> new IncomeExpenseBreakdownResponseDTO(
+                                        typeEntry.getKey(),
+                                        macroEntry.getKey(),
+                                        currEntry.getKey(),
+                                        currEntry.getValue()))
+                        )
+                )
+                .sorted(Comparator
+                        .comparing(IncomeExpenseBreakdownResponseDTO::getTransactionType)
+                        .thenComparing(IncomeExpenseBreakdownResponseDTO::getMacroCategory)
+                        .thenComparing(IncomeExpenseBreakdownResponseDTO::getCurrency))
+                .toList();
     }
 
     public List<UpcomingRecurringTransactionResponseDTO> getUpcomingRecurringTransactions(
@@ -237,15 +247,15 @@ public class DashboardService {
                 ));
 
         List<TransactionEntity> transactions = transactionRepository.findByUserIdAndDateBetween(userId, startOfMonth, endOfMonth);
-        BigDecimal totalIncome = BigDecimal.ZERO;
-        BigDecimal totalExpense = BigDecimal.ZERO;
+        Map<String, BigDecimal> totalIncome = new HashMap<>();
+        Map<String, BigDecimal> totalExpense = new HashMap<>();
 
         for (TransactionEntity tx : transactions) {
-            if (TransactionTypeEnum.INCOME.equals(tx.getTransactionType())) {
-                totalIncome = totalIncome.add(tx.getAmount());
-            } else if (TransactionTypeEnum.EXPENSE.equals(tx.getTransactionType())) {
-                totalExpense = totalExpense.add(tx.getAmount());
-            }
+            Map<String, BigDecimal> target = switch (tx.getTransactionType()) {
+                case INCOME -> totalIncome;
+                case EXPENSE -> totalExpense;
+            };
+            target.merge(tx.getCurrency().getCode(), tx.getAmount(), BigDecimal::add);
         }
 
         int recurringCount = getUpcomingRecurringTransactions(userId, endOfMonth).size();

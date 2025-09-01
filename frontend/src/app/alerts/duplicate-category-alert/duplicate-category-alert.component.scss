@@ -1,0 +1,53 @@
+@use '@angular/material' as mat;
+@use 'src/styles' as styles;
+
+$primary: #005f73;
+$secondary: #caf0f8;
+
+.duplicate-category-alert-container {
+  border-radius: .5rem;
+  padding: .5rem;
+
+  .duplicate-category-alert-title {
+    padding: 1rem;
+    justify-content: center;
+    display: flex;
+    color: $primary;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+
+  mat-dialog-content {
+    font-size: 1rem;
+    padding: .5rem;
+    text-align: justify;
+
+    p {
+      margin-bottom: 0.5rem;
+      color: $primary;
+    }
+  }
+
+  mat-dialog-actions {
+    gap: 1rem;
+    justify-content: end;
+    
+    button {
+      border-radius: .5rem;
+    }
+
+    .duplicate-category-alert-button-close {
+      color: $primary;
+      background-color: #ffff;
+      border: 1px solid $primary;
+      margin: 0;
+    }
+
+    .duplicate-category-alert-button-modify {
+      color: #ffff;
+      background-color: $primary;
+      border: 1px solid $primary;
+      margin: 0;
+    }
+  }
+}
