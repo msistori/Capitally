@@ -4,12 +4,12 @@
     <li *ngFor="let tx of transactions">
       <div class="tx-info">
         <span class="tx-description">{{ tx.description }}</span>
-        <span class="tx-date">{{ tx.date | date:'shortDate' }}</span>
+        <span class="tx-date">{{ tx.date | date:'dd/MM/yyyy' }}</span>
       </div>
       <div class="tx-amount" [ngClass]="{
         'positive': tx.transactionType === TransactionTypeEnum.INCOME,
         'negative': tx.transactionType === TransactionTypeEnum.EXPENSE }">
-        {{ tx.amount | currency: 'EUR':'symbol' }}
+        {{ tx.amount | currency: (tx.currencyCode ? tx.currencyCode : 'EUR'):'symbol-narrow' }}
       </div>
     </li>
   </ul>

@@ -3,10 +3,11 @@ import { Observable } from 'rxjs';
 import {
   CurrentBalanceResponseDTO,
   DashboardOverviewResponseDTO,
-  ExpenseBreakdownResponseDTO,
   TransactionsSummaryResponseDTO,
   UpcomingRecurringTransactionModel,
-  BalanceTrendPerCurrencyResponseDTO
+  BalanceTrendPerCurrencyResponseDTO,
+  BalanceTrendResponseDTO,
+  IncomeExpenseBreakdownResponseDTO
 } from './../models/dashboard.model'; // crea qui i tipi
 import { HttpClient, HttpParams } from '@angular/common/http';
 
@@ -42,12 +43,12 @@ export class DashboardService {
     return this.http.get<BalanceTrendPerCurrencyResponseDTO[]>(`${this.apiUrl}/balance-trend`, { params });
   }
 
-  getExpenseBreakdown(userId: string, start: string, end: string): Observable<ExpenseBreakdownResponseDTO[]> {
+  getIncomeExpenseBreakdown(userId: string, start: string, end: string): Observable<IncomeExpenseBreakdownResponseDTO[]> {
     const params = new HttpParams()
       .set('userId', userId)
       .set('startDate', start)
       .set('endDate', end);
-    return this.http.get<ExpenseBreakdownResponseDTO[]>(`${this.apiUrl}/expense-breakdown`, { params });
+    return this.http.get<IncomeExpenseBreakdownResponseDTO[]>(`${this.apiUrl}/income-expense-breakdown`, { params });
   }
 
   getUpcomingRecurringTransactions(userId: string, untilDate: string): Observable<UpcomingRecurringTransactionModel[]> {
@@ -55,5 +56,13 @@ export class DashboardService {
       .set('userId', userId)
       .set('untilDate', untilDate);
     return this.http.get<UpcomingRecurringTransactionModel[]>(`${this.apiUrl}/upcoming-recurring`, { params });
+  }
+
+  getYearlyBalanceTrend(userId: string, startDate: string, endDate: string): Observable<BalanceTrendResponseDTO[]> {
+    const params = new HttpParams()
+      .set('userId', userId)
+      .set('startDate', startDate)
+      .set('endDate', endDate);
+    return this.http.get<BalanceTrendResponseDTO[]>(`${this.apiUrl}/balance-trend`, { params });
   }
 }

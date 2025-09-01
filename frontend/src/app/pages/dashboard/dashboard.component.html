@@ -1,26 +1,22 @@
 <main class="dashboard-container">
-  <!-- saldo totale -->
+  <!-- balance-summary -->
   <app-balance-summary
-    [totalBalance]="overviewData?.totalBalancePerCurrency?.['EUR'] ?? 0">
+    [totalBalance]="overviewData.totalBalancePerCurrency ? overviewData.totalBalancePerCurrency : {}">
   </app-balance-summary>
 
-  <!-- selettore lingua -->
-  <div class="language-toggle">
-    <button
-      *ngFor="let lang of availableLanguages"
-      (click)="changeLanguage(lang)"
-      [class.active]="currentLang === lang">
-      {{ lang === 'it' ? 'IT' : 'EN' }}
-    </button>
-  </div>
-
-  <!-- riepilogo mese -->
+  <!-- monthly-summary -->
   <app-monthly-summary
     *ngIf="overviewData"
-    [income]="overviewData.totalIncomeThisMonth"
-    [expense]="overviewData.totalExpenseThisMonth">
+    [income]="overviewData.totalIncomeThisMonth ? overviewData.totalIncomeThisMonth : {}"
+    [expense]="overviewData.totalExpenseThisMonth ? overviewData.totalExpenseThisMonth : {}">
   </app-monthly-summary>
 
-  <!-- ultime transazioni -->
+  <!-- recent-transactions -->
   <app-recent-transactions></app-recent-transactions>
+
+  <!-- balance trend -->
+  <app-balance-trend [items]="yearlyBalance"></app-balance-trend>
+
+  <!-- income - expense breakdown -->
+   <app-income-expense-breakdown [items]="incomeExpenseBreakdownData" (monthChange)="onMonthChange($event)"></app-income-expense-breakdown>
 </main>

@@ -17,8 +17,10 @@ export class CategoryService {
   }
 
   postCategory(category: CategoryModel): Observable<CategoryModel> {
-    //return this.http.post<TransactionModel>(`${this.apiUrl}`, transaction);
-    console.log(category);
-    return new Observable<CategoryModel>;
+    return this.http.post<CategoryModel>(`${this.apiUrl}`, category);
+  }
+
+  putCategory(category: CategoryModel, id: number): Observable<CategoryModel> {
+    return this.http.put<CategoryModel>(`${this.apiUrl}/${id}`, category);
   }
 }

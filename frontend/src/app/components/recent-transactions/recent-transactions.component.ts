@@ -32,7 +32,6 @@ export class RecentTransactionsComponent implements OnInit, OnDestroy {
   private loadTransactions(): void {
     this.transactionService.getTransactions(this.userId).subscribe(res => {
       this.transactions = res
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
         .slice(0, 5);
     });
   }

@@ -1,5 +1,6 @@
 package com.capitally.controller;
 
+import com.capitally.core.enums.TransactionTypeEnum;
 import com.capitally.model.response.*;
 import com.capitally.service.DashboardService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -70,12 +71,13 @@ public class DashboardController {
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @GetMapping("/expense-breakdown")
-    public List<ExpenseBreakdownResponseDTO> getExpenseBreakdown(
+    @GetMapping("/income-expense-breakdown")
+    public List<IncomeExpenseBreakdownResponseDTO> getIncomeExpenseBreakdown(
             @RequestParam BigInteger userId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        return dashboardService.getExpenseBreakdown(userId, startDate, endDate);
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) TransactionTypeEnum transactionType) {
+        return dashboardService.getIncomeExpenseBreakdown(userId, startDate, endDate, transactionType);
     }
 
 

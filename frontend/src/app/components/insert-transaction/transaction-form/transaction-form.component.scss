@@ -45,7 +45,8 @@ $form-secondary: #caf0f8;
 
   }
 
-  .account-field {
+  .account-field,
+  .recurring-period-field {
     font-size: 1.5rem;
     font-weight: 800;
     text-align: center;
@@ -63,6 +64,13 @@ $form-secondary: #caf0f8;
     max-width: 80%;
     width: 80%;
     margin: 1rem auto;
+    text-align: center;
+
+    .recurring-end-date-label {
+      font-weight: bold;
+      font-size: 1.5rem;
+      margin: .5rem;
+    }
 
     .cal-header {
       display: flex;
@@ -118,6 +126,11 @@ $form-secondary: #caf0f8;
           color: #fff;
           border-radius: 50%;
         }
+
+        &.outside {
+          opacity: .35;
+          pointer-events: none;
+        }
       }
     }
   }
@@ -132,7 +145,7 @@ $form-secondary: #caf0f8;
   .mat-button-toggle {
     flex: 1;
     text-align: center;
-    padding: 1rem;
+    padding: .9rem;
     border-radius: .5rem;
     border: 0.5px solid currentColor;
 
@@ -149,6 +162,7 @@ $form-secondary: #caf0f8;
   flex-wrap: wrap;
   gap: 0.25rem;
   justify-content: space-between;
+  align-items: stretch;
 
   .category-item-macro {
     font-weight: bold;
@@ -166,12 +180,13 @@ $form-secondary: #caf0f8;
     padding: 0.3rem 0.1rem;
     text-align: center;
     cursor: pointer;
-    height: calc(50% - 0.25rem);
+    justify-content: center;
     width: calc(25% - 0.25rem);
     min-height: calc(50% - 0.25rem);
     min-width: calc(25% - 0.25rem);
     max-height: calc(50% - 0.25rem);
     max-width: calc(25% - 0.25rem);
+    word-break: break-word;
 
     img {
       width: 24px;
@@ -213,17 +228,11 @@ $form-secondary: #caf0f8;
   }
 }
 
-.description-field {
-  display: flex;
-  flex-direction: column;
-}
-
 .description-input {
   color: $form-primary !important;
   position: absolute;
   font-size: 1.7rem !important;
 }
-
 
 .recurring-section {
   .recurring-toggle {
@@ -239,6 +248,14 @@ $form-secondary: #caf0f8;
     flex-direction: column;
     gap: 0.75rem;
     margin-top: 1rem;
+
+    .recurring-end-date-toggle {
+      width: 100%;
+      justify-content: space-between;
+      font-weight: 600;
+
+      --mdc-form-field-label-text-color: $form-primary;
+    }
   }
 }
 
@@ -254,7 +271,8 @@ $form-secondary: #caf0f8;
 }
 
 .currency-item,
-.account-option {
+.account-option,
+.recurring-period-option {
   border-top: 1px solid $form-primary;
   border-radius: .5rem;
   text-align: center;
@@ -280,24 +298,49 @@ $form-secondary: #caf0f8;
   display: none;
 }
 
-::ng-deep
-.recurring-toggle.mat-mdc-slide-toggle.mat-mdc-slide-toggle-checked:not(.mat-disabled)
-  .mdc-switch__shadow {
+::ng-deep .recurring-toggle.mat-mdc-slide-toggle.mat-mdc-slide-toggle-checked:not(.mat-disabled) .mdc-switch__shadow {
   background-color: $form-primary;
 }
-::ng-deep
-.recurring-toggle.mat-mdc-slide-toggle.mat-mdc-slide-toggle-checked:not(.mat-disabled)
-  .mdc-switch__track::after {
+
+::ng-deep .recurring-toggle.mat-mdc-slide-toggle.mat-mdc-slide-toggle-checked:not(.mat-disabled) .mdc-switch__track::after {
   background-color: $form-secondary !important;
 }
 
-::ng-deep
-.recurring-toggle.mat-mdc-slide-toggle:not(.mat-mdc-slide-toggle-checked)
-  .mdc-switch__shadow {
+::ng-deep .recurring-toggle.mat-mdc-slide-toggle:not(.mat-mdc-slide-toggle-checked) .mdc-switch__shadow {
   background-color: $form-primary;
 }
-::ng-deep
-.recurring-toggle.mat-mdc-slide-toggle:not(.mat-mdc-slide-toggle-checked)
-  .mdc-switch__track::before {
+
+::ng-deep .recurring-toggle.mat-mdc-slide-toggle:not(.mat-mdc-slide-toggle-checked) .mdc-switch__track::before {
   background-color: rgba($form-primary, 0.3);
+}
+
+::ng-deep .recurring-end-date-toggle.mat-mdc-slide-toggle.mat-mdc-slide-toggle-checked:not(.mat-disabled) .mdc-switch__shadow {
+  background-color: $form-primary;
+}
+
+::ng-deep .recurring-end-date-toggle.mat-mdc-slide-toggle.mat-mdc-slide-toggle-checked:not(.mat-disabled) .mdc-switch__track::after {
+  background-color: $form-secondary !important;
+}
+
+::ng-deep .recurring-end-date-toggle.mat-mdc-slide-toggle:not(.mat-mdc-slide-toggle-checked) .mdc-switch__shadow {
+  background-color: $form-primary;
+}
+
+::ng-deep .recurring-end-date-toggle.mat-mdc-slide-toggle:not(.mat-mdc-slide-toggle-checked) .mdc-switch__track::before {
+  background-color: rgba($form-primary, 0.3);
+}
+
+::ng-deep .view-all-categories-modal-panel {
+  .mat-mdc-dialog-container {
+    .mdc-dialog__container {
+      .mat-mdc-dialog-surface {
+        border-radius: 2rem 2rem 0 0;
+      }
+    }
+  }
+
+  @media (max-width: 599px) {
+    max-width: 100% !important;
+    width: 100%;
+  }
 }

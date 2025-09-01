@@ -1,10 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { DashboardService } from '../../services/dashboard.service';
-import { CurrencyService } from '../../services/currency.service';
-import { TranslateService } from '@ngx-translate/core';
-import { DashboardOverviewResponseDTO } from '../../models/dashboard.model';
-import { CurrencyModel } from '../../models/currency.model';
+import { BalanceTrendResponseDTO, DashboardOverviewResponseDTO, IncomeExpenseBreakdownResponseDTO } from '../../models/dashboard.model';
 import { RefreshService } from '../../services/refresh.service';
 
 @Component({
@@ -13,29 +10,26 @@ import { RefreshService } from '../../services/refresh.service';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit, OnDestroy {
-  readonly availableLanguages = ['it', 'en'];
-  currentLang!: string;
-  overviewData?: DashboardOverviewResponseDTO;
-  currencies?: CurrencyModel[];
+  overviewData: DashboardOverviewResponseDTO = {
+    totalBalancePerCurrency: {},
+    totalIncomeThisMonth: {},
+    totalExpenseThisMonth: {},
+    upcomingRecurringCount: []
+  };
+  yearlyBalance: BalanceTrendResponseDTO[] = [];
+  incomeExpenseBreakdownData: IncomeExpenseBreakdownResponseDTO[] = [];
+
+  currentYear = new Date().getFullYear();
+  private selectedYear = new Date().getFullYear();
+  private selectedMonth = new Date().getMonth();
+
   readonly userId = '1';
   private sub = new Subscription();
 
   constructor(
     private dashboardService: DashboardService,
-    private currencyService: CurrencyService,
-    private translate: TranslateService,
     private refreshService: RefreshService
-  ) {
-    this.translate.addLangs(this.availableLanguages);
-    const saved = localStorage.getItem('lang');
-    const browser = this.translate.getBrowserLang();
-    const fallback = 'it';
-    const initLang = saved && this.availableLanguages.includes(saved)
-      ? saved
-      : browser && this.availableLanguages.includes(browser) ? browser : fallback;
-    this.translate.use(initLang);
-    this.currentLang = initLang;
-  }
+  ) {}
 
   ngOnInit(): void {
     this.refresh();
@@ -47,17 +41,57 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   refresh(): void {
-    this.dashboardService.getDashboardOverview(this.userId).subscribe(
-      res => this.overviewData = res,
-      err => console.error('Error loading dashboard', err)
-    );
+    const yearStart = `${this.currentYear}-01-01`;
+    const yearEnd = this.endOfRange(this.currentYear);
+
+    this.dashboardService.getDashboardOverview(this.userId).subscribe({
+      next: res => this.overviewData = res,
+      error: err => console.error('Error loading dashboard', err)
+    });
+
+    this.dashboardService.getYearlyBalanceTrend(this.userId, yearStart, yearEnd).subscribe({
+      next: data => this.yearlyBalance = [...data].sort((a, b) => a.month.localeCompare(b.month)),
+      error: err => console.error('Error loading yearly balance trend', err)
+    });
+
+    const { startDate, endDate } = this.monthRange(this.selectedYear, this.selectedMonth);
+    this.dashboardService.getIncomeExpenseBreakdown(this.userId, startDate, endDate).subscribe({
+      next: res => this.incomeExpenseBreakdownData = res,
+      error: err => console.error('Error loading income-expense breakdown', err)
+    });
   }
 
-  changeLanguage(lang: string): void {
-    if (lang !== this.currentLang && this.availableLanguages.includes(lang)) {
-      this.translate.use(lang);
-      this.currentLang = lang;
-      localStorage.setItem('lang', lang);
+  onMonthChange(range: { startDate: string; endDate: string }) {
+    const d = new Date(range.startDate);
+    this.selectedYear = d.getFullYear();
+    this.selectedMonth = d.getMonth();
+
+    this.dashboardService.getIncomeExpenseBreakdown(this.userId, range.startDate, range.endDate).subscribe({
+      next: res => this.incomeExpenseBreakdownData = res,
+      error: err => console.error('Error loading income-expense breakdown', err)
+    });
+  }
+
+  private endOfRange(year: number): string {
+    const now = new Date();
+    if (now.getFullYear() === year) {
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      return `${year}-${mm}-${dd}`;
     }
+    return `${year}-12-31`;
+  }
+
+  private monthRange(year: number, month0: number): { startDate: string; endDate: string } {
+    const start = new Date(year, month0, 1);
+    const end = new Date(year, month0 + 1, 0);
+    return { startDate: this.formatLocalDate(start), endDate: this.formatLocalDate(end) };
+  }
+
+  private formatLocalDate(d: Date): string {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
   }
 }

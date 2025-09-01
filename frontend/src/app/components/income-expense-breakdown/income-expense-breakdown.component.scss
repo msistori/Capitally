@@ -1,0 +1,245 @@
+$primary: #005f73;
+$accent: #caf0f8;
+$income: #1da779;
+$expense: #bf1f23;
+
+:host {
+  display: block;
+  height: 100%;
+  min-height: 0;
+}
+
+@media (max-width: 1023px) {
+  :host {
+    height: auto;
+  }
+  .ieb {
+    height: auto;
+    overflow: visible; /* allow full content on mobile */
+    grid-template-rows: auto auto auto; /* no forced 1fr */
+  }
+  .table {
+    overflow: visible; /* page will scroll */
+  }
+}
+
+.ieb {
+  display: grid;
+  gap: .75rem;
+  padding: .5rem 1rem;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  /* contain inner scroll */
+  /* title (row1) + month-nav (row2) + scrollable body (row3) */
+  grid-template-rows: auto auto 1fr;
+  grid-auto-rows: 0;
+  /* prevent unexpected implicit rows */
+  container-type: inline-size;
+  /* enable container queries */
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  background-color: rgba(255, 255, 255, 0.42);
+  border: 1px solid rgba(209, 213, 219, 0.5);
+  border-radius: 1rem;
+  padding: 1.5rem;
+
+  h3 {
+    margin: 0;
+    color: $primary;
+    text-align: center;
+  }
+}
+
+.glass {
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  background-color: rgba(255, 255, 255, 0.42);
+  border: 1px solid rgba(209, 213, 219, 0.5);
+  border-radius: 1rem;
+}
+
+.month-nav {
+  display: grid;
+  grid-template-columns: 3rem 1fr 3rem;
+  align-items: center;
+  padding: .25rem .25rem;
+
+  .nav-btn {
+    display: grid;
+    place-items: center;
+    border: none;
+    background: transparent;
+    padding: .25rem;
+    cursor: pointer;
+
+    img {
+      width: 24px;
+      height: 24px;
+    }
+
+    &.disabled,
+    &:disabled {
+      opacity: .4;
+      cursor: not-allowed;
+      filter: grayscale(1);
+    }
+  }
+
+  .month-label {
+    text-align: center;
+    font-weight: 700;
+    color: $primary;
+    text-transform: capitalize;
+  }
+}
+
+.table {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  gap: 0;
+  overflow: auto;
+  /* internal scroll when needed */
+  min-height: 0;
+  /* allow to shrink within container */
+  align-content: start;
+  /* don't stretch rows when extra space exists */
+}
+
+.divider {
+  width: 1px;
+  background: rgba(0, 0, 0, .1);
+  margin: .5rem 0;
+}
+
+.col {
+  padding: .75rem;
+
+  .col-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: .5rem;
+
+    .title {
+      margin: 0;
+      font-weight: 700;
+
+      &.income {
+        color: $income;
+      }
+
+      &.expense {
+        color: $expense;
+      }
+    }
+
+    .total {
+      font-weight: 700;
+      color: $primary;
+      white-space: nowrap;
+    }
+  }
+
+  .rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: .35rem;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    padding: .5rem .6rem;
+    border-radius: .75rem;
+    background: rgba(255, 255, 255, .55);
+    border: 1px solid rgba(209, 213, 219, .45);
+    color: $primary;
+
+    .cat {
+      font-weight: 600;
+    }
+
+    .val {
+      font-weight: 700;
+      white-space: nowrap;
+
+      .pct {
+        margin-left: .5rem;
+        font-weight: 600;
+        opacity: .8;
+      }
+    }
+  }
+
+  .empty {
+    text-align: center;
+    opacity: .75;
+    padding: .5rem 0;
+    color: $primary;
+  }
+}
+
+.no-data {
+  opacity: .7;
+  text-align: center;
+  padding: .5rem 0;
+}
+
+@media (max-width: 599px) {
+  .table {
+    grid-template-columns: 1fr;
+  }
+
+  .divider {
+    display: none;
+  }
+}
+
+@media (max-width: 1280px) {
+  .table {
+    grid-template-columns: 1fr;
+  }
+
+  .divider {
+    display: none;
+  }
+}
+
+@container (max-width: 900px) {
+  .table {
+    grid-template-columns: 1fr;
+  }
+
+  .divider {
+    display: none;
+  }
+}
+
+@media(min-width: 600px) {
+  .ieb {
+    max-height: 36vh;
+    height: fit-content;
+  }
+
+  .table {
+    max-height: 100%;
+  }
+}
+
+/* Mobile overrides must come after base rules to win the cascade */
+@media (max-width: 1023px) {
+  :host { height: auto; min-height: 0; }
+  .ieb {
+    height: auto;
+    overflow: visible; /* allow full content on mobile */
+    grid-template-rows: auto auto auto; /* no forced 1fr */
+  }
+  .table {
+    overflow: visible; /* page will scroll */
+    max-height: none;
+  }
+}

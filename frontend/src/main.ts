@@ -1,12 +1,11 @@
-import { enableProdMode } from '@angular/core';
+import { enableProdMode, ApplicationRef } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-
 import { AppModule } from './app/app.module';
-import { environment } from './environments/environment';
+import { filter, take } from 'rxjs/operators';
 
-if (environment.production) {
-  enableProdMode();
-}
-
-platformBrowserDynamic().bootstrapModule(AppModule)
-  .catch(err => console.error(err));
+platformBrowserDynamic().bootstrapModule(AppModule).then(moduleRef => {
+  const appRef = moduleRef.injector.get(ApplicationRef);
+  appRef.isStable.pipe(filter(v => v), take(1)).subscribe(() => {
+    document.getElementById('app-preloader')?.remove();
+  });
+});

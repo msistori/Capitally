@@ -42,6 +42,7 @@ public class CategoryService {
 
         existing.setMacroCategory(dto.getMacroCategory());
         existing.setCategory(dto.getCategory());
+        existing.setIconName(dto.getIconName());
 
         return categoryMapper.mapCategoryEntityToDTO(categoryRepository.save(existing));
     }

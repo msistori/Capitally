@@ -1,0 +1,70 @@
+<section class="ieb">
+  <h3>{{ 'INCOME_EXPENSE_BREAKDOWN.TITLE' | translate }}</h3>
+
+  <header class="month-nav glass">
+    <button class="nav-btn" (click)="prevMonth()" aria-label="Previous month">
+      <img src="./../../../assets/icons/arrow-left.svg" alt="<">
+    </button>
+
+    <div class="month-label">{{ monthLabel() }}</div>
+
+    <button
+      class="nav-btn"
+      (click)="nextMonth()"
+      [disabled]="isNextDisabled()"
+      [class.disabled]="isNextDisabled()"
+      aria-label="Next month"
+      [attr.aria-disabled]="isNextDisabled()">
+      <img src="./../../../assets/icons/arrow-right.svg" alt=">">
+    </button>
+  </header>
+
+  <div class="table glass">
+    <div class="col col-left">
+      <div class="col-header">
+        <h3 class="title income">{{ 'INCOME_EXPENSE_BREAKDOWN.INCOMES' | translate }}</h3>
+        <div class="total" *ngIf="vm().INCOME">
+          {{ vm().INCOME?.total | number:'1.0-2' }} {{ defaultCurrency }}
+        </div>
+      </div>
+
+      <ul class="rows" *ngIf="vm().INCOME; else emptyIncome">
+        <li class="row" *ngFor="let c of vm().INCOME?.categories">
+          <span class="cat">{{ c.macroCategory }}</span>
+          <span class="val">
+            {{ c.total | number:'1.0-2' }} {{ defaultCurrency }}
+            <small class="pct">{{ c.percent | number:'1.0-0' }}%</small>
+          </span>
+        </li>
+      </ul>
+      <ng-template #emptyIncome>
+        <div class="empty">{{ 'INCOME_EXPENSE_BREAKDOWN.NO_INCOMES' | translate }}</div>
+      </ng-template>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="col col-right">
+      <div class="col-header">
+        <h3 class="title expense">{{ 'INCOME_EXPENSE_BREAKDOWN.EXPENSES' | translate }}</h3>
+        <div class="total" *ngIf="vm().EXPENSE">
+          {{ vm().EXPENSE?.total | number:'1.0-2' }} {{ defaultCurrency }}
+        </div>
+      </div>
+
+      <ul class="rows" *ngIf="vm().EXPENSE; else emptyExpense">
+        <li class="row" *ngFor="let c of vm().EXPENSE?.categories">
+          <span class="cat">{{ c.macroCategory }}</span>
+          <span class="val">
+            {{ c.total | number:'1.0-2' }} {{ defaultCurrency }}
+            <small class="pct">{{ c.percent | number:'1.0-0' }}%</small>
+          </span>
+        </li>
+      </ul>
+      <ng-template #emptyExpense>
+        <div class="empty">{{ 'INCOME_EXPENSE_BREAKDOWN.NO_EXPENSES' | translate }}</div>
+      </ng-template>
+    </div>
+  </div>
+
+</section>

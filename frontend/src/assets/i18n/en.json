@@ -1,22 +1,58 @@
 {
-  "APP": { "TITLE": "Capitally" },
+  "APP": {
+    "TITLE": "Capitally"
+  },
+  "BUTTON_CLOSE": "Close",
+  "BUTTON_NEW": "New",
+  "BUTTON_MODIFY": "Modify",
+  "BUTTON_SAVE": "Save Changes",
+  "BUTTON_CREATE": "Create",
+  "BUTTON_CANCEL": "Cancel",
   "FORM": {
     "AMOUNT": "Amount",
     "CURRENCY": "Currency",
-    "TYPE": { "INCOME": "Income", "EXPENSE": "Expense" },
+    "ACCOUNT": "Account",
+    "TYPE": {
+      "INCOME": "Income",
+      "EXPENSE": "Expense"
+    },
     "CATEGORY": "Category",
+    "MACROCATEGORY": "Macro Category",
     "DATE": "Date",
     "TODAY": "Today",
     "YESTERDAY": "Yesterday",
     "DESCRIPTION": "Description",
+    "WEEK_DAYS": [
+      "Mo",
+      "Tu",
+      "We",
+      "Th",
+      "Fr",
+      "Sa",
+      "Su"
+    ],
     "RECURRING": {
       "LABEL": "Recurring transaction",
       "PERIOD": "Frequency",
-      "COUNT": "Number of periods",
+      "COUNT": "Frequency of periods",
       "END_DATE": "Recurrence end",
       "WEEKLY": "Weekly",
       "MONTHLY": "Monthly",
-      "YEARLY": "Yearly"
+      "YEARLY": "Yearly",
+      "DAILY": "Daily",
+      "TWO_DAYS": "Every 2 days",
+      "TEN_DAYS": "Every 10 days",
+      "TWELVE_DAYS": "Every 12 days",
+      "FIFTEEN_DAYS": "Every 15 days",
+      "THIRTY_DAYS": "Every 30 days",
+      "THIRTY_ONE_DAYS": "Every 31 days",
+      "TWO_WEEKS": "Every 2 weeks",
+      "FOUR_WEEKS": "Every 4 weeks",
+      "TWO_MONTHS": "Every 2 months",
+      "THREE_MONTHS": "Every 3 months",
+      "FOUR_MONTHS": "Every 4 months",
+      "SIX_MONTHS": "Every 6 months",
+      "TWO_YEARS": "Every 2 years"
     },
     "SUBMIT": "Save"
   },
@@ -39,7 +75,18 @@
     "TRAVEL": "Travel",
     "HEALTH": "Health"
   },
+  "CATEGORY_SELECTION": {
+    "TITLE": "Select Category",
+    "SEARCH": "Search...",
+    "SELECT_CATEGORY_TO_MODIFY": "Select category to modify",
+    "DUPLICATE_ALERT": {
+      "TITLE": "Existing Category!",
+      "MESSAGE": "There is already a category: ",
+      "MESSAGE_CHOISE": "Do you want to modify the existing one or cancel it?"
+    }
+  },
   "TRANSACTION": {
+    "TITLE": "New Transaction",
     "RECENT_TRANSACTIONS_TITLE": "Recent Transactions"
   },
   "BALANCE": {
@@ -48,5 +95,30 @@
   "MONTHLY_SUMMARY": {
     "MONTHLY_SUMMARY_TITLE": "Monthly Income / Expense",
     "NO_DATA": "No Monthly Data"
+  },
+  "YEARLY_BALANCE_TREND": {
+    "MONTH_NAMES": [
+      "JAN",
+      "FEB",
+      "MAR",
+      "APR",
+      "MAY",
+      "JUN",
+      "JUL",
+      "AUG",
+      "SEP",
+      "OCT",
+      "NOV",
+      "DEC"
+    ],
+    "TITLE": "Yearly Balance Trend",
+    "ALL_CURRENCIES": "ALL"
+  },
+  "INCOME_EXPENSE_BREAKDOWN": {
+    "TITLE": "Categories Incomes / Expenses",
+    "INCOMES": "Incomes",
+    "EXPENSES": "Expenses",
+    "NO_INCOMES": "No incomes this month",
+    "NO_EXPENSES": "No expenses this month"
   }
 }

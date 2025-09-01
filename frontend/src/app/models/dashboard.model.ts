@@ -1,7 +1,9 @@
+import { TransactionTypeEnum } from "./transaction.model";
+
 export interface DashboardOverviewResponseDTO {
   totalBalancePerCurrency: { [currencyCode: string]: number };
-  totalIncomeThisMonth: number;
-  totalExpenseThisMonth: number;
+  totalIncomeThisMonth:  { [currencyCode: string]: number };
+  totalExpenseThisMonth:  { [currencyCode: string]: number };
   upcomingRecurringCount: UpcomingRecurringTransactionModel[];
 }
 
@@ -15,9 +17,10 @@ export interface TransactionsSummaryResponseDTO {
   groupedByCategory: any;
 }
 
-export interface ExpenseBreakdownResponseDTO {
+export interface IncomeExpenseBreakdownResponseDTO {
+  transactionType: TransactionTypeEnum;
   macroCategory: string;
-  currencyCode: string;
+  currency: string;
   total: number;
 }
 
@@ -30,4 +33,10 @@ export interface UpcomingRecurringTransactionModel {
   description: string;
   nextDate: string;
   amount: number;
+}
+
+export interface BalanceTrendResponseDTO {
+  month: string,
+  currency: string,
+  balance: number
 }

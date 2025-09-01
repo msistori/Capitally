@@ -1,22 +1,58 @@
 {
-  "APP": { "TITLE": "Capitally" },
+  "APP": {
+    "TITLE": "Capitally"
+  },
+  "BUTTON_CLOSE": "Chiudi",
+  "BUTTON_NEW": "Nuova",
+  "BUTTON_MODIFY": "Modifica",
+  "BUTTON_SAVE": "Salva Modifiche",
+  "BUTTON_CREATE": "Crea",
+  "BUTTON_CANCEL": "Annulla",
   "FORM": {
     "AMOUNT": "Importo",
     "CURRENCY": "Valuta",
-    "TYPE": { "INCOME": "Entrata", "EXPENSE": "Uscita" },
+    "ACCOUNT": "Conto",
+    "TYPE": {
+      "INCOME": "Entrata",
+      "EXPENSE": "Uscita"
+    },
     "CATEGORY": "Categoria",
+    "MACROCATEGORY": "Macro Categoria",
     "DATE": "Data",
     "TODAY": "Oggi",
     "YESTERDAY": "Ieri",
     "DESCRIPTION": "Descrizione",
+    "WEEK_DAYS": [
+      "Lu",
+      "Ma",
+      "Me",
+      "Gi",
+      "Ve",
+      "Sa",
+      "Do"
+    ],
     "RECURRING": {
       "LABEL": "Transazione ricorrente",
       "PERIOD": "Frequenza",
-      "COUNT": "Numero di periodi",
+      "COUNT": "Frequenza periodi",
       "END_DATE": "Fine ricorrenza",
       "WEEKLY": "Settimanale",
       "MONTHLY": "Mensile",
-      "YEARLY": "Annuale"
+      "YEARLY": "Annuale",
+      "DAILY": "Giornaliera",
+      "TWO_DAYS": "Ogni 2 giorni",
+      "TEN_DAYS": "Ogni 10 giorni",
+      "TWELVE_DAYS": "Ogni 12 giorni",
+      "FIFTEEN_DAYS": "Ogni 15 giorni",
+      "THIRTY_DAYS": "Ogni 30 giorni",
+      "THIRTY_ONE_DAYS": "Ogni 31 giorni",
+      "TWO_WEEKS": "Ogni 2 settimane",
+      "FOUR_WEEKS": "Ogni 4 settimane",
+      "TWO_MONTHS": "Ogni 2 mesi",
+      "THREE_MONTHS": "Ogni 3 mesi",
+      "FOUR_MONTHS": "Ogni 4 mesi",
+      "SIX_MONTHS": "Ogni 6 mesi",
+      "TWO_YEARS": "Ogni 2 anni"
     },
     "SUBMIT": "Salva"
   },
@@ -39,7 +75,18 @@
     "TRAVEL": "Viaggi",
     "HEALTH": "Salute"
   },
+  "CATEGORY_SELECTION": {
+    "TITLE": "Seleziona Categoria",
+    "SEARCH": "Cerca...",
+    "SELECT_CATEGORY_TO_MODIFY": "Seleziona categoria da modificare",
+    "DUPLICATE_ALERT": {
+      "TITLE": "Categoria Esistente!",
+      "MESSAGE": "Esiste già una categoria: ",
+      "MESSAGE_CHOISE": "Vuoi modificare quella esistente o annullare?"
+    }
+  },
   "TRANSACTION": {
+    "TITLE": "Nuova Transazione",
     "RECENT_TRANSACTIONS_TITLE": "Ultime Transazioni"
   },
   "BALANCE": {
@@ -48,5 +95,30 @@
   "MONTHLY_SUMMARY": {
     "MONTHLY_SUMMARY_TITLE": "Entrate / Uscite Mensili",
     "NO_DATA": "Nessun Dato Mensile"
+  },
+  "YEARLY_BALANCE_TREND": {
+    "MONTH_NAMES": [
+      "GEN",
+      "FEB",
+      "MAR",
+      "APR",
+      "MAG",
+      "GIU",
+      "LUG",
+      "AGO",
+      "SET",
+      "OTT",
+      "NOV",
+      "DIC"
+    ],
+    "TITLE": "Bilancio Annuale",
+    "ALL_CURRENCIES": "TUTTE"
+  },
+  "INCOME_EXPENSE_BREAKDOWN": {
+    "TITLE": "Categorie Entrate / Uscite",
+    "INCOMES": "Entrate",
+    "EXPENSES": "Uscite",
+    "NO_INCOMES": "Nessuna entrata questo mese",
+    "NO_EXPENSES": "Nessuna uscita questo mese"
   }
 }

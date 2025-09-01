@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { TransactionModel } from '../../../models/transaction.model';
+import { RecurrencePeriodEnum, TransactionModel, TransactionTypeEnum } from '../../../models/transaction.model';
 import { CategorySelectionDialogComponent } from '../category-selection-dialog/category-selection-dialog.component';
 import { CurrencyService } from '../../../services/currency.service';
 import { TransactionService } from '../../../services/transaction.service';
@@ -11,6 +11,7 @@ import { CategoryService } from '../../../services/category.service';
 import { AccountService } from '../../../services/account.service';
 import { AccountModel } from '../../../models/account.model';
 import { RefreshService } from '../../../services/refresh.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-transaction-form',
@@ -27,8 +28,13 @@ export class TransactionFormComponent implements OnInit {
   plus!: { name: string; icon: string };
   selectedCategory: string | null = null;
   readonly userId = 1;
-  weekDays = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
-  matrix: (Date | null)[][] = [];
+  weekDays: string[] = [];
+  matrixDate: (Date | null)[][] = [];
+  matrixRecurringEndDate: (Date | null)[][] = [];
+  recurrencePeriods = Object.values(RecurrencePeriodEnum);
+  viewDate: Date = new Date();
+
+  RecurrencePeriodEnum = RecurrencePeriodEnum;
 
   constructor(
     private dialogRef: MatDialogRef<TransactionFormComponent>,
@@ -39,7 +45,8 @@ export class TransactionFormComponent implements OnInit {
     private transactionService: TransactionService,
     private categoryService: CategoryService,
     private accountService: AccountService,
-    private refreshService: RefreshService
+    private refreshService: RefreshService,
+    public translateService: TranslateService
   ) { }
 
   ngOnInit(): void {
@@ -47,13 +54,12 @@ export class TransactionFormComponent implements OnInit {
       accountId: [null, Validators.required],
       amount: [null, [Validators.required, Validators.min(0.01)]],
       currencyCode: ['EUR', Validators.required],
-      transactionType: ['EXPENSE', Validators.required],
+      transactionType: [TransactionTypeEnum.EXPENSE, Validators.required],
       categoryId: [null],
       date: [new Date()],
       description: [''],
       isRecurring: [false],
       recurringPeriod: [null],
-      recurringCount: [null],
       recurringEndDate: [null]
     });
     this.currencyService.getCurrencies().subscribe(data => this.currencies = data);
@@ -66,13 +72,18 @@ export class TransactionFormComponent implements OnInit {
       .subscribe(data => this.accounts = data);
     const base = './../../../../assets/icons';
     this.plus = { name: 'CATEGORY.OTHER', icon: `${base}/plus.svg` };
-    this.buildMonthMatrix(this.form.get('date')!.value);
-    this.form.get('date')!.valueChanges.subscribe(d => {
-      this.buildMonthMatrix(d);
+    this.translateService.get('FORM.WEEK_DAYS').subscribe((days: string[]) => {
+      this.weekDays = days;
     });
+    this.buildMonthMatrixDate(this.form.get('date')!.value);
+    this.form.get('date')!.valueChanges.subscribe(d => {
+      this.buildMonthMatrixDate(d);
+    });
+    this.viewDate = this.form.get('recurringEndDate')!.value ?? new Date();
+    this.buildMonthMatrixRecurringEndDate(this.viewDate);
   }
 
-  private buildMonthMatrix(d: Date) {
+  private buildMonthMatrixDate(d: Date) {
     const y = d.getFullYear();
     const m = d.getMonth();
     const first = new Date(y, m, 1);
@@ -82,15 +93,35 @@ export class TransactionFormComponent implements OnInit {
     for (let i = 0; i < startOff; i++) cells.push(null);
     for (let day = 1; day <= daysCount; day++) cells.push(new Date(y, m, day));
     while (cells.length % 7) cells.push(null);
-    this.matrix = [];
+    this.matrixDate = [];
     for (let i = 0; i < cells.length; i += 7) {
-      this.matrix.push(cells.slice(i, i + 7));
+      this.matrixDate.push(cells.slice(i, i + 7));
     }
   }
 
-  get currentWeek(): (Date | null)[] {
+  get currentWeekDate(): (Date | null)[] {
     const sel: Date = this.form.get('date')!.value;
-    return this.matrix.find(w => w.some(d => d && this.sameDay(d, sel))) || this.matrix[0];
+    return this.matrixDate.find(w => w.some(d => d && this.sameDay(d, sel))) || this.matrixDate[0];
+  }
+
+  private buildMonthMatrixRecurringEndDate(d: Date) {
+    const y = d.getFullYear();
+    const m = d.getMonth();
+    const first = new Date(y, m, 1);
+    const startOff = (first.getDay() + 6) % 7;
+    const daysInMonth = new Date(y, m + 1, 0).getDate();
+    const totalCells = Math.ceil((startOff + daysInMonth) / 7) * 7;
+
+    const gridStart = new Date(y, m, 1 - startOff);
+    const cells: Date[] = [];
+    for (let i = 0; i < totalCells; i++) {
+      cells.push(new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + i));
+    }
+
+    this.matrixRecurringEndDate = [];
+    for (let i = 0; i < cells.length; i += 7) {
+      this.matrixRecurringEndDate.push(cells.slice(i, i + 7));
+    }
   }
 
   prevWeek() {
@@ -107,9 +138,25 @@ export class TransactionFormComponent implements OnInit {
     this.form.get('date')!.setValue(nxt);
   }
 
-  selectDay(d: Date | null) {
+  prevMonth() {
+    this.viewDate = new Date(this.viewDate.getFullYear(), this.viewDate.getMonth() - 1, 1);
+    this.buildMonthMatrixRecurringEndDate(this.viewDate);
+  }
+
+  nextMonth() {
+    this.viewDate = new Date(this.viewDate.getFullYear(), this.viewDate.getMonth() + 1, 1);
+    this.buildMonthMatrixRecurringEndDate(this.viewDate);
+  }
+
+  isOutside(d: Date | null): boolean {
+    if (!d) return false;
+    return d.getMonth() !== this.viewDate.getMonth() || d.getFullYear() !== this.viewDate.getFullYear();
+  }
+
+  selectDay(d: Date | null, field: string) {
     if (!d) return;
-    this.form.get('date')!.setValue(d);
+    if (field === 'recurringEndDate' && this.isOutside(d)) return;
+    this.form.get(field)!.setValue(d);
   }
 
   isToday(d: Date | null): boolean {
@@ -118,15 +165,19 @@ export class TransactionFormComponent implements OnInit {
     return this.sameDay(d, now);
   }
 
-  isSelected(d: Date | null): boolean {
+  isSelected(d: Date | null, field: string): boolean {
     if (!d) return false;
-    return this.sameDay(d, this.form.get('date')!.value);
+    return this.sameDay(d, this.form.get(field)!.value);
   }
 
   private sameDay(a: Date, b: Date): boolean {
     return a.getDate() === b.getDate()
       && a.getMonth() === b.getMonth()
       && a.getFullYear() === b.getFullYear();
+  }
+
+  recurringEndDateSelected(event: any) {
+    this.form.get('recurringEndDate')?.setValue(event.checked ? new Date() : null)
   }
 
   selectCategory(cat: any): void {
@@ -137,13 +188,22 @@ export class TransactionFormComponent implements OnInit {
   openAllCategories(): void {
     this.selectedCategory = this.plus.name;
     const ref = this.dialog.open(CategorySelectionDialogComponent, {
-      width: '100%',
-      maxWidth: '400px',
-      data: { selectedCategory: this.form.get('categoryId')!.value },
-      panelClass: 'view-all-categories-modal-panel'
+      panelClass: 'view-all-categories-modal-panel',
+      data: {
+        selectedCategoryId: this.form.get('categoryId')!.value as number | null,
+        categories: this.categories,
+        userId: this.userId
+      }
     });
-    ref.afterClosed().subscribe(res => {
-      if (res) this.form.get('categoryId')!.setValue(res);
+
+    ref.afterClosed().subscribe((picked: CategoryModel | null) => {
+      if (!picked) return;
+
+      this.form.patchValue({ categoryId: picked.id });
+      this.selectedCategory = picked.category;
+
+      this.categories = [picked, ...this.categories.filter(c => c.id !== picked.id)];
+      this.recentCategories = this.categories.slice(0, 3);
     });
   }
 
@@ -151,6 +211,7 @@ export class TransactionFormComponent implements OnInit {
     if (this.form.invalid) return;
     const payload: TransactionModel = this.form.value;
     payload.userId = this.userId;
+    if (!payload.isRecurring) payload.recurrenceEndDate = undefined;
     this.transactionService.postTransaction(payload)
       .subscribe(
         () => {
