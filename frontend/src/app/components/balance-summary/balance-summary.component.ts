@@ -1,5 +1,6 @@
-import { Component, Input, OnInit, computed, signal } from '@angular/core';
+import { Component, Input, OnInit, computed, signal, inject } from '@angular/core';
 import { FxRateService } from '../../services/fx-rate.service';
+import { StorageService } from '../../auth/storage.service';
 
 @Component({
   selector: 'app-balance-summary',
@@ -12,11 +13,14 @@ export class BalanceSummaryComponent implements OnInit {
   @Input() set totalBalance(value: { [currencyCode: string]: number }) {
     this.totalBalanceSig.set(value || {});
   }
-  readonly defaultCurrency: string = 'EUR';
+  readonly defaultCurrency: string;
 
   private readonly ratesSig = signal<Record<string, number>>({});
 
-  constructor(private fx: FxRateService) {}
+  private storage = inject(StorageService);
+  constructor(private fx: FxRateService) {
+    this.defaultCurrency = this.storage.getDefaultCurrency();
+  }
 
   ngOnInit(): void {
     this.fx.getRates(this.defaultCurrency).subscribe({

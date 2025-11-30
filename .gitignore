@@ -86,3 +86,22 @@ testem.log
 .DS_Store
 Thumbs.db
 /frontend/.angular/cache
+
+# backend build
+**/target/
+# angular cache/build
+frontend/.angular/
+frontend/dist/
+# local env files
+**/src/main/resources/application-local.*
+**/src/main/resources/application-dev.yml
+**/src/main/resources/application-dev.properties
+**/src/main/resources/*.secrets.*
+frontend/src/environments/environment.local.ts
+# IDE
+.idea/
+*.iml
+.vscode/
+# OS
+.DS_Store
+Thumbs.db

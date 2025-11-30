@@ -225,7 +225,8 @@ export class CategorySelectionDialogComponent implements OnInit {
       'Shopping','Smartphone','Spanner','Stadium','Subscribe','Taxi','Ticket','Tooth','Transfer','Washing-machine','Watch','Wifi',
       'Animal','Bank','Barbell','Barber','Bike','Bill','Book','Camera','Car','Card-holder','Car-insurance','Car-wash','Charger',
       'Cigar','Clothes','Cocktail','Coffee','Coin','Diamond','Dices','Flower','Food','Football','Fuel','Games','Gift','Health',
-      'Metro','Mic','Money-bag','Motorbike','Parking','Pc','Plane','Plus','Police','Popcorn','Receipt','Salary','Ship','Shoes'
+      'Metro','Mic','Money-bag','Motorbike','Parking','Pc','Plane','Plus','Police','Popcorn','Receipt','Salary','Ship','Shoes',
+      'Settings', 'Robot'
     ];
   }
 }

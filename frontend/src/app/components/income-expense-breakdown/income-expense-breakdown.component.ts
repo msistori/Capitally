@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, signal } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, signal, inject } from '@angular/core';
 import { IncomeExpenseBreakdownResponseDTO } from 'src/app/models/dashboard.model';
 import { TransactionTypeEnum } from 'src/app/models/transaction.model';
 import { TranslateService } from '@ngx-translate/core';
+import { StorageService } from '../../auth/storage.service';
 
 interface CategoryVM {
   macroCategory: string;
@@ -34,7 +35,8 @@ export class IncomeExpenseBreakdownComponent implements OnInit, OnChanges {
   currentYear = new Date().getFullYear();
   currentMonth = new Date().getMonth();
 
-  defaultCurrency = 'EUR';
+  private storage = inject(StorageService);
+  defaultCurrency = this.storage.getDefaultCurrency();
 
   private readonly today = new Date();
 

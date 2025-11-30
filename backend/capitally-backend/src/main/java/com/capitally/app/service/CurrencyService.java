@@ -1,0 +1,63 @@
+package com.capitally.app.service;
+
+import com.capitally.app.core.entity.CurrencyEntity;
+import com.capitally.app.core.repository.CurrencyRepository;
+import com.capitally.app.mapper.CurrencyMapper;
+import com.capitally.app.model.request.CurrencyRequestDTO;
+import com.capitally.app.model.response.CurrencyResponseDTO;
+import jakarta.persistence.criteria.Predicate;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.capitally.app.utils.CapitallyUtils.addIfNotNull;
+import static com.capitally.app.utils.CapitallyUtils.buildLikePredicate;
+
+@Service
+@RequiredArgsConstructor
+public class CurrencyService {
+
+    private final CurrencyMapper currencyMapper;
+    private final CurrencyRepository currencyRepository;
+
+    public CurrencyResponseDTO saveCurrency(CurrencyRequestDTO input) {
+        CurrencyEntity currencyEntity = currencyMapper.mapCurrencyDTOToEntity(input);
+        return currencyMapper.mapCurrencyEntityToDTO(currencyRepository.save(currencyEntity));
+    }
+
+    public List<CurrencyResponseDTO> getCurrencies(String name, String code) {
+        Specification<CurrencyEntity> spec = buildSpecification(name, code);
+        return currencyRepository.findAll(spec).stream()
+                .map(currencyMapper::mapCurrencyEntityToDTO)
+                .toList();
+    }
+
+    public CurrencyResponseDTO putCurrency(String code, CurrencyRequestDTO dto) {
+        currencyRepository.deleteById(code);
+
+        CurrencyEntity newCurrency = new CurrencyEntity();
+
+        newCurrency.setName(dto.getName());
+        newCurrency.setCode(dto.getCode());
+
+        return currencyMapper.mapCurrencyEntityToDTO(currencyRepository.save(newCurrency));
+    }
+
+    public void deleteCurrency(String code) {
+        currencyRepository.deleteById(code);
+    }
+
+    private Specification<CurrencyEntity> buildSpecification(String name, String code) {
+        return (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            addIfNotNull(predicates, name, () -> buildLikePredicate(cb, root.get("name"), name));
+            addIfNotNull(predicates, code, () -> buildLikePredicate(cb, root.get("code"), code));
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+    }
+}

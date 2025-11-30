@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { RecurrencePeriodEnum, TransactionModel, TransactionTypeEnum } from '../../../models/transaction.model';
@@ -12,6 +12,7 @@ import { AccountService } from '../../../services/account.service';
 import { AccountModel } from '../../../models/account.model';
 import { RefreshService } from '../../../services/refresh.service';
 import { TranslateService } from '@ngx-translate/core';
+import { StorageService } from '../../../auth/storage.service';
 
 @Component({
   selector: 'app-transaction-form',
@@ -27,7 +28,8 @@ export class TransactionFormComponent implements OnInit {
   accounts: AccountModel[] = [];
   plus!: { name: string; icon: string };
   selectedCategory: string | null = null;
-  readonly userId = 1;
+  private storage = inject(StorageService);
+  readonly userId = Number(this.storage.getUserId() || 1);
   weekDays: string[] = [];
   matrixDate: (Date | null)[][] = [];
   matrixRecurringEndDate: (Date | null)[][] = [];
@@ -53,7 +55,7 @@ export class TransactionFormComponent implements OnInit {
     this.form = this.fb.group({
       accountId: [null, Validators.required],
       amount: [null, [Validators.required, Validators.min(0.01)]],
-      currencyCode: ['EUR', Validators.required],
+      currencyCode: [this.storage.getDefaultCurrency(), Validators.required],
       transactionType: [TransactionTypeEnum.EXPENSE, Validators.required],
       categoryId: [null],
       date: [new Date()],

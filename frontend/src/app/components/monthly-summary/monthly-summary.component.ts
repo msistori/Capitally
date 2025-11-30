@@ -1,8 +1,9 @@
-import { Component, Input, OnChanges, ViewChild } from '@angular/core';
+import { Component, Input, OnChanges, ViewChild, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { StorageService } from '../../auth/storage.service';
 
 const logoImg = new Image();
 logoImg.src = 'assets/logo.svg';
@@ -32,7 +33,8 @@ const DoughnutCenterLogo = {
 export class MonthlySummaryComponent implements OnChanges {
   @Input() income: { [currencyCode: string]: number } = {};
   @Input() expense: { [currencyCode: string]: number } = {};
-  defaultCurrency = 'EUR';
+  private storage = inject(StorageService);
+  defaultCurrency = this.storage.getDefaultCurrency();
 
   @ViewChild(BaseChartDirective) chart?: BaseChartDirective<'doughnut'>;
 
@@ -94,15 +96,33 @@ export class MonthlySummaryComponent implements OnChanges {
     if (this.isNoData) {
       this.setNoDataState();
     } else {
+      const labels: string[] = [];
+      const data: number[] = [];
+      const bg: string[] = [];
+      const hoverBg: string[] = [];
+
+      if (incomeVal > 0) {
+        labels.push('Income');
+        data.push(incomeVal);
+        bg.push('#22c55e');
+        hoverBg.push('#22c55e');
+      }
+      if (expenseVal > 0) {
+        labels.push('Expense');
+        data.push(expenseVal);
+        bg.push('#ef4444');
+        hoverBg.push('#ef4444');
+      }
+
       this.chartData = {
-        labels: ['Income', 'Expense'],
+        labels,
         datasets: [{
           label: 'DATA',
-          data: [incomeVal, expenseVal],
-          backgroundColor: ['#22c55e', '#ef4444'],
+          data,
+          backgroundColor: bg,
           hoverBorderWidth: 7,
           borderWidth: 0,
-          hoverBorderColor: ['#22c55e', '#ef4444']
+          hoverBorderColor: hoverBg
         }]
       };
     }

@@ -1,8 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { DashboardService } from '../../services/dashboard.service';
 import { BalanceTrendResponseDTO, DashboardOverviewResponseDTO, IncomeExpenseBreakdownResponseDTO } from '../../models/dashboard.model';
 import { RefreshService } from '../../services/refresh.service';
+import { StorageService } from '../../auth/storage.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -23,7 +24,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private selectedYear = new Date().getFullYear();
   private selectedMonth = new Date().getMonth();
 
-  readonly userId = '1';
+  private storage = inject(StorageService);
+  readonly userId = this.storage.getUserId() || '1';
   private sub = new Subscription();
 
   constructor(

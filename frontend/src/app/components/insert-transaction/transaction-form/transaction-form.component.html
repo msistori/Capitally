@@ -10,8 +10,8 @@
   </div>
 
   <!-- Account -->
-  <mat-select class="account-field" panelClass="account-panel-class" formControlName="accountId"
-    placeholder="{{ 'FORM.ACCOUNT' | translate }}">
+  <mat-select #accountSel="matSelect" class="account-field" panelClass="account-panel-class" formControlName="accountId"
+    placeholder="{{ 'FORM.ACCOUNT' | translate }}" (click)="accountSel.open()">
     <mat-option *ngFor="let acc of accounts" class="account-option" [value]="acc.id">{{ acc.name }}</mat-option>
   </mat-select>
 

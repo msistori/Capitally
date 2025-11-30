@@ -8,6 +8,29 @@
   "BUTTON_SAVE": "Save Changes",
   "BUTTON_CREATE": "Create",
   "BUTTON_CANCEL": "Cancel",
+  "LOGIN_PAGE": {
+    "LOGIN": {
+      "TITLE": "Welcome back!",
+      "EMAIL_USERNAME": "Email or Username",
+      "SUBMIT": "Sign in",
+      "SIGN_UP": "Don't have an account? Sign up!",
+      "ERROR": "Login failed"
+    },
+    "REGISTER": {
+      "TITLE": "Welcome!",
+      "USERNAME": "Username",
+      "EMAIL": "Email",
+      "PASSWORD_MIN_ERROR": "Password must be at least 6 characters long",
+      "SUBMIT": "Sign up",
+      "SIGN_IN": "Already have an account? Sign in",
+      "ERROR": "Registration failed",
+      "USER_TAKEN_ERROR": "Username already used",
+      "EMAIL_TAKEN_ERROR": "Email already used"
+    },
+    "PASSWORD": "Password",
+    "GUEST": "Enter as Guest",
+    "GUEST_ERROR": "Guest login failed"
+  },
   "FORM": {
     "AMOUNT": "Amount",
     "CURRENCY": "Currency",

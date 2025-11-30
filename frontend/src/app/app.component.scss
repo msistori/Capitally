@@ -17,6 +17,11 @@
   height: 100%;
 }
 
+.no-scroll {
+  overflow: hidden;
+  height: 100%;
+}
+
 .app-shell.dimmed {
   filter: brightness(.8);
   transition: filter .15s ease;

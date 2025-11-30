@@ -2,11 +2,11 @@
   <app-header></app-header>
 
   <main class="content">
-    <div class="app-shell" [class.dimmed]="loading()" [attr.inert]="loading() ? '' : null">
+    <div [class.no-scroll]="disableScroll" class="app-shell" [class.dimmed]="loading()" [attr.inert]="loading() ? '' : null">
       <router-outlet></router-outlet>
     </div>
     <app-loading-overlay></app-loading-overlay>
   </main>
 
-  <app-footer></app-footer>
+  <app-footer *ngIf="showFooter"></app-footer>
 </div>

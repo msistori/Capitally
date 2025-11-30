@@ -56,6 +56,20 @@ $form-secondary: #caf0f8;
     border-radius: .5rem;
   }
 
+  /* Ensure CONTO select stays on top and clickable */
+  .account-field {
+    position: relative;
+    z-index: 100;
+    display: block;
+    pointer-events: auto;
+  }
+
+  .account-field .mat-mdc-select-trigger {
+    position: relative;
+    z-index: 101;
+    pointer-events: auto;
+  }
+
   .calendar-card {
     background: #fff;
     border-radius: 0.5rem;
@@ -230,7 +244,6 @@ $form-secondary: #caf0f8;
 
 .description-input {
   color: $form-primary !important;
-  position: absolute;
   font-size: 1.7rem !important;
 }
 
@@ -342,5 +355,9 @@ $form-secondary: #caf0f8;
   @media (max-width: 599px) {
     max-width: 100% !important;
     width: 100%;
+  }
+
+  @media (min-width: 1200px) {
+    max-width: 40vw !important;
   }
 }

@@ -1,7 +1,8 @@
 import { NgModule, LOCALE_ID } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS, HttpClientXsrfModule } from '@angular/common/http';
+import { AuthInterceptor } from './auth/auth.interceptor';
 
 import { TranslateModule } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -60,6 +61,10 @@ const globalRippleConfig: RippleGlobalOptions = { disabled: true };
   imports: [
     BrowserModule,
     HttpClientModule,
+    HttpClientXsrfModule.withOptions({
+      cookieName: 'XSRF-TOKEN',
+      headerName: 'X-XSRF-TOKEN'
+    }),
     TranslateModule.forRoot({
       fallbackLang: 'en',
       loader: provideTranslateHttpLoader({
@@ -81,6 +86,7 @@ const globalRippleConfig: RippleGlobalOptions = { disabled: true };
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: MAT_RIPPLE_GLOBAL_OPTIONS, useValue: globalRippleConfig },
     { provide: LOCALE_ID, useValue: 'it-IT' }
   ],

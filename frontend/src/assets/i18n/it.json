@@ -8,6 +8,29 @@
   "BUTTON_SAVE": "Salva Modifiche",
   "BUTTON_CREATE": "Crea",
   "BUTTON_CANCEL": "Annulla",
+  "LOGIN_PAGE": {
+    "LOGIN": {
+      "TITLE": "Bentornato!",
+      "EMAIL_USERNAME": "Email o Username",
+      "SUBMIT": "Accedi",
+      "SIGN_UP": "Non hai ancora un account? Crealo ora!",
+      "ERROR": "Errore durante il login"
+    },
+    "REGISTER": {
+      "TITLE": "Benvenuto!",
+      "USERNAME": "Username",
+      "EMAIL": "Email",
+      "PASSWORD_MIN_ERROR": "La password deve avere almeno 6 caratteri",
+      "SUBMIT": "Iscriviti",
+      "SIGN_IN": "Hai già un account? Fai l'accesso!",
+      "ERROR": "Errore durante la registrazione",
+      "USER_TAKEN_ERROR": "Username già utilizzato",
+      "EMAIL_TAKEN_ERROR": "Email già utilizzata"
+    },
+    "PASSWORD": "Password",
+    "GUEST": "Entra come ospite",
+    "GUEST_ERROR": "Login come ospite fallito"
+  },
   "FORM": {
     "AMOUNT": "Importo",
     "CURRENCY": "Valuta",

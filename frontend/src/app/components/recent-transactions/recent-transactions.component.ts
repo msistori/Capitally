@@ -1,8 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { TransactionService } from './../../services/transaction.service';
 import { RefreshService } from './../../services/refresh.service';
 import { TransactionModel, TransactionTypeEnum } from './../../models/transaction.model';
+import { StorageService } from './../../auth/storage.service';
 
 @Component({
   selector: 'app-recent-transactions',
@@ -10,7 +11,8 @@ import { TransactionModel, TransactionTypeEnum } from './../../models/transactio
   styleUrls: ['./recent-transactions.component.scss']
 })
 export class RecentTransactionsComponent implements OnInit, OnDestroy {
-  readonly userId = '1';
+  private storage = inject(StorageService);
+  readonly userId = this.storage.getUserId() || '1';
   TransactionTypeEnum = TransactionTypeEnum;
   transactions: TransactionModel[] = [];
   private sub = new Subscription();

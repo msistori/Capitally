@@ -2,11 +2,9 @@
   "name": "frontend",
   "version": "0.0.0",
   "scripts": {
-    "ng": "ng",
-    "start": "npx ng serve",
+    "start": "ng serve -c local --proxy-config proxy.conf.json",
     "build": "ng build",
-    "test": "ng test",
-    "lint": "ng lint"
+    "build:prod": "ng build -c production"
   },
   "private": true,
   "dependencies": {
