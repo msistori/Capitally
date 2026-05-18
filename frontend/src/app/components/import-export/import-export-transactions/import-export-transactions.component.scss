@@ -1,0 +1,46 @@
+$primary: #005f73;
+
+.import-export-container {
+  display: grid;
+  gap: 0.65rem;
+
+  .csv-action {
+    align-items: center;
+    background: #fff;
+    border: 1px solid $primary;
+    border-radius: 0.75rem;
+    color: $primary;
+    display: inline-flex;
+    font-weight: 700;
+    gap: 0.65rem;
+    justify-content: flex-start;
+    min-height: 3.1rem;
+    padding-inline: 0.95rem;
+    text-align: left;
+    width: 100%;
+
+    mat-icon {
+      color: $primary;
+    }
+  }
+}
+
+@media (min-width: 640px) {
+  .import-export-container {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    .csv-action {
+      align-items: center;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 6.5rem;
+      padding-block: 0.85rem;
+      text-align: center;
+      white-space: normal;
+
+      mat-icon {
+        margin-inline: auto;
+      }
+    }
+  }
+}

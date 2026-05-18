@@ -7,7 +7,39 @@
   "BUTTON_MODIFY": "Modify",
   "BUTTON_SAVE": "Save Changes",
   "BUTTON_CREATE": "Create",
+  "BUTTON_DELETE": "Delete",
   "BUTTON_CANCEL": "Cancel",
+  "SEARCH": "Search...",
+  "UNDONE_OPERATION": "This action cannot be undone.",
+  "GUEST_ALERT": {
+    "TITLE": "Limited access",
+    "MESSAGE": "This operation is not available for guest users.",
+    "LOGIN_HINT": "Sign in to unlock all features.",
+    "LOGIN": "Sign in"
+  },
+  "LOGIN_PAGE": {
+    "LOGIN": {
+      "TITLE": "Welcome back!",
+      "EMAIL_USERNAME": "Email or Username",
+      "SUBMIT": "Sign in",
+      "SIGN_UP": "Don't have an account? Sign up!",
+      "ERROR": "Login failed"
+    },
+    "REGISTER": {
+      "TITLE": "Welcome!",
+      "USERNAME": "Username",
+      "EMAIL": "Email",
+      "PASSWORD_MIN_ERROR": "Password must be at least 6 characters long",
+      "SUBMIT": "Sign up",
+      "SIGN_IN": "Already have an account? Sign in",
+      "ERROR": "Registration failed",
+      "USER_TAKEN_ERROR": "Username already used",
+      "EMAIL_TAKEN_ERROR": "Email already used"
+    },
+    "PASSWORD": "Password",
+    "GUEST": "Enter as Guest",
+    "GUEST_ERROR": "Guest login failed"
+  },
   "FORM": {
     "AMOUNT": "Amount",
     "CURRENCY": "Currency",
@@ -22,6 +54,7 @@
     "TODAY": "Today",
     "YESTERDAY": "Yesterday",
     "DESCRIPTION": "Description",
+    "NO_CURRENCIES_FOUND": "No currencies found",
     "WEEK_DAYS": [
       "Mo",
       "Tu",
@@ -31,6 +64,10 @@
       "Sa",
       "Su"
     ],
+    "DELETE_CATEGORY": {
+      "TITLE": "Confirm deletion",
+      "TEXT": "Are you sure you want to delete this category?"
+    },
     "RECURRING": {
       "LABEL": "Recurring transaction",
       "PERIOD": "Frequency",
@@ -79,6 +116,8 @@
     "TITLE": "Select Category",
     "SEARCH": "Search...",
     "SELECT_CATEGORY_TO_MODIFY": "Select category to modify",
+    "SELECT_CATEGORY_TO_DELETE": "Select category to delete",
+    "CONFIRM_CATEGORY_TO_DELETE": "Are you sure to delete this category?",
     "DUPLICATE_ALERT": {
       "TITLE": "Existing Category!",
       "MESSAGE": "There is already a category: ",
@@ -120,5 +159,90 @@
     "EXPENSES": "Expenses",
     "NO_INCOMES": "No incomes this month",
     "NO_EXPENSES": "No expenses this month"
+  },
+  "SETTINGS": {
+    "TITLE": "Profile Settings",
+    "LANGUAGE": "Language",
+    "LOGOUT": "Logout",
+    "SECTIONS": {
+      "DATA": "Data",
+      "RESET_TITLE": "Reset data",
+      "CSV": "CSV",
+      "IMPORT_EXPORT_TITLE": "Import and export",
+      "PREFERENCES": "Preferences",
+      "DISPLAY_TITLE": "Display"
+    },
+    "RESET": {
+      "TRANSACTIONS": "Delete all transactions",
+      "CATEGORIES": "Delete all categories",
+      "ACCOUNTS": "Delete all accounts"
+    },
+    "TEMPLATE": {
+      "TRANSACTIONS": {
+        "TITLE": "Confirm transaction deletion",
+        "MESSAGE": "Are you sure you want to delete all your transactions?"
+      },
+      "CATEGORIES": {
+        "TITLE": "Confirm category deletion",
+        "MESSAGE": "Are you sure you want to delete all your categories?"
+      },
+      "ACCOUNTS": {
+        "TITLE": "Confirm account deletion",
+        "MESSAGE": "Are you sure you want to delete all your accounts?"
+      }
+    },
+    "IMPORT_EXPORT": {
+      "IMPORT": {
+        "TITLE": "Import transactions",
+        "DIALOG_TITLE": "Import transactions CSV",
+        "UPLOAD_FILE": "Select or drag the transactions CSV file here",
+        "IMPORT": "Import",
+        "FORMAT_ERROR": "The file must be in CSV format"
+      },
+      "EXPORT": {
+        "TITLE": "Export transactions",
+        "DIALOG_TITLE": "Export transactions CSV",
+        "DESCRIPTION": "Set the filters to apply to the CSV file. Leave every field empty to export all transactions.",
+        "FORM": {
+          "ACCOUNT": "Account",
+          "CURRENCY": "Currency",
+          "TRANSACTION_TYPE": "Transaction type",
+          "ALL_TYPES": "All types",
+          "DESCRIPTION": "Description",
+          "MACROCATEGORY": "Macro category",
+          "CATEGORY": "Category",
+          "MIN_AMOUNT": "Minimum amount",
+          "MAX_AMOUNT": "Maximum amount",
+          "START_DATE": "Start date",
+          "END_DATE": "End date",
+          "ERROR": {
+            "AMOUNT": "The minimum amount must be lower than the maximum amount",
+            "DATE": "The start date must be before the end date"
+          },
+          "EXPORTING": "Exporting",
+          "EXPORT": "Export"
+        }
+      },
+      "TEMPLATE": {
+        "TITLE": "Download template",
+        "DIALOG_TITLE": "Download CSV template",
+        "DESCRIPTION": "Download the sample file with the correct columns for importing transactions.",
+        "DOWNLOAD": "Download template",
+        "DOWNLOADING": "Downloading..."
+      },
+      "RESULT": {
+        "SUCCESS_TITLE": "Import completed",
+        "FAILED_TITLE": "Import failed",
+        "IMPORTED_PREFIX": "Imported",
+        "IMPORTED_MIDDLE": "transactions out of",
+        "IMPORTED_SUFFIX": "total rows.",
+        "NEW_ACCOUNTS": "New accounts added",
+        "NEW_CATEGORIES": "New categories added",
+        "ERRORS_TITLE": "Errors found ({{count}})",
+        "ROW": "Row",
+        "FIELD": "Field",
+        "VALUE": "Value"
+      }
+    }
   }
 }

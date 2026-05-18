@@ -1,0 +1,14 @@
+server:
+  forward-headers-strategy: framework
+
+capitally:
+  app:
+    base-url: ${CAPITALLY_APP_BASE_URL}
+  sas:
+    issuer: ${CAPITALLY_SAS_ISSUER}
+    client:
+      id: ${CAPITALLY_OIDC_CLIENT_ID}
+      secret: ${CAPITALLY_OIDC_CLIENT_SECRET}
+      redirect-uri: ${capitally.app.base-url}/login/oauth2/code/capitally
+      post-logout-uri: ${capitally.app.base-url}/
+      scopes: openid,profile,email,offline_access

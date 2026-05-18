@@ -1,0 +1,19 @@
+<div class="csv-dialog">
+  <h2 mat-dialog-title>{{ 'SETTINGS.IMPORT_EXPORT.TEMPLATE.DIALOG_TITLE' | translate }}</h2>
+
+  <mat-dialog-content class="content">
+    <div class="info-area">
+      <mat-icon class="dialog-icon">download</mat-icon>
+      <p>{{ 'SETTINGS.IMPORT_EXPORT.TEMPLATE.DESCRIPTION' | translate }}</p>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="actions">
+    <button class="btn-secondary" type="button" (click)="close()" [disabled]="downloading">
+      {{ 'BUTTON_CANCEL' | translate }}
+    </button>
+    <button class="btn-primary" type="button" (click)="download()" [disabled]="downloading">
+      {{ (downloading ? 'SETTINGS.IMPORT_EXPORT.TEMPLATE.DOWNLOADING' : 'SETTINGS.IMPORT_EXPORT.TEMPLATE.DOWNLOAD') | translate }}
+    </button>
+  </mat-dialog-actions>
+</div>

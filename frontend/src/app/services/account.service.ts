@@ -21,4 +21,8 @@ export class AccountService {
     console.log(account);
     return new Observable<AccountModel>;
   }
+
+  deleteAccounts() {
+    return this.http.delete<void>(`${this.apiUrl}`);
+  }
 }

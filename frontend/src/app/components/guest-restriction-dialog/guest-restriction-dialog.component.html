@@ -1,0 +1,14 @@
+<div class="dialog-container">
+  <mat-icon class="dialog-icon">lock</mat-icon>
+  <h2 class="dialog-title">{{ 'GUEST_ALERT.TITLE' | translate }}</h2>
+
+  <div class="dialog-content">
+    <p>{{ 'GUEST_ALERT.MESSAGE' | translate }}</p>
+    <p>{{ 'GUEST_ALERT.LOGIN_HINT' | translate }}</p>
+  </div>
+
+  <div class="dialog-actions">
+    <button class="btn-secondary" type="button" (click)="onClose()">{{ 'BUTTON_CLOSE' | translate }}</button>
+    <button class="btn-primary" type="button" (click)="onLogin()">{{ 'GUEST_ALERT.LOGIN' | translate }}</button>
+  </div>
+</div>

@@ -7,7 +7,39 @@
   "BUTTON_MODIFY": "Modifica",
   "BUTTON_SAVE": "Salva Modifiche",
   "BUTTON_CREATE": "Crea",
+  "BUTTON_DELETE": "Elimina",
   "BUTTON_CANCEL": "Annulla",
+  "SEARCH": "Cerca...",
+  "UNDONE_OPERATION": "Questa operazione non è revocabile.",
+  "GUEST_ALERT": {
+    "TITLE": "Accesso limitato",
+    "MESSAGE": "Operazione non consentita per utenti guest.",
+    "LOGIN_HINT": "Effettua il login per accedere a tutte le funzionalità.",
+    "LOGIN": "Accedi"
+  },
+  "LOGIN_PAGE": {
+    "LOGIN": {
+      "TITLE": "Bentornato!",
+      "EMAIL_USERNAME": "Email o Username",
+      "SUBMIT": "Accedi",
+      "SIGN_UP": "Non hai ancora un account? Crealo ora!",
+      "ERROR": "Errore durante il login"
+    },
+    "REGISTER": {
+      "TITLE": "Benvenuto!",
+      "USERNAME": "Username",
+      "EMAIL": "Email",
+      "PASSWORD_MIN_ERROR": "La password deve avere almeno 6 caratteri",
+      "SUBMIT": "Iscriviti",
+      "SIGN_IN": "Hai già un account? Fai l'accesso!",
+      "ERROR": "Errore durante la registrazione",
+      "USER_TAKEN_ERROR": "Username già utilizzato",
+      "EMAIL_TAKEN_ERROR": "Email già utilizzata"
+    },
+    "PASSWORD": "Password",
+    "GUEST": "Entra come ospite",
+    "GUEST_ERROR": "Login come ospite fallito"
+  },
   "FORM": {
     "AMOUNT": "Importo",
     "CURRENCY": "Valuta",
@@ -22,6 +54,7 @@
     "TODAY": "Oggi",
     "YESTERDAY": "Ieri",
     "DESCRIPTION": "Descrizione",
+    "NO_CURRENCIES_FOUND": "Nessuna valuta trovata",
     "WEEK_DAYS": [
       "Lu",
       "Ma",
@@ -31,6 +64,10 @@
       "Sa",
       "Do"
     ],
+    "DELETE_CATEGORY": {
+      "TITLE": "Conferma eliminazione",
+      "TEXT": "Sei sicuro di voler eliminare questa categoria?"
+    },
     "RECURRING": {
       "LABEL": "Transazione ricorrente",
       "PERIOD": "Frequenza",
@@ -77,8 +114,9 @@
   },
   "CATEGORY_SELECTION": {
     "TITLE": "Seleziona Categoria",
-    "SEARCH": "Cerca...",
     "SELECT_CATEGORY_TO_MODIFY": "Seleziona categoria da modificare",
+    "SELECT_CATEGORY_TO_DELETE": "Seleziona categoria da eliminare",
+    "CONFIRM_CATEGORY_TO_DELETE": "Sicuro di voler eliminare questa categoria?",
     "DUPLICATE_ALERT": {
       "TITLE": "Categoria Esistente!",
       "MESSAGE": "Esiste già una categoria: ",
@@ -120,5 +158,90 @@
     "EXPENSES": "Uscite",
     "NO_INCOMES": "Nessuna entrata questo mese",
     "NO_EXPENSES": "Nessuna uscita questo mese"
+  },
+  "SETTINGS": {
+    "TITLE": "Impostazioni Profilo",
+    "LANGUAGE": "Lingua",
+    "SECTIONS": {
+      "DATA": "Dati",
+      "RESET_TITLE": "Reset dati",
+      "CSV": "CSV",
+      "IMPORT_EXPORT_TITLE": "Import ed export",
+      "PREFERENCES": "Preferenze",
+      "DISPLAY_TITLE": "Visualizzazione"
+    },
+    "RESET": {
+      "TRANSACTIONS": "Cancella tutte le transazioni",
+      "CATEGORIES": "Cancella tutte le categorie",
+      "ACCOUNTS": "Cancella tutti i conti"
+    },
+    "LOGOUT": "Logout",
+    "TEMPLATE": {
+      "TRANSACTIONS": {
+        "TITLE": "Conferma cancellazione delle transazioni",
+        "MESSAGE": "Sei sicuro di voler eliminare tutte le tue transazioni?"
+      },
+      "CATEGORIES": {
+        "TITLE": "Conferma cancellazione delle categorie",
+        "MESSAGE": "Sei sicuro di voler eliminare tutte le tue categorie?"
+      },
+      "ACCOUNTS": {
+        "TITLE": "Conferma cancellazione dei conti",
+        "MESSAGE": "Sei sicuro di voler eliminare tutti i tuoi conti?"
+      }
+    },
+    "IMPORT_EXPORT": {
+      "IMPORT": {
+        "TITLE": "Importa transazioni",
+        "DIALOG_TITLE": "Importa transazioni CSV",
+        "UPLOAD_FILE": "Seleziona o trascina qui il file CSV delle transazioni",
+        "IMPORT": "Importa",
+        "FORMAT_ERROR": "Il file deve essere in formato CSV"
+      },
+      "EXPORT": {
+        "TITLE": "Esporta transazioni",
+        "DIALOG_TITLE": "Esporta transazioni CSV",
+        "DESCRIPTION": "Imposta i filtri da applicare al file CSV. Lascia i campi vuoti per esportare tutte le transazioni.",
+        "FORM": {
+          "ACCOUNT": "Conto",
+          "CURRENCY": "Valuta",
+          "TRANSACTION_TYPE": "Tipo transazione",
+          "ALL_TYPES": "Tutti i tipi",
+          "DESCRIPTION": "Descrizione",
+          "MACROCATEGORY": "Macro categoria",
+          "CATEGORY": "Categoria",
+          "MIN_AMOUNT": "Importo minimo",
+          "MAX_AMOUNT": "Importo massimo",
+          "START_DATE": "Data inizio",
+          "END_DATE": "Data fine",
+          "ERROR": {
+            "AMOUNT": "L'importo minimo deve essere inferiore a quello massimo",
+            "DATE": "La data iniziale deve essere precedente a quella finale"
+          },
+          "EXPORTING": "Esportazione in corso",
+          "EXPORT": "Esporta"
+        }
+      },
+      "TEMPLATE": {
+        "TITLE": "Scarica template",
+        "DIALOG_TITLE": "Scarica template CSV",
+        "DESCRIPTION": "Scarica il file modello con le colonne corrette per importare le transazioni.",
+        "DOWNLOAD": "Scarica template",
+        "DOWNLOADING": "Download in corso..."
+      },
+      "RESULT": {
+        "SUCCESS_TITLE": "Importazione completata",
+        "FAILED_TITLE": "Importazione fallita",
+        "IMPORTED_PREFIX": "Importate",
+        "IMPORTED_MIDDLE": "transazioni su",
+        "IMPORTED_SUFFIX": "righe totali.",
+        "NEW_ACCOUNTS": "Nuovi conti aggiunti",
+        "NEW_CATEGORIES": "Nuove categorie aggiunte",
+        "ERRORS_TITLE": "Errori rilevati ({{count}})",
+        "ROW": "Riga",
+        "FIELD": "Campo",
+        "VALUE": "Valore"
+      }
+    }
   }
 }

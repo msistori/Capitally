@@ -23,4 +23,15 @@ export class CategoryService {
   putCategory(category: CategoryModel, id: number): Observable<CategoryModel> {
     return this.http.put<CategoryModel>(`${this.apiUrl}/${id}`, category);
   }
+
+  deleteCategory(category: CategoryModel) {
+    const params = new HttpParams()
+      .set('macroCategory', category.macroCategory)
+      .set('category', category.category)
+    return this.http.delete<CategoryModel>(`${this.apiUrl}`, { params });
+  }
+
+  deleteCategories() {
+    return this.http.delete<void>(`${this.apiUrl}`);
+  }
 }

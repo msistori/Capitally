@@ -1,0 +1,91 @@
+$primary: #005f73;
+$secondary: #caf0f8;
+
+.csv-dialog {
+  color: $primary;
+  min-width: min(78vw, 360px);
+
+  h2 {
+    color: $primary;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0;
+    padding: 0.35rem 0 0.75rem;
+    text-align: center;
+  }
+}
+
+.content {
+  color: $primary;
+  padding: 0;
+}
+
+.info-area {
+  align-items: center;
+  border: 2px dashed rgba(0, 95, 115, 0.34);
+  border-radius: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 1.35rem 1rem;
+  text-align: center;
+
+  p {
+    margin: 0;
+  }
+}
+
+.dialog-icon {
+  align-items: center;
+  background: $secondary;
+  border-radius: 50%;
+  color: $primary !important;
+  display: inline-flex;
+  height: 3rem;
+  justify-content: center;
+  width: 3rem;
+
+  &.mat-icon {
+    color: $primary !important;
+  }
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.55rem;
+  margin-top: 1rem;
+  padding: 0;
+}
+
+.btn-secondary,
+.btn-primary {
+  border-radius: 0.65rem;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  padding: 0.7rem 0.9rem;
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.65;
+  }
+}
+
+.btn-secondary {
+  background: #fff;
+  border: 1px solid $primary;
+  color: $primary;
+}
+
+.btn-primary {
+  background: $primary;
+  border: 1px solid $primary;
+  color: #fff;
+}
+
+@media (min-width: 640px) {
+  .actions {
+    grid-template-columns: 1fr 1fr;
+  }
+}

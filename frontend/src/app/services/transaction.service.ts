@@ -19,4 +19,8 @@ export class TransactionService {
   postTransaction(transaction: TransactionModel): Observable<TransactionModel> {
     return this.http.post<TransactionModel>(`${this.apiUrl}`, transaction);
   }
+
+  deleteTransactions() {
+    return this.http.delete<void>(`${this.apiUrl}`);
+  }
 }

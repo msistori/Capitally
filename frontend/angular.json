@@ -9,12 +9,8 @@
       "sourceRoot": "src",
       "prefix": "app",
       "schematics": {
-        "@schematics/angular:component": {
-          "style": "scss"
-        },
-        "@schematics/angular:application": {
-          "strict": true
-        }
+        "@schematics/angular:component": { "style": "scss" },
+        "@schematics/angular:application": { "strict": true }
       },
       "architect": {
         "build": {
@@ -26,27 +22,22 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "aot": true,
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
-            "stylePreprocessorOptions": {
-              "includePaths": [
-                "node_modules"
-              ]
-            },
-            "styles": [
-              "src/styles.scss"
-            ],
+            "assets": ["src/favicon.ico","src/assets"],
+            "stylePreprocessorOptions": { "includePaths": ["node_modules"] },
+            "styles": ["src/styles.scss"],
             "scripts": []
           },
           "configurations": {
+            "development": {
+              "sourceMap": { "scripts": true, "styles": true, "vendor": true },
+              "optimization": false,
+              "vendorChunk": true,
+              "namedChunks": true,
+              "buildOptimizer": false
+            },
             "production": {
               "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
+                { "replace": "src/environments/environment.ts", "with": "src/environments/environment.prod.ts" }
               ],
               "optimization": true,
               "outputHashing": "all",
@@ -56,37 +47,37 @@
               "vendorChunk": false,
               "buildOptimizer": true,
               "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
-                }
+                { "type": "initial", "maximumWarning": "500kb", "maximumError": "1mb" },
+                { "type": "anyComponentStyle", "maximumWarning": "2kb", "maximumError": "4kb" }
               ]
+            },
+            "local": {
+              "fileReplacements": [
+                { "replace": "src/environments/environment.ts", "with": "src/environments/environment.local.ts" }
+              ],
+              "sourceMap": { "scripts": true, "styles": true, "vendor": true },
+              "optimization": false,
+              "vendorChunk": true,
+              "namedChunks": true,
+              "buildOptimizer": false
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "buildTarget": "frontend:build",
+            "buildTarget": "frontend:build:local",
             "proxyConfig": "proxy.conf.json"
           },
           "configurations": {
-            "production": {
-              "buildTarget": "frontend:build:production"
-            }
+            "production": { "browserTarget": "frontend:build:production" },
+            "local": { "browserTarget": "frontend:build:local" }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "buildTarget": "frontend:build"
-          }
+          "options": { "buildTarget": "frontend:build" }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
@@ -95,13 +86,8 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
-            "styles": [
-              "src/styles.scss"
-            ],
+            "assets": ["src/favicon.ico","src/assets"],
+            "styles": ["src/styles.scss"],
             "scripts": []
           }
         }

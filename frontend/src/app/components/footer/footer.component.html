@@ -1,3 +1,18 @@
-<footer class="footer">
-    <app-add-transaction-fab></app-add-transaction-fab>
+<footer class="footer" role="contentinfo">
+
+  <nav class="footer-actions" aria-label="Footer navigation">
+
+    <app-footer-action [icon]="'home'" [label]="'Home'" (action)="goToHome()"></app-footer-action>
+
+    <app-footer-action [icon]="'account_balance'" [label]="'Accounts'" (action)="goToAccounts()"></app-footer-action>
+
+    <app-footer-action [icon]="'add'" [label]="'Add transaction'" (action)="openTransactionModal()"
+      [disabled]="transactionDialogOpen"></app-footer-action>
+
+    <app-footer-action [icon]="'list_alt'" [label]="'Summary'" (action)="goToSummary()"></app-footer-action>
+
+    <app-footer-action [icon]="'settings'" [label]="'Settings'" (action)="openSettingsModal()"
+      [disabled]="settingsDialogOpen"></app-footer-action>
+
+  </nav>
 </footer>

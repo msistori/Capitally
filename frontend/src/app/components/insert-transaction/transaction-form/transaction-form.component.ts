@@ -1,5 +1,5 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, Output, EventEmitter, inject } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { RecurrencePeriodEnum, TransactionModel, TransactionTypeEnum } from '../../../models/transaction.model';
 import { CategorySelectionDialogComponent } from '../category-selection-dialog/category-selection-dialog.component';
@@ -12,6 +12,7 @@ import { AccountService } from '../../../services/account.service';
 import { AccountModel } from '../../../models/account.model';
 import { RefreshService } from '../../../services/refresh.service';
 import { TranslateService } from '@ngx-translate/core';
+import { StorageService } from '../../../auth/storage.service';
 
 @Component({
   selector: 'app-transaction-form',
@@ -21,13 +22,16 @@ import { TranslateService } from '@ngx-translate/core';
 export class TransactionFormComponent implements OnInit {
   @Output() submitted = new EventEmitter<TransactionModel>();
   form!: FormGroup;
-  currencies: { code: string }[] = [];
+  currencies: { code: string; name?: string }[] = [];
+  filteredCurrencies: { code: string; name?: string }[] = [];
+  currencySearchControl = new FormControl('');
   categories: CategoryModel[] = [];
   recentCategories: CategoryModel[] = [];
   accounts: AccountModel[] = [];
   plus!: { name: string; icon: string };
   selectedCategory: string | null = null;
-  readonly userId = 1;
+  private storage = inject(StorageService);
+  readonly userId = Number(this.storage.getUserId() || 1);
   weekDays: string[] = [];
   matrixDate: (Date | null)[][] = [];
   matrixRecurringEndDate: (Date | null)[][] = [];
@@ -53,7 +57,7 @@ export class TransactionFormComponent implements OnInit {
     this.form = this.fb.group({
       accountId: [null, Validators.required],
       amount: [null, [Validators.required, Validators.min(0.01)]],
-      currencyCode: ['EUR', Validators.required],
+      currencyCode: [this.storage.getDefaultCurrency(), Validators.required],
       transactionType: [TransactionTypeEnum.EXPENSE, Validators.required],
       categoryId: [null],
       date: [new Date()],
@@ -62,25 +66,86 @@ export class TransactionFormComponent implements OnInit {
       recurringPeriod: [null],
       recurringEndDate: [null]
     });
-    this.currencyService.getCurrencies().subscribe(data => this.currencies = data);
+
+    this.currencyService.getCurrencies().subscribe(data => {
+      this.currencies = data;
+      this.filteredCurrencies = data;
+    });
+
+    this.currencySearchControl.valueChanges.subscribe(searchTerm => {
+      this.filterCurrencies(searchTerm || '');
+    });
+
     this.categoryService.getCategories(this.userId.toString())
       .subscribe(data => {
         this.categories = data;
         this.recentCategories = this.categories.slice(0, 3);
       });
+
     this.accountService.getAccounts(this.userId.toString())
-      .subscribe(data => this.accounts = data);
+      .subscribe(data => this.accounts = data.sort((a, b) =>
+        a.name.localeCompare(b.name)
+      ));
+
     const base = './../../../../assets/icons';
     this.plus = { name: 'CATEGORY.OTHER', icon: `${base}/plus.svg` };
+
     this.translateService.get('FORM.WEEK_DAYS').subscribe((days: string[]) => {
       this.weekDays = days;
     });
+
     this.buildMonthMatrixDate(this.form.get('date')!.value);
     this.form.get('date')!.valueChanges.subscribe(d => {
       this.buildMonthMatrixDate(d);
     });
+
     this.viewDate = this.form.get('recurringEndDate')!.value ?? new Date();
     this.buildMonthMatrixRecurringEndDate(this.viewDate);
+  }
+
+  filterCurrencies(searchTerm: string): void {
+    const term = searchTerm.toLowerCase().trim();
+    const currentCurrency = this.form.get('currencyCode')!.value;
+
+    if (!term) {
+      this.filteredCurrencies = this.currencies;
+      return;
+    }
+
+    const filtered = this.currencies.filter(cur =>
+      cur.code.toLowerCase().includes(term) ||
+      (cur.name && cur.name.toLowerCase().includes(term))
+    );
+
+    const currentCur = this.currencies.find(c => c.code === currentCurrency);
+    const isCurrentInFiltered = filtered.find(c => c.code === currentCurrency);
+
+    if (currentCur && !isCurrentInFiltered) {
+      this.filteredCurrencies = [currentCur, ...filtered];
+    } else {
+      this.filteredCurrencies = filtered;
+    }
+  }
+
+  shouldHideCurrent(cur: any, index: number): boolean {
+    const currentCurrency = this.form.get('currencyCode')!.value;
+    const searchTerm = this.currencySearchControl.value;
+
+    if (index !== 0 || !searchTerm || cur.code !== currentCurrency) {
+      return false;
+    }
+
+    const matchesSearch = cur.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (cur.name && cur.name.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    return !matchesSearch;
+  }
+
+  onCurrencyPanelOpenChange(opened: boolean): void {
+    if (!opened) {
+      this.currencySearchControl.setValue('');
+      this.filteredCurrencies = this.currencies;
+    }
   }
 
   private buildMonthMatrixDate(d: Date) {
@@ -90,13 +155,33 @@ export class TransactionFormComponent implements OnInit {
     const startOff = (first.getDay() + 6) % 7;
     const daysCount = new Date(y, m + 1, 0).getDate();
     const cells: (Date | null)[] = [];
-    for (let i = 0; i < startOff; i++) cells.push(null);
-    for (let day = 1; day <= daysCount; day++) cells.push(new Date(y, m, day));
-    while (cells.length % 7) cells.push(null);
+
+    for (let i = startOff - 1; i >= 0; i--) {
+      const prevMonthDate = new Date(y, m, -i);
+      cells.push(prevMonthDate);
+    }
+
+    for (let day = 1; day <= daysCount; day++) {
+      cells.push(new Date(y, m, day));
+    }
+
+    let nextDay = 1;
+    while (cells.length % 7) {
+      cells.push(new Date(y, m + 1, nextDay));
+      nextDay++;
+    }
+
     this.matrixDate = [];
     for (let i = 0; i < cells.length; i += 7) {
       this.matrixDate.push(cells.slice(i, i + 7));
     }
+  }
+
+  isOutsideMonth(d: Date | null, field: string): boolean {
+    if (!d) return false;
+    const referenceDate: Date = this.form.get(field)!.value;
+    return d.getMonth() !== referenceDate.getMonth() ||
+      d.getFullYear() !== referenceDate.getFullYear();
   }
 
   get currentWeekDate(): (Date | null)[] {
