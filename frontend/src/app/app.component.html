@@ -1,7 +1,7 @@
 <div class="layout">
   <app-header></app-header>
 
-  <main class="content">
+  <main class="content" [ngClass]="showFooter ? '' : 'login-content'">
     <div [class.no-scroll]="disableScroll" class="app-shell" [class.dimmed]="loading()" [attr.inert]="loading() ? '' : null">
       <router-outlet></router-outlet>
     </div>

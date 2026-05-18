@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { map, startWith } from 'rxjs/operators';
@@ -6,6 +6,7 @@ import { CategoryModel } from 'src/app/models/category.model';
 import { CategoryService } from 'src/app/services/category.service';
 import { Utils } from '../../utils';
 import { DuplicateCategoryAlertComponent } from 'src/app/alerts/duplicate-category-alert/duplicate-category-alert.component';
+import { RefreshService } from 'src/app/services/refresh.service';
 
 type DialogData = {
   categories: CategoryModel[];
@@ -19,9 +20,13 @@ type DialogData = {
   styleUrls: ['./category-selection-dialog.component.scss']
 })
 export class CategorySelectionDialogComponent implements OnInit {
+  @ViewChild('deleteDialogTemplate') deleteDialogTemplate!: TemplateRef<any>;
+
   categories: CategoryModel[] = [];
   selectedCategoryId?: number | null;
   userId!: number;
+  categoryToDelete?: CategoryModel | null;
+  showDeleteDialog: boolean = false;
 
   grouped: Record<string, CategoryModel[]> = {};
   macros: string[] = [];
@@ -29,7 +34,8 @@ export class CategorySelectionDialogComponent implements OnInit {
 
   creating = false;
   editing = false;
-  mode: 'create' | 'edit' = 'create';
+  deleting = false;
+  mode: 'create' | 'edit' | 'delete' = 'create';
   editingCategoryId: number | undefined;
 
   createForm!: FormGroup;
@@ -45,8 +51,9 @@ export class CategorySelectionDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private fb: FormBuilder,
     private categoryService: CategoryService,
-    public utils: Utils
-  ) {}
+    public utils: Utils,
+    private refreshService: RefreshService
+  ) { }
 
   ngOnInit(): void {
     this.categories = [...(this.data?.categories ?? [])];
@@ -120,7 +127,7 @@ export class CategorySelectionDialogComponent implements OnInit {
     this.pickedIcon = undefined;
     this.createForm.reset({ macroCategory: '', category: '', iconName: '' });
   }
-  
+
   toggleEdit(): void {
     if (this.editing && this.mode === 'edit') {
       this.resetFlag();
@@ -139,9 +146,67 @@ export class CategorySelectionDialogComponent implements OnInit {
     this.editTargetCtrl.setValue(null);
   }
 
+  toggleDelete(): void {
+    if (this.mode === 'delete') {
+      this.mode = 'create';
+      this.resetFlag();
+      return;
+    }
+    this.switchToDelete();
+  }
+
+  switchToDelete(): void {
+    this.mode = 'delete';
+    this.deleting = true;
+    this.editingCategoryId = undefined;
+    this.pickedIcon = undefined;
+    this.selectedCategoryId = undefined;
+    this.createForm.reset({ macroCategory: '', category: '', iconName: '' });
+    this.editTargetCtrl.setValue(null);
+  }
+
+  deleteCategory(): void {
+    const dialogRef = this.dialog.open(this.deleteDialogTemplate, {
+      width: '400px',
+      panelClass: 'delete-dialog-template',
+      data: { category: this.categoryToDelete }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true && this.categoryToDelete) {
+        this.categoryService.deleteCategory(this.categoryToDelete).subscribe({
+          next: () => {
+            console.log('Categoria eliminata con successo');
+
+            this.categories = this.categories.filter(
+              cat => cat.id !== this.categoryToDelete!.id
+            );
+
+            this.buildGroups();
+
+            this.categoryToDelete = null;
+            this.selectedCategoryId = null;
+            this.resetFlag();
+
+            this.refreshService.triggerRefresh();
+          },
+          error: err => {
+            console.error(err);
+          }
+        });
+      }
+    });
+  }
+
+  considerToDeleteCategory(cat: CategoryModel): void {
+    this.selectedCategoryId = cat.id;
+    this.categoryToDelete = cat;
+  }
+
   resetFlag(): void {
     this.creating = false;
     this.editing = false;
+    this.deleting = false;
   }
 
   onEditTargetChange(id: number | null): void {
@@ -222,11 +287,18 @@ export class CategorySelectionDialogComponent implements OnInit {
 
   private getIconNames(): string[] {
     return [
-      'Shopping','Smartphone','Spanner','Stadium','Subscribe','Taxi','Ticket','Tooth','Transfer','Washing-machine','Watch','Wifi',
-      'Animal','Bank','Barbell','Barber','Bike','Bill','Book','Camera','Car','Card-holder','Car-insurance','Car-wash','Charger',
-      'Cigar','Clothes','Cocktail','Coffee','Coin','Diamond','Dices','Flower','Food','Football','Fuel','Games','Gift','Health',
-      'Metro','Mic','Money-bag','Motorbike','Parking','Pc','Plane','Plus','Police','Popcorn','Receipt','Salary','Ship','Shoes',
-      'Settings', 'Robot'
+      'Air-balloon', 'Amazon', 'Animal', 'Bank', 'Barbell', 'Barber', 'Beach',
+      'Bike', 'Bill', 'Book', 'Camera', 'Car', 'Car-insurance', 'Car-wash',
+      'Card-holder', 'Charger', 'Cigar', 'Clothes', 'Cocktail', 'Coffee', 'Coin',
+      'Concert-day', 'Diamond', 'Dices', 'Flower', 'Food', 'Football', 'Fuel',
+      'Games', 'Gift', 'Grater-cutting', 'Health', 'Home', 'Hotel', 'Id-card',
+      'Mechanic', 'Metro', 'Mic', 'Money-bag', 'Motorbike', 'Music-note', 'Nutrition',
+      'Parfume', 'Parking', 'Pc', 'Pharmacy', 'Pharmacy-shopping-cart', 'Pills',
+      'Ping-pong', 'Plane', 'Plus', 'Police', 'Popcorn', 'Question-mark', 'Race-car',
+      'Receipt', 'Robot', 'Salary', 'Settings', 'Ship', 'Shoes', 'Shopping',
+      'Ski', 'Smartphone', 'Spanner', 'Stadium', 'Subscribe', 'Swim',
+      'Tax', 'Taxi', 'Ticket', 'Tooth', 'Transfer', 'Washing-machine', 'Watch',
+      'Wifi', 'Road'
     ];
   }
 }

@@ -28,10 +28,7 @@
     color: #0e2431;
   }
 
-  
-
-  /* toggle lingua */
-  .language-toggle {
+  .header-options {
     display: flex;
     gap: 0.5rem;
 
@@ -49,5 +46,17 @@
         text-decoration: underline;
       }
     }
+
+    .logout-btn {
+      background-color: #005f73;
+      color: #ffff;
+      border: 0;
+      cursor: pointer;
+      display: flex;
+    }
   }
+}
+
+.login-header {
+  padding: 0 10%;
 }

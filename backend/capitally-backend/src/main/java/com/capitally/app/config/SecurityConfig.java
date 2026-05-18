@@ -2,6 +2,7 @@ package com.capitally.app.config;
 
 import com.capitally.app.core.security.JwtAuthenticationFilter;
 import com.capitally.app.core.security.JwtTokenProvider;
+import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -53,6 +54,7 @@ public class SecurityConfig {
                 .accessDeniedHandler((req, res, e) -> res.sendError(HttpServletResponse.SC_FORBIDDEN))
         );
         http.authorizeHttpRequests(auth -> auth
+                .dispatcherTypeMatchers(DispatcherType.ASYNC, DispatcherType.ERROR).permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers(
                         "/auth/**",
@@ -75,7 +77,8 @@ public class SecurityConfig {
                 ).permitAll()
                 .anyRequest().authenticated()
         );
-        http.addFilterBefore(new JwtAuthenticationFilter(jwt, uds), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtAuthenticationFilter(jwt),
+                UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

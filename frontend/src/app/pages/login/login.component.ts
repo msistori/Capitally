@@ -10,6 +10,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { switchMap } from 'rxjs';
+import { GuestService } from 'src/app/services/guest.service';
 
 @Component({
   selector: 'app-login',
@@ -33,7 +34,9 @@ export class LoginComponent {
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
 
-  constructor(private translate: TranslateService) {}
+  constructor(private translate: TranslateService, private guestService: GuestService) {
+    this.guestService.clearGuestLogin();
+  }
 
   mode = signal<'login' | 'register'>('login');
   loading = signal(false);
@@ -95,6 +98,7 @@ export class LoginComponent {
         )
       ).subscribe({
         next: () => {
+          this.guestService.clearGuestLogin();
           this.loading.set(false);
           this.router.navigate(['/dashboard']);
         },
@@ -120,6 +124,7 @@ export class LoginComponent {
     this.loading.set(true);
     this.auth.loginAsGuest().subscribe({
       next: () => {
+        this.guestService.setGuestLogin();
         this.loading.set(false);
         this.router.navigate(['/dashboard']);
       },

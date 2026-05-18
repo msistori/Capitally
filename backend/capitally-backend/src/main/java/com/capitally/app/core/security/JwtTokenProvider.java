@@ -5,6 +5,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.Claims;
 
+import java.math.BigInteger;
 import java.security.Key;
 import java.time.Instant;
 import java.util.Date;
@@ -19,9 +20,10 @@ public class JwtTokenProvider {
         this.validityMillis = validityMillis;
     }
 
-    public String generate(String subject, Set<String> roles) {
+    public String generate(BigInteger userId, String subject, Set<String> roles) {
         Instant now = Instant.now();
         return Jwts.builder()
+                .setId(String.valueOf(userId))
                 .setSubject(subject)
                 .claim("roles", String.join(",", roles))
                 .setIssuedAt(Date.from(now))

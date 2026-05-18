@@ -1,0 +1,66 @@
+<div class="result-dialog">
+  <h2 mat-dialog-title>
+    <mat-icon [class.failed]="data.failed">{{ data.failed ? 'error' : 'check_circle' }}</mat-icon>
+    {{ (data.failed ? 'SETTINGS.IMPORT_EXPORT.RESULT.FAILED_TITLE' : 'SETTINGS.IMPORT_EXPORT.RESULT.SUCCESS_TITLE') | translate }}
+  </h2>
+
+  <mat-dialog-content>
+    <div *ngIf="!data.failed && data.summary" class="summary-section">
+      <p class="success-message">
+        {{ 'SETTINGS.IMPORT_EXPORT.RESULT.IMPORTED_PREFIX' | translate }}
+        <strong>{{ data.summary.importedTransactions }}</strong>
+        {{ 'SETTINGS.IMPORT_EXPORT.RESULT.IMPORTED_MIDDLE' | translate }}
+        <strong>{{ data.summary.totalRows }}</strong>
+        {{ 'SETTINGS.IMPORT_EXPORT.RESULT.IMPORTED_SUFFIX' | translate }}
+      </p>
+    </div>
+
+    <div *ngIf="data.summary?.newAccounts?.length > 0" class="new-items">
+      <h3>
+        <mat-icon>account_balance</mat-icon>
+        {{ 'SETTINGS.IMPORT_EXPORT.RESULT.NEW_ACCOUNTS' | translate }}
+      </h3>
+      <ul>
+        <li *ngFor="let account of data.summary.newAccounts">{{ account }}</li>
+      </ul>
+    </div>
+
+    <div *ngIf="hasNewCategories()" class="new-items">
+      <h3>
+        <mat-icon>label</mat-icon>
+        {{ 'SETTINGS.IMPORT_EXPORT.RESULT.NEW_CATEGORIES' | translate }}
+      </h3>
+      <div *ngFor="let entry of getCategoriesArray()" class="category-group">
+        <strong>{{ entry.account }}:</strong>
+        <ul>
+          <li *ngFor="let category of entry.categories">{{ category }}</li>
+        </ul>
+      </div>
+    </div>
+
+    <div *ngIf="data.hasErrors && data.errors?.length > 0" class="errors-section">
+      <h3>
+        <mat-icon>warning</mat-icon>
+        {{ 'SETTINGS.IMPORT_EXPORT.RESULT.ERRORS_TITLE' | translate:{ count: data.errors.length } }}
+      </h3>
+      <div class="error-list">
+        <div *ngFor="let error of data.errors" class="error-item">
+          <div class="error-header" *ngIf="error.rowNumber">
+            <strong>{{ 'SETTINGS.IMPORT_EXPORT.RESULT.ROW' | translate }} {{ error.rowNumber }}</strong>
+            <span *ngIf="error.field" class="error-field">
+              {{ 'SETTINGS.IMPORT_EXPORT.RESULT.FIELD' | translate }}: {{ error.field }}
+            </span>
+          </div>
+          <p class="error-message">{{ error.message }}</p>
+          <p *ngIf="error.value" class="error-value">
+            {{ 'SETTINGS.IMPORT_EXPORT.RESULT.VALUE' | translate }}: <code>{{ error.value }}</code>
+          </p>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="actions">
+    <button class="btn-primary" type="button" (click)="close()">OK</button>
+  </mat-dialog-actions>
+</div>

@@ -17,13 +17,13 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     enabled: true
-    path: /swagger-ui/index.html
+    path: /index.html
 
 jwt:
-  secret: ${JWT_SECRET:dev-secret-change-me-please-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZdev-secret-change-me}
+  secret: ${JWT_SECRET}
   validityMillis: ${JWT_VALIDITY_MILLIS:259200000}
 
 logging:
   level:
-    org.springframework.security: DEBUG
-    com.capitally: DEBUG
+    org.springframework.security: INFO
+    com.capitally: INFO

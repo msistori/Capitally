@@ -30,7 +30,7 @@ import { TransactionsModule } from './components/insert-transaction/transactions
 import { DuplicateCategoryAlertComponent } from './alerts/duplicate-category-alert/duplicate-category-alert.component';
 import { BalanceTrendComponent } from './components/balance-trend/balance-trend.component';
 
-import { MAT_RIPPLE_GLOBAL_OPTIONS, RippleGlobalOptions } from '@angular/material/core'; 
+import { MAT_RIPPLE_GLOBAL_OPTIONS, RippleGlobalOptions } from '@angular/material/core';
 import { registerLocaleData } from '@angular/common';
 
 import localeIt from '@angular/common/locales/it';
@@ -39,6 +39,11 @@ import localeEn from '@angular/common/locales/en';
 import { LoadingInterceptor } from './loader/loading.interceptor';
 import { LoadingOverlayComponent } from './loader/loading-overlay/loading-overlay.component';
 import { IncomeExpenseBreakdownComponent } from './components/income-expense-breakdown/income-expense-breakdown.component';
+import { FooterActionComponent } from './components/footer/footer-action/footer-action.component';
+import { SettingsModule } from './pages/settings/settings.module';
+import { GuestInterceptor } from './interceptors/guest.interceptor';
+import { MockApiInterceptor } from './mocks/mock-api.interceptor';
+import { GuestRestrictionDialogComponent } from './components/guest-restriction-dialog/guest-restriction-dialog.component';
 
 registerLocaleData(localeIt);
 registerLocaleData(localeEn);
@@ -56,7 +61,9 @@ const globalRippleConfig: RippleGlobalOptions = { disabled: true };
     DuplicateCategoryAlertComponent,
     BalanceTrendComponent,
     IncomeExpenseBreakdownComponent,
-    FooterComponent
+    FooterComponent,
+    FooterActionComponent,
+    GuestRestrictionDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -66,7 +73,7 @@ const globalRippleConfig: RippleGlobalOptions = { disabled: true };
       headerName: 'X-XSRF-TOKEN'
     }),
     TranslateModule.forRoot({
-      fallbackLang: 'en',
+      fallbackLang: 'it',
       loader: provideTranslateHttpLoader({
         prefix: './assets/i18n/',
         suffix: '.json',
@@ -81,6 +88,7 @@ const globalRippleConfig: RippleGlobalOptions = { disabled: true };
     MatButtonModule,
     NgChartsModule,
     TransactionsModule,
+    SettingsModule,
     MatDialogModule,
     LoadingOverlayComponent
   ],
@@ -88,7 +96,9 @@ const globalRippleConfig: RippleGlobalOptions = { disabled: true };
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: MAT_RIPPLE_GLOBAL_OPTIONS, useValue: globalRippleConfig },
-    { provide: LOCALE_ID, useValue: 'it-IT' }
+    { provide: LOCALE_ID, useValue: 'it-IT' },
+    { provide: HTTP_INTERCEPTORS, useClass: GuestInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: MockApiInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })

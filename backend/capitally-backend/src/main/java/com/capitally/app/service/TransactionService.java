@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import static com.capitally.app.utils.CapitallyUtils.addIfNotNull;
 
@@ -67,8 +68,17 @@ public class TransactionService {
         return transactionMapper.mapTransactionEntityToDTO(transactionRepository.save(existing));
     }
 
-    public void deleteTransaction(BigInteger id) {
-        transactionRepository.deleteById(id);
+    public void deleteTransaction(BigInteger userId, BigInteger transactionId, BigInteger accountId, BigInteger categoryId,
+                                  LocalDate startDate, LocalDate endDate, BigDecimal minAmount, BigDecimal maxAmount) {
+        if(transactionId != null) {
+            Optional<TransactionEntity> transactionToDelete = transactionRepository.findByIdAndUser_Id(transactionId, userId);
+            if(transactionToDelete.isPresent()) {
+                transactionRepository.deleteById(transactionId);
+            }
+        } else {
+            Specification<TransactionEntity> spec = buildSpecification(userId, accountId, categoryId, startDate, endDate, minAmount, maxAmount);
+            transactionRepository.delete(spec);
+        }
     }
 
     private Specification<TransactionEntity> buildSpecification(BigInteger userId, BigInteger accountId, BigInteger categoryId,

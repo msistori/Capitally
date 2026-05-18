@@ -25,7 +25,6 @@ CREATE TABLE t_account (
     name VARCHAR(100) NOT NULL,
     initial_balance DECIMAL(15,2) DEFAULT 0.00,
     currency VARCHAR(3) REFERENCES currencies(code),
-    account_type VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

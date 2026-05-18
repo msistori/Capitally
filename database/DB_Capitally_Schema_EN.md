@@ -20,7 +20,6 @@
 - `name`
 - `initial_balance`
 - `currency` (FK)
-- `account_type` (e.g., checking, savings, investment)
 - `created_at`
 - `updated_at`
 

@@ -2,10 +2,10 @@
   <h2>{{ 'BALANCE.BALANCE_TITLE' | translate }}</h2>
 
   <!-- Combined total in default currency -->
-  <p class="balance-total">{{ convertedTotal() | currency: defaultCurrency:'symbol' }}</p>
+  <p class="balance-total">{{ convertedTotal() | currency: defaultCurrencySig():'symbol' }}</p>
 
   <!-- Per-currency breakdown -->
-  <ul class="per-currency">
+  <ul class="per-currency" *ngIf="showBreakdown()">
     <li *ngFor="let e of entries()">
       <span class="code">{{ e.code }}</span>
       <span class="amt">{{ e.amount | currency: e.code:'symbol-narrow' }}</span>

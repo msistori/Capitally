@@ -1,0 +1,106 @@
+<div class="settings">
+  <header class="modal-header">
+    <h2 class="title">{{ 'SETTINGS.TITLE' | translate }}</h2>
+    <button mat-icon-button (click)="close()" class="close-btn" [attr.aria-label]="'BUTTON_CLOSE' | translate" disableRipple>
+      <mat-icon>close</mat-icon>
+    </button>
+  </header>
+
+  <section class="settings-section danger-section">
+    <div class="section-heading">
+      <span class="section-kicker">{{ 'SETTINGS.SECTIONS.DATA' | translate }}</span>
+      <h3>{{ 'SETTINGS.SECTIONS.RESET_TITLE' | translate }}</h3>
+    </div>
+
+    <div class="action-grid">
+      <button class="settings-action danger-action" type="button" (click)="clearAll(ClearTarget.TRANSACTIONS)">
+        <mat-icon>receipt_long</mat-icon>
+        <span>{{ 'SETTINGS.RESET.TRANSACTIONS' | translate }}</span>
+      </button>
+
+      <button class="settings-action danger-action" type="button" (click)="clearAll(ClearTarget.CATEGORIES)">
+        <mat-icon>category</mat-icon>
+        <span>{{ 'SETTINGS.RESET.CATEGORIES' | translate }}</span>
+      </button>
+
+      <button class="settings-action danger-action" type="button" (click)="clearAll(ClearTarget.ACCOUNTS)">
+        <mat-icon>account_balance_wallet</mat-icon>
+        <span>{{ 'SETTINGS.RESET.ACCOUNTS' | translate }}</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="settings-section">
+    <div class="section-heading">
+      <span class="section-kicker">{{ 'SETTINGS.SECTIONS.CSV' | translate }}</span>
+      <h3>{{ 'SETTINGS.SECTIONS.IMPORT_EXPORT_TITLE' | translate }}</h3>
+    </div>
+
+    <app-import-export-transactions [parentDialogRef]="dialogRef"></app-import-export-transactions>
+  </section>
+
+  <section class="settings-section preferences-section">
+    <div class="section-heading">
+      <span class="section-kicker">{{ 'SETTINGS.SECTIONS.PREFERENCES' | translate }}</span>
+      <h3>{{ 'SETTINGS.SECTIONS.DISPLAY_TITLE' | translate }}</h3>
+    </div>
+
+    <div class="currency-block">
+      <label class="currency-label">{{ 'FORM.CURRENCY' | translate }}</label>
+
+      <mat-form-field appearance="outline" class="currency-field">
+        <mat-select [value]="selectedCurrencyCode" (selectionChange)="onCurrencyChange($event.value)"
+          (openedChange)="onCurrencyPanelOpenChange($event)" panelClass="currency-panel-class">
+          <mat-option class="search-option">
+            <input class="search" [value]="currencySearchControl.value"
+              (input)="currencySearchControl.setValue($any($event.target).value)" (click)="$event.stopPropagation()"
+              (keydown)="$event.stopPropagation()" placeholder="{{ 'SEARCH' | translate }}" autocomplete="off" />
+          </mat-option>
+
+          <mat-option *ngFor="let cur of filteredCurrencies; let i = index" [value]="cur.code" class="currency-item"
+            [class.current-hidden]="shouldHideCurrent(cur, i)">
+            <span class="currency-code">{{ cur.code }}</span>
+            <span class="currency-name" *ngIf="cur.name">- {{ cur.name }}</span>
+          </mat-option>
+
+          <mat-option *ngIf="filteredCurrencies.length === 0" disabled class="no-results">
+            {{ 'FORM.NO_CURRENCIES_FOUND' | translate }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="language-block">
+      <span class="language-label">{{ 'SETTINGS.LANGUAGE' | translate }}</span>
+      <div class="language-options" role="group" [attr.aria-label]="'SETTINGS.LANGUAGE' | translate">
+        <button *ngFor="let lang of availableLanguages" type="button" (click)="changeLanguage(lang)"
+          [class.active]="currentLang === lang">
+          {{ lang === 'it' ? 'IT' : 'EN' }}
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <button class="logout-btn" type="button" (click)="logout()">
+    <mat-icon>logout</mat-icon>
+    {{ 'SETTINGS.LOGOUT' | translate }}
+  </button>
+</div>
+
+<ng-template #confirmDeleteAllTemplate let-data>
+  <div class="confirm-dialog">
+    <h2 mat-dialog-title>{{ data.title }}</h2>
+
+    <mat-dialog-content>
+      <p>{{ data.message }}</p>
+      <p class="warning-copy">{{ 'UNDONE_OPERATION' | translate }}</p>
+    </mat-dialog-content>
+
+    <mat-dialog-actions class="template-actions">
+      <button class="dialog-secondary" type="button" [mat-dialog-close]="false">{{ 'BUTTON_CANCEL' | translate }}</button>
+      <button class="dialog-danger" type="button" [mat-dialog-close]="true" cdkFocusInitial>
+        {{ 'BUTTON_DELETE' | translate }}
+      </button>
+    </mat-dialog-actions>
+  </div>
+</ng-template>

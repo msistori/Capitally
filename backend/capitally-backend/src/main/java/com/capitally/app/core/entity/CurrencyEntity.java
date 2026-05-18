@@ -5,14 +5,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "t_currency")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CurrencyEntity extends AuditableEntity {
+public class CurrencyEntity {
     @Id
     private String code;
     private String name;

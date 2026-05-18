@@ -13,7 +13,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
-import { AddTransactionFabComponent } from './add-transaction-fab/add-transaction-fab.component';
 import { AddTransactionModalComponent } from './add-transaction-modal/add-transaction-modal.component';
 import { TransactionFormComponent } from './transaction-form/transaction-form.component';
 import { CategorySelectionDialogComponent } from './category-selection-dialog/category-selection-dialog.component';
@@ -38,7 +37,6 @@ export const MY_DATE_FORMATS = {
 
 @NgModule({
   declarations: [
-    AddTransactionFabComponent,
     AddTransactionModalComponent,
     TransactionFormComponent,
     CategorySelectionDialogComponent
@@ -61,7 +59,7 @@ export const MY_DATE_FORMATS = {
     MatChipsModule,
     MatAutocompleteModule
   ],
-  exports: [AddTransactionFabComponent],
+  exports: [],
   providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter },
     { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS }

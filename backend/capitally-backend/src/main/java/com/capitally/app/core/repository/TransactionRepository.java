@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<TransactionEntity, BigInteger>, JpaSpecificationExecutor<TransactionEntity> {
@@ -18,4 +19,9 @@ public interface TransactionRepository extends JpaRepository<TransactionEntity, 
 
     List<TransactionEntity> findByUserIdAndIsRecurringTrue(BigInteger userId);
 
+    Optional<TransactionEntity> findByIdAndUser_Id(BigInteger id, BigInteger userId);
+
+    List<TransactionEntity> findByUser_IdAndCategory_Id(BigInteger userId, BigInteger categoryId);
+
+    List<TransactionEntity> findByUser_IdAndAccount_Name(BigInteger userId, String accountName);
 }

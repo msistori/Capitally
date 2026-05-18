@@ -4,6 +4,7 @@ import { StorageService } from '../auth/storage.service';
 import { AuthTokens, AuthUser, Credentials, RegisterPayload } from '../auth/auth.model';
 import { map, Observable, of, switchMap, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { GuestService } from './guest.service';
 
 type BackendLoginResponse = { token: string; tokenType: string; username: string; email: string; roles: string[] };
 type BackendMeResponse = { id: string | number; username: string; email: string; roles: string[] };
@@ -14,6 +15,8 @@ const API = '/auth';
 export class AuthService {
   private http = inject(HttpClient);
   private storage = inject(StorageService);
+
+  private constructor(private guestService: GuestService) {}
 
   login(payload: Credentials): Observable<AuthUser> {
     const body = { usernameOrEmail: payload.usernameOrEmail, password: payload.password };
@@ -44,6 +47,7 @@ export class AuthService {
   }
 
   logout(): Observable<void> {
+    this.guestService.clearGuestLogin();
     this.storage.clearAuth();
     return of(void 0);
   }

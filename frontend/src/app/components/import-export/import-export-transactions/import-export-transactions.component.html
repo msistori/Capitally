@@ -1,0 +1,14 @@
+<div class="import-export-container">
+  <button class="csv-action" type="button" (click)="openTemplateDialog()">
+    <mat-icon>download</mat-icon>
+    {{ 'SETTINGS.IMPORT_EXPORT.TEMPLATE.TITLE' | translate }}
+  </button>
+  <button class="csv-action" type="button" (click)="openImportDialog()">
+    <mat-icon>upload_file</mat-icon>
+    {{ 'SETTINGS.IMPORT_EXPORT.IMPORT.TITLE' | translate }}
+  </button>
+  <button class="csv-action" type="button" (click)="openExportDialog()">
+    <mat-icon>ios_share</mat-icon>
+    {{ 'SETTINGS.IMPORT_EXPORT.EXPORT.TITLE' | translate }}
+  </button>
+</div>

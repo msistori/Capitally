@@ -14,10 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Period;
-import java.time.YearMonth;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -234,7 +231,7 @@ public class DashboardService {
     }
 
     public DashboardOverviewResponseDTO getDashboardOverview(BigInteger userId) {
-        YearMonth currentMonth = YearMonth.now();
+        YearMonth currentMonth = YearMonth.of(2025, Month.AUGUST);
         LocalDate startOfMonth = currentMonth.atDay(1);
         LocalDate endOfMonth = currentMonth.atEndOfMonth();
 

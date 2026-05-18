@@ -3,6 +3,7 @@ package com.capitally.app.controller;
 import com.capitally.app.model.request.CurrencyRequestDTO;
 import com.capitally.app.model.response.CurrencyResponseDTO;
 import com.capitally.app.service.CurrencyService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/currency")
 @RequiredArgsConstructor
+@Tag(name = "Currency", description = "API crud per Currency")
 public class CurrencyController {
 
     private final CurrencyService currencyService;

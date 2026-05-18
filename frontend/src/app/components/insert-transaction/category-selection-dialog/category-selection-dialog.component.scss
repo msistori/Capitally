@@ -19,7 +19,7 @@ $secondary: #caf0f8;
     flex-direction: column-reverse;
     align-items: flex-end;
     position: relative;
-    padding: 0.5rem;
+    padding: .8rem;
     height: 3rem;
 
     .title {
@@ -46,7 +46,7 @@ $secondary: #caf0f8;
     display: flex;
     gap: 2%;
     align-items: center;
-    padding: .5rem;
+    padding: .8rem;
 
     .search {
       flex: 1 1 auto;
@@ -55,6 +55,7 @@ $secondary: #caf0f8;
       border-radius: .6rem;
       background: #fff;
       color: $primary;
+      width: 2rem;
 
       &::placeholder {
         color: $primary;
@@ -70,13 +71,22 @@ $secondary: #caf0f8;
     }
 
     .new-btn,
-    .edit-btn {
+    .edit-btn,
+    .delete-btn {
       flex: 0 0 auto;
       padding: .6rem .9rem;
       border-radius: .7rem;
       border: 1px solid $primary;
       background: #fff;
       color: $primary;
+      cursor: pointer;
+    }
+
+    .delete-btn {
+      &.active {
+        color: #fff;
+        background: $primary;
+      }
     }
   }
 }
@@ -85,15 +95,15 @@ $secondary: #caf0f8;
   display: flex;
   justify-content: flex-end;
   gap: 2%;
-  margin-top: .5rem;
 
   button {
     padding: .6rem .9rem;
     border-radius: .7rem;
+    cursor: pointer;
   }
 
   .secondary {
-    border: 1px solid rgba(0, 0, 0, .2);
+    border: 1px solid $primary;
     background: #fff;
     color: $primary;
   }
@@ -110,6 +120,45 @@ $secondary: #caf0f8;
   bottom: -.1rem;
   padding: .5rem;
   background-color: #ffff;
+}
+
+.delete-actions {
+  position: sticky;
+  bottom: -.1rem;
+  padding: .5rem;
+  background-color: #ffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2%;
+  border-top: 2px solid $primary;
+
+  .label {
+    font-weight: bold;
+  }
+
+  .delete-buttons {
+    display: flex;
+    gap: 1rem;
+  }
+
+  button {
+    padding: .6rem .9rem;
+    border-radius: .7rem;
+    cursor: pointer;
+  }
+
+  .secondary {
+    border: 1px solid $primary;
+    background: #fff;
+    color: $primary;
+  }
+
+  button[type="submit"] {
+    border: 1px solid $primary;
+    background: $primary;
+    color: #fff;
+  }
 }
 
 .create-box {
@@ -302,6 +351,72 @@ $secondary: #caf0f8;
   display: flex;
   justify-content: flex-end;
   padding: .75rem;
+}
+
+.template-icon {
+  align-self: center;
+  color: $primary;
+  transform: scale(2);
+  padding: 1rem;
+}
+
+.template-title {
+  padding: .5rem;
+  text-align: center;
+  text-box: auto;
+  color: $primary;
+  font-weight: bold;
+}
+
+.template-text {
+  padding: 0;
+  color: $primary;
+
+  >p {
+    text-align: center;
+    margin: 0;
+  }
+}
+
+.template-info {
+  padding: 0;
+  color: $primary;
+
+  >p {
+    text-align: center;
+    margin: 0;
+    font-size: small;
+  }
+}
+
+.template-actions {
+  align-self: center;
+  gap: 1rem;
+  margin-top: 1rem;
+
+  .template-cancel-button {
+    color: $primary;
+    background-color: #ffff;
+    border: 1px solid $primary;
+    margin: 0;
+
+    &:hover {
+      background-color: $primary;
+      color: #ffff;
+    }
+  }
+
+  .template-confirm-button {
+    color: #ffff;
+    background-color: $primary;
+    border: 1px solid $primary;
+    margin: 0;
+
+    &:hover {
+      background-color: $secondary;
+      color: $primary;
+    }
+  }
 }
 
 :host ::ng-deep .cap-autocomplete.mat-mdc-autocomplete-panel {
