@@ -10,5 +10,8 @@ public class AccountResponseDTO {
     private BigInteger id;
     private String name;
     private BigDecimal initialBalance;
+    private String currencyInitialBalanceCode;
+    private String iconName;
+    private Boolean includeInTotalBalance;
     private BigInteger userId;
 }

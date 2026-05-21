@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { RecurrencePeriodEnum, TransactionModel, TransactionTypeEnum } from '../../../models/transaction.model';
 import { CategorySelectionDialogComponent } from '../category-selection-dialog/category-selection-dialog.component';
 import { CurrencyService } from '../../../services/currency.service';
@@ -10,7 +10,6 @@ import { CategoryModel } from '../../../models/category.model';
 import { CategoryService } from '../../../services/category.service';
 import { AccountService } from '../../../services/account.service';
 import { AccountModel } from '../../../models/account.model';
-import { RefreshService } from '../../../services/refresh.service';
 import { TranslateService } from '@ngx-translate/core';
 import { StorageService } from '../../../auth/storage.service';
 
@@ -41,7 +40,6 @@ export class TransactionFormComponent implements OnInit {
   RecurrencePeriodEnum = RecurrencePeriodEnum;
 
   constructor(
-    private dialogRef: MatDialogRef<TransactionFormComponent>,
     private fb: FormBuilder,
     private dialog: MatDialog,
     protected utils: Utils,
@@ -49,7 +47,6 @@ export class TransactionFormComponent implements OnInit {
     private transactionService: TransactionService,
     private categoryService: CategoryService,
     private accountService: AccountService,
-    private refreshService: RefreshService,
     public translateService: TranslateService
   ) { }
 
@@ -299,10 +296,7 @@ export class TransactionFormComponent implements OnInit {
     if (!payload.isRecurring) payload.recurrenceEndDate = undefined;
     this.transactionService.postTransaction(payload)
       .subscribe(
-        () => {
-          this.refreshService.triggerRefresh();
-          this.dialogRef.close();
-        },
+        tx => this.submitted.emit(tx),
         err => console.error('Save error', err)
       );
   }

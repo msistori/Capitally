@@ -9,5 +9,8 @@ import java.math.BigInteger;
 public class AccountRequestDTO {
     private String name;
     private BigDecimal initialBalance;
+    private String currencyInitialBalanceCode;
+    private String iconName;
+    private Boolean includeInTotalBalance;
     private BigInteger userId;
 }

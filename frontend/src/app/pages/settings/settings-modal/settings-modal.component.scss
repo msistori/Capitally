@@ -193,10 +193,15 @@ $border: rgba(0, 95, 115, 0.18);
   gap: 0.55rem;
   margin-top: 1rem;
   padding: 0;
+
+  &.single-action {
+    grid-template-columns: 1fr;
+  }
 }
 
 .dialog-secondary,
-.dialog-danger {
+.dialog-danger,
+.dialog-primary {
   border-radius: 0.65rem;
   cursor: pointer;
   font: inherit;
@@ -214,6 +219,70 @@ $border: rgba(0, 95, 115, 0.18);
   background: $danger;
   border: 1px solid $danger;
   color: #fff;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+.dialog-primary {
+  background: $primary;
+  border: 1px solid $primary;
+  color: #fff;
+}
+
+.transaction-delete-dialog {
+  mat-dialog-content {
+    display: grid;
+    gap: 0.85rem;
+    text-align: left;
+  }
+}
+
+.scope-grid {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: 1fr 1fr;
+
+  button {
+    background: #fff;
+    border: 1px solid $primary;
+    border-radius: 0.65rem;
+    color: $primary;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+    padding: 0.7rem 0.75rem;
+
+    &.active {
+      background: $primary;
+      color: #fff;
+    }
+  }
+}
+
+.dialog-field {
+  display: grid;
+  gap: 0.4rem;
+
+  span {
+    color: $primary;
+    font-weight: 700;
+  }
+}
+
+.dialog-select {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid $border;
+  border-radius: 0.65rem;
+  box-sizing: border-box;
+  color: $primary;
+  font: inherit;
+  font-weight: 700;
+  min-height: 3rem;
+  padding: 0.75rem 0.9rem;
+  width: 100%;
 }
 
 ::ng-deep .cdk-overlay-pane:has(.currency-panel-class) {
@@ -295,5 +364,9 @@ $border: rgba(0, 95, 115, 0.18);
 
   .template-actions {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .template-actions.single-action {
+    grid-template-columns: 1fr;
   }
 }

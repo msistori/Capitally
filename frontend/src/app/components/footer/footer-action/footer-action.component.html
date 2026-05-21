@@ -1,8 +1,10 @@
 <button
   class="footer-action"
+  [class.active]="active"
   type="button"
   (click)="onClick()"
   [disabled]="disabled"
+  [attr.aria-current]="active ? 'page' : null"
 >
 
   <span class="icon">

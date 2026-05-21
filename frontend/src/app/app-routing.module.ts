@@ -3,11 +3,13 @@ import { Routes, RouterModule } from '@angular/router';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { LoginComponent } from './pages/login/login.component';
 import { authGuard } from './auth/auth.guard';
+import { AccountsComponent } from './pages/accounts/accounts.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: '', component: LoginComponent, pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
+  { path: 'accounts', component: AccountsComponent, canActivate: [authGuard] },
   { path: '**', redirectTo: '' }
 ];
 

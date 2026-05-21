@@ -1,5 +1,6 @@
 import { Component, DestroyRef, TemplateRef, ViewChild, inject } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -13,6 +14,7 @@ import { CategoryService } from 'src/app/services/category.service';
 import { RefreshService } from 'src/app/services/refresh.service';
 import { TransactionService } from 'src/app/services/transaction.service';
 import { CurrencyService } from 'src/app/services/currency.service';
+import { AccountModel } from 'src/app/models/account.model';
 
 type Currency = { code: string; name?: string };
 
@@ -23,17 +25,26 @@ type Currency = { code: string; name?: string };
 })
 export class SettingsModalComponent {
   @ViewChild('confirmDeleteAllTemplate') confirmDeleteAllTemplate!: TemplateRef<any>;
+  @ViewChild('deleteTransactionsTemplate') deleteTransactionsTemplate!: TemplateRef<any>;
+  @ViewChild('accountTransactionsWarningTemplate') accountTransactionsWarningTemplate!: TemplateRef<any>;
 
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
   private storage = inject(StorageService);
 
   ClearTarget = ClearTarget;
+  TransactionDeleteScope = TransactionDeleteScope;
+  readonly userId = Number(this.storage.getUserId() || 1);
 
   currencySearchControl = new FormControl<string>('', { nonNullable: true });
+  transactionDeleteForm = new FormGroup({
+    scope: new FormControl<TransactionDeleteScope>(TransactionDeleteScope.ACCOUNT, { nonNullable: true }),
+    accountId: new FormControl<number | null>(null)
+  });
 
   currencies: Currency[] = [];
   filteredCurrencies: Currency[] = [];
+  accounts: AccountModel[] = [];
 
   readonly availableLanguages = ['it', 'en'];
   currentLang!: string;
@@ -68,6 +79,10 @@ export class SettingsModalComponent {
       this.filteredCurrencies = data;
     });
 
+    this.accountService.getAccounts(this.userId.toString()).subscribe(data => {
+      this.accounts = data.sort((a, b) => a.name.localeCompare(b.name));
+    });
+
     this.currencySearchControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(term => this.filterCurrencies(term));
@@ -78,12 +93,12 @@ export class SettingsModalComponent {
   }
 
   clearAll(target: ClearTarget): void {
-    const configMap: Record<ClearTarget, { title: string; message: string; action: () => Observable<any> }> = {
-      [ClearTarget.TRANSACTIONS]: {
-        title: this.translateService.instant('SETTINGS.TEMPLATE.TRANSACTIONS.TITLE') as string,
-        message: this.translateService.instant('SETTINGS.TEMPLATE.TRANSACTIONS.MESSAGE') as string,
-        action: () => this.transactionService.deleteTransactions()
-      },
+    if (target === ClearTarget.TRANSACTIONS) {
+      this.openDeleteTransactionsDialog();
+      return;
+    }
+
+    const configMap: Record<Exclude<ClearTarget, ClearTarget.TRANSACTIONS>, { title: string; message: string; action: () => Observable<any> }> = {
       [ClearTarget.CATEGORIES]: {
         title: this.translateService.instant('SETTINGS.TEMPLATE.CATEGORIES.TITLE') as string,
         message: this.translateService.instant('SETTINGS.TEMPLATE.CATEGORIES.MESSAGE') as string,
@@ -98,6 +113,65 @@ export class SettingsModalComponent {
 
     const config = configMap[target];
 
+    if (target === ClearTarget.ACCOUNTS) {
+      this.transactionService.getTransactions(this.userId.toString()).subscribe({
+        next: transactions => {
+          const accountIds = new Set(this.accounts.map(account => account.id));
+          const hasAccountTransactions = transactions.some(transaction => accountIds.has(transaction.accountId));
+
+          if (hasAccountTransactions) {
+            this.openAccountTransactionsWarning();
+            return;
+          }
+
+          this.openConfirmDeleteDialog(config);
+        },
+        error: err => console.error(err)
+      });
+      return;
+    }
+
+    this.openConfirmDeleteDialog(config);
+  }
+
+  canConfirmTransactionDeletion(): boolean {
+    return this.transactionDeleteForm.controls.scope.value === TransactionDeleteScope.ALL
+      || this.transactionDeleteForm.controls.accountId.value !== null;
+  }
+
+  setTransactionDeleteScope(scope: TransactionDeleteScope): void {
+    this.transactionDeleteForm.controls.scope.setValue(scope);
+  }
+
+  private openDeleteTransactionsDialog(): void {
+    this.transactionDeleteForm.reset({
+      scope: TransactionDeleteScope.ACCOUNT,
+      accountId: null
+    });
+
+    this.dialog
+      .open(this.deleteTransactionsTemplate, {
+        width: '440px',
+        maxWidth: 'calc(100vw - 2rem)',
+        panelClass: 'delete-dialog-template'
+      })
+      .afterClosed()
+      .subscribe(confirmed => {
+        if (!confirmed || !this.canConfirmTransactionDeletion()) return;
+
+        const value = this.transactionDeleteForm.getRawValue();
+        const accountId = value.scope === TransactionDeleteScope.ACCOUNT
+          ? value.accountId ?? undefined
+          : undefined;
+
+        this.transactionService.deleteTransactions(accountId).subscribe({
+          next: () => this.refreshService.triggerRefresh(),
+          error: err => console.error(err)
+        });
+      });
+  }
+
+  private openConfirmDeleteDialog(config: { title: string; message: string; action: () => Observable<any> }): void {
     this.dialog
       .open(this.confirmDeleteAllTemplate, {
         width: '400px',
@@ -111,9 +185,24 @@ export class SettingsModalComponent {
 
         config.action().subscribe({
           next: () => this.refreshService.triggerRefresh(),
-          error: err => console.error(err)
+          error: err => {
+            if (err instanceof HttpErrorResponse && err.status === 409) {
+              this.openAccountTransactionsWarning();
+              return;
+            }
+
+            console.error(err);
+          }
         });
       });
+  }
+
+  private openAccountTransactionsWarning(): void {
+    this.dialog.open(this.accountTransactionsWarningTemplate, {
+      width: '420px',
+      maxWidth: 'calc(100vw - 2rem)',
+      panelClass: 'delete-dialog-template'
+    });
   }
 
   logout(): void {
@@ -179,4 +268,9 @@ enum ClearTarget {
   TRANSACTIONS = 'TRANSACTIONS',
   CATEGORIES = 'CATEGORIES',
   ACCOUNTS = 'ACCOUNTS'
+}
+
+enum TransactionDeleteScope {
+  ACCOUNT = 'ACCOUNT',
+  ALL = 'ALL'
 }

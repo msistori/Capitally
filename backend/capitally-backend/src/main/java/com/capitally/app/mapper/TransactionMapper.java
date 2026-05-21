@@ -13,7 +13,9 @@ public interface TransactionMapper {
     @Mapping(source = "category.id", target = "categoryId")
     @Mapping(source = "account.id", target = "accountId")
     @Mapping(source = "currency.code", target = "currencyCode")
+    @Mapping(source = "transferCounterpartyAccount.id", target = "transferCounterpartyAccountId")
     TransactionResponseDTO mapTransactionEntityToDTO(TransactionEntity entity);
 
+    @Mapping(target = "transferCounterpartyAccount", ignore = true)
     TransactionEntity mapTransactionDTOToEntity(TransactionRequestDTO requestDTO);
 }

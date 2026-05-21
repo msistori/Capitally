@@ -26,6 +26,7 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { BalanceSummaryComponent } from './components/balance-summary/balance-summary.component';
 import { RecentTransactionsComponent } from './components/recent-transactions/recent-transactions.component';
 import { MonthlySummaryComponent } from './components/monthly-summary/monthly-summary.component';
+import { AnnualIncomeExpenseComponent } from './components/annual-income-expense/annual-income-expense.component';
 import { TransactionsModule } from './components/insert-transaction/transactions.module';
 import { DuplicateCategoryAlertComponent } from './alerts/duplicate-category-alert/duplicate-category-alert.component';
 import { BalanceTrendComponent } from './components/balance-trend/balance-trend.component';
@@ -44,6 +45,7 @@ import { SettingsModule } from './pages/settings/settings.module';
 import { GuestInterceptor } from './interceptors/guest.interceptor';
 import { MockApiInterceptor } from './mocks/mock-api.interceptor';
 import { GuestRestrictionDialogComponent } from './components/guest-restriction-dialog/guest-restriction-dialog.component';
+import { AccountsModule } from './pages/accounts/accounts.module';
 
 registerLocaleData(localeIt);
 registerLocaleData(localeEn);
@@ -58,6 +60,7 @@ const globalRippleConfig: RippleGlobalOptions = { disabled: true };
     BalanceSummaryComponent,
     RecentTransactionsComponent,
     MonthlySummaryComponent,
+    AnnualIncomeExpenseComponent,
     DuplicateCategoryAlertComponent,
     BalanceTrendComponent,
     IncomeExpenseBreakdownComponent,
@@ -89,6 +92,7 @@ const globalRippleConfig: RippleGlobalOptions = { disabled: true };
     NgChartsModule,
     TransactionsModule,
     SettingsModule,
+    AccountsModule,
     MatDialogModule,
     LoadingOverlayComponent
   ],

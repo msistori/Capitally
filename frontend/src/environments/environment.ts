@@ -2,18 +2,20 @@ export const environment = {
   production: false,
   apiBase: '/api',
   mockApi: {
-    enabled: true,
+    enabled: false,
     endpoints: {
       authLogin: true,
       authMe: true,
       dashboardOverview: true,
       dashboardBalanceTrend: true,
       dashboardIncomeExpenseBreakdown: true,
+      dashboardAnnualIncomeExpense: true,
       transactions: true,
       categories: true,
       accounts: true,
       currencies: true,
-      importExport: true
+      importExport: true,
+      transfers: true
     }
   },
   auth: {

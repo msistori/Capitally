@@ -16,13 +16,20 @@ export class AccountService {
     return this.http.get<AccountModel[]>(`${this.apiUrl}`, { params });
   }
 
-  postAccount(account: AccountModel): Observable<AccountModel> {
-    //return this.http.post<TransactionModel>(`${this.apiUrl}`, transaction);
-    console.log(account);
-    return new Observable<AccountModel>;
+  postAccount(account: Partial<AccountModel>): Observable<AccountModel> {
+    return this.http.post<AccountModel>(`${this.apiUrl}`, account);
+  }
+
+  putAccount(accountId: number, account: Partial<AccountModel>): Observable<AccountModel> {
+    return this.http.put<AccountModel>(`${this.apiUrl}/${accountId}`, account);
   }
 
   deleteAccounts() {
     return this.http.delete<void>(`${this.apiUrl}`);
+  }
+
+  deleteAccount(accountId: number): Observable<void> {
+    const params = new HttpParams().set('accountId', accountId);
+    return this.http.delete<void>(`${this.apiUrl}`, { params });
   }
 }

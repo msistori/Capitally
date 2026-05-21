@@ -52,4 +52,10 @@ public class TransactionEntity extends AuditableEntity {
     private TransactionRecurrencePeriodEnum recurrencePeriod;
 
     private LocalDate recurrenceEndDate;
+
+    private String transferGroupId;
+
+    @ManyToOne
+    @JoinColumn(name = "transfer_counterparty_account_id")
+    private AccountEntity transferCounterpartyAccount;
 }

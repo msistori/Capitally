@@ -131,9 +131,71 @@
   "BALANCE": {
     "BALANCE_TITLE": "Total Balance"
   },
+  "ACCOUNTS": {
+    "TITLE": "Accounts",
+    "TOTAL_LABEL": "Total Accounts Balance",
+    "EMPTY": "No accounts yet",
+    "EXCLUDED_BADGE": "Excluded from total balance",
+    "BACK": "Back",
+    "NEW_ACCOUNT": {
+      "TITLE": "New Account",
+      "ACTION": "New Account",
+      "ICON_LABEL": "Select Icon",
+      "NAME": "Account Name",
+      "NAME_PLACEHOLDER": "E.g. Current Account",
+      "INITIAL_BALANCE": "Initial Balance",
+      "CURRENCY": "Currency",
+      "EXCLUDE_TOTAL": "Exclude from total balance",
+      "SAVE": "Save"
+    },
+    "EDIT_ACCOUNT": {
+      "TITLE": "Edit Account",
+      "BALANCES_TITLE": "Total balance by currency",
+      "ADD_CURRENCY": "Add currency",
+      "CURRENCY": "Currency",
+      "TOTAL_BALANCE": "Total balance",
+      "SAVE": "Save",
+      "DELETE": "Delete account"
+    },
+    "DELETE_BLOCKED": {
+      "TITLE": "Account has transactions",
+      "MESSAGE": "This account has transactions. Before deleting it, delete those transactions or move them one by one to another account."
+    },
+    "TRANSFER": {
+      "TITLE": "New Transfer",
+      "SUBTITLE": "Move money between your accounts simply and safely.",
+      "ACTION": "Transfer",
+      "FROM": "From",
+      "TO": "To",
+      "AMOUNT": "Amount",
+      "CURRENCY": "Currency",
+      "DATE": "Date",
+      "DESCRIPTION": "Reason (optional)",
+      "DESCRIPTION_PLACEHOLDER": "E.g. Transfer between accounts",
+      "SAME_ACCOUNT_ERROR": "Choose two different accounts.",
+      "CONFIRM": "Confirm"
+    },
+    "HISTORY": {
+      "TITLE": "Transfer History",
+      "ACTION": "Transfer History",
+      "PERIOD": "Period",
+      "PERIOD_1M": "Last month",
+      "PERIOD_3M": "Last 3 months",
+      "PERIOD_12M": "Last 12 months",
+      "PERIOD_ALL": "All",
+      "FILTERS": "Filters",
+      "EMPTY": "No transfers in the selected period"
+    }
+  },
   "MONTHLY_SUMMARY": {
     "MONTHLY_SUMMARY_TITLE": "Monthly Income / Expense",
     "NO_DATA": "No Monthly Data"
+  },
+  "ANNUAL_INCOME_EXPENSE": {
+    "TITLE": "Yearly Income / Expense",
+    "INCOMES": "Incomes",
+    "EXPENSES": "Expenses",
+    "NO_DATA": "No yearly data"
   },
   "YEARLY_BALANCE_TREND": {
     "MONTH_NAMES": [
@@ -173,7 +235,7 @@
       "DISPLAY_TITLE": "Display"
     },
     "RESET": {
-      "TRANSACTIONS": "Delete all transactions",
+      "TRANSACTIONS": "Delete transactions",
       "CATEGORIES": "Delete all categories",
       "ACCOUNTS": "Delete all accounts"
     },
@@ -190,6 +252,18 @@
         "TITLE": "Confirm account deletion",
         "MESSAGE": "Are you sure you want to delete all your accounts?"
       }
+    },
+    "TRANSACTION_DELETE": {
+      "TITLE": "Delete transactions",
+      "MESSAGE": "Choose whether to delete transactions for a specific account or all transactions.",
+      "SCOPE_LABEL": "Transaction deletion type",
+      "SCOPE_ACCOUNT": "By account",
+      "SCOPE_ALL": "All",
+      "ACCOUNT": "Account"
+    },
+    "ACCOUNT_DELETE_BLOCKED": {
+      "TITLE": "Accounts have transactions",
+      "MESSAGE": "One or more accounts have transactions. Before deleting accounts, delete those transactions or move them one by one to another account."
     },
     "IMPORT_EXPORT": {
       "IMPORT": {

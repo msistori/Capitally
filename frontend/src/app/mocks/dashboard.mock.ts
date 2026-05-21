@@ -39,3 +39,13 @@ export const incomeExpenseBreakdownMock = [
   { transactionType: 'EXPENSE', macroCategory: 'Vizi', currency: 'EUR', total: 5.00 }
 ];
 
+export const annualIncomeExpenseMock = [
+  { month: '2026-01', currency: 'EUR', income: 3100.00, expense: 940.00 },
+  { month: '2026-02', currency: 'EUR', income: 3200.00, expense: 1120.00 },
+  { month: '2026-03', currency: 'EUR', income: 3050.00, expense: 860.00 },
+  { month: '2026-04', currency: 'EUR', income: 3400.00, expense: 1280.00 },
+  { month: '2026-05', currency: 'EUR', income: 3800.00, expense: 175.00 },
+  { month: '2026-01', currency: 'USD', income: 150.00, expense: 25.00 },
+  { month: '2026-02', currency: 'USD', income: 0.00, expense: 75.00 },
+  { month: '2026-03', currency: 'USD', income: 200.00, expense: 40.00 }
+];

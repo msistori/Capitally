@@ -11,8 +11,13 @@ export class TransactionService {
 
   constructor(private http: HttpClient) {}
 
-  getTransactions(userId: string): Observable<TransactionModel[]> {
-    const params = new HttpParams().set('userId', userId);
+  getTransactions(userId: string, accountId?: number): Observable<TransactionModel[]> {
+    let params = new HttpParams().set('userId', userId);
+
+    if (accountId !== undefined) {
+      params = params.set('accountId', accountId);
+    }
+
     return this.http.get<TransactionModel[]>(`${this.apiUrl}`, { params });
   }
 
@@ -20,7 +25,13 @@ export class TransactionService {
     return this.http.post<TransactionModel>(`${this.apiUrl}`, transaction);
   }
 
-  deleteTransactions() {
-    return this.http.delete<void>(`${this.apiUrl}`);
+  deleteTransactions(accountId?: number) {
+    let params = new HttpParams();
+
+    if (accountId !== undefined) {
+      params = params.set('accountId', accountId);
+    }
+
+    return this.http.delete<void>(`${this.apiUrl}`, { params });
   }
 }

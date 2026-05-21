@@ -51,7 +51,7 @@ $primary: #005f73;
   }
   
   &:active { transform: translateY(1px); }
-  &:hover { background: rgba(255,255,255,0.03); }
+  &:hover .icon { box-shadow: 0 0 18px rgba(79, 209, 197, 0.58); }
 }
 
 @media (min-width: 1024px) {
@@ -99,9 +99,6 @@ $primary: #005f73;
     white-space: nowrap;
     border-radius: 0;
     
-    /* Indicatore pagina attiva (opzionale - aggiungi classe .active alla voce corrente) */
-    border-left: 4px solid transparent;
-    
     transition: all 0.3s ease;
   }
   
@@ -131,9 +128,8 @@ $primary: #005f73;
     color: #ffffff;
   }
 
-  .footer:hover ::ng-deep .footer-action.active {
-    background: rgba(79, 209, 197, 0.15);
-    border-left-color: #4FD1C5;
+  .footer:hover ::ng-deep .footer-action.active .icon {
+    box-shadow: 0 0 18px rgba(79, 209, 197, 0.72);
   }
   
   .footer::before {

@@ -34,7 +34,14 @@ export class RecentTransactionsComponent implements OnInit, OnDestroy {
   private loadTransactions(): void {
     this.transactionService.getTransactions(this.userId).subscribe(res => {
       this.transactions = res
+        .filter(transaction => !this.isTransferTransaction(transaction))
         .slice(0, 5);
     });
+  }
+
+  private isTransferTransaction(transaction: TransactionModel): boolean {
+    const transferGroupId = transaction.transferGroupId?.trim();
+    return Boolean(transaction.transferCounterpartyAccountId)
+      || Boolean(transferGroupId?.startsWith('TRF-'));
   }
 }

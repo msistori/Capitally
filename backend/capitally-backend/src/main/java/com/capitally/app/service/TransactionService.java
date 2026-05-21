@@ -5,6 +5,7 @@ import com.capitally.app.core.repository.*;
 import com.capitally.app.mapper.TransactionMapper;
 import com.capitally.app.model.request.TransactionRequestDTO;
 import com.capitally.app.model.response.TransactionResponseDTO;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
@@ -35,10 +36,17 @@ public class TransactionService {
 
         TransactionEntity transactionEntity = transactionMapper.mapTransactionDTOToEntity(input);
 
-        transactionEntity.setCategory(categoryRepository.getReferenceById(input.getCategoryId()));
+        if (input.getCategoryId() != null) {
+            transactionEntity.setCategory(categoryRepository.getReferenceById(input.getCategoryId()));
+        }
         transactionEntity.setAccount(accountRepository.getReferenceById(input.getAccountId()));
         transactionEntity.setUser(userRepository.getReferenceById(input.getUserId()));
         transactionEntity.setCurrency(currencyRepository.getReferenceById(input.getCurrencyCode()));
+        if (input.getTransferCounterpartyAccountId() != null) {
+            transactionEntity.setTransferCounterpartyAccount(
+                    accountRepository.getReferenceById(input.getTransferCounterpartyAccountId())
+            );
+        }
 
         return transactionMapper.mapTransactionEntityToDTO(transactionRepository.save(transactionEntity));
     }
@@ -77,7 +85,11 @@ public class TransactionService {
             }
         } else {
             Specification<TransactionEntity> spec = buildSpecification(userId, accountId, categoryId, startDate, endDate, minAmount, maxAmount);
-            transactionRepository.delete(spec);
+            List<TransactionEntity> transactionsToDelete = transactionRepository.findAll(spec);
+
+            if (!transactionsToDelete.isEmpty()) {
+                transactionRepository.deleteAllInBatch(transactionsToDelete);
+            }
         }
     }
 
@@ -88,7 +100,10 @@ public class TransactionService {
             List<Predicate> predicates = new ArrayList<>();
 
             addIfNotNull(predicates, userId, () -> cb.equal(root.get("user").get("id"), userId));
-            addIfNotNull(predicates, accountId, () -> cb.equal(root.get("account").get("id"), accountId));
+            addIfNotNull(predicates, accountId, () -> cb.or(
+                    cb.equal(root.get("account").get("id"), accountId),
+                    cb.equal(root.join("transferCounterpartyAccount", JoinType.LEFT).get("id"), accountId)
+            ));
             addIfNotNull(predicates, categoryId, () -> cb.equal(root.get("category").get("id"), categoryId));
             addIfNotNull(predicates, startDate, () -> cb.greaterThanOrEqualTo(root.get("date"), startDate));
             addIfNotNull(predicates, endDate, () -> cb.lessThanOrEqualTo(root.get("date"), endDate));
