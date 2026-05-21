@@ -1,6 +1,13 @@
 server:
   forward-headers-strategy: framework
 
+spring:
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
 capitally:
   app:
     base-url: ${CAPITALLY_APP_BASE_URL}
@@ -12,3 +19,8 @@ capitally:
       redirect-uri: ${capitally.app.base-url}/login/oauth2/code/capitally
       post-logout-uri: ${capitally.app.base-url}/
       scopes: openid,profile,email,offline_access
+
+logging:
+  level:
+    org.hibernate.SQL: WARN
+    org.hibernate.orm.jdbc.bind: WARN

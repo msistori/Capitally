@@ -24,7 +24,11 @@ CREATE TABLE t_account (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     initial_balance DECIMAL(15,2) DEFAULT 0.00,
-    currency VARCHAR(3) REFERENCES currencies(code),
+    currency_initial_balance VARCHAR(3) REFERENCES t_currency(code),
+    icon_name VARCHAR(80) DEFAULT 'account_balance_wallet',
+    include_in_total_balance BOOLEAN DEFAULT TRUE,
+    CONSTRAINT chk_account_currency_initial_balance_requires_balance
+        CHECK (initial_balance IS NOT NULL OR currency_initial_balance IS NULL),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -60,6 +64,8 @@ CREATE TABLE t_transaction (
     recurrence_period VARCHAR(20),
     recurrence_interval INTEGER,
     recurrence_end_date DATE,
+    transfer_group_id VARCHAR(36),
+    transfer_counterparty_account_id INTEGER REFERENCES accounts(id) ON DELETE SET NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

@@ -87,6 +87,49 @@
   </button>
 </div>
 
+<ng-template #deleteTransactionsTemplate>
+  <div class="confirm-dialog transaction-delete-dialog" [formGroup]="transactionDeleteForm">
+    <h2 mat-dialog-title>{{ 'SETTINGS.TRANSACTION_DELETE.TITLE' | translate }}</h2>
+
+    <mat-dialog-content>
+      <p>{{ 'SETTINGS.TRANSACTION_DELETE.MESSAGE' | translate }}</p>
+
+      <div class="scope-grid" role="group" [attr.aria-label]="'SETTINGS.TRANSACTION_DELETE.SCOPE_LABEL' | translate">
+        <button
+          type="button"
+          [class.active]="transactionDeleteForm.controls.scope.value === TransactionDeleteScope.ACCOUNT"
+          (click)="setTransactionDeleteScope(TransactionDeleteScope.ACCOUNT)">
+          {{ 'SETTINGS.TRANSACTION_DELETE.SCOPE_ACCOUNT' | translate }}
+        </button>
+        <button
+          type="button"
+          [class.active]="transactionDeleteForm.controls.scope.value === TransactionDeleteScope.ALL"
+          (click)="setTransactionDeleteScope(TransactionDeleteScope.ALL)">
+          {{ 'SETTINGS.TRANSACTION_DELETE.SCOPE_ALL' | translate }}
+        </button>
+      </div>
+
+      <label class="dialog-field" *ngIf="transactionDeleteForm.controls.scope.value === TransactionDeleteScope.ACCOUNT">
+        <span>{{ 'SETTINGS.TRANSACTION_DELETE.ACCOUNT' | translate }}</span>
+        <mat-select class="dialog-select" formControlName="accountId" panelClass="currency-panel-class">
+          <mat-option *ngFor="let account of accounts" [value]="account.id">
+            {{ account.name }}
+          </mat-option>
+        </mat-select>
+      </label>
+
+      <p class="warning-copy">{{ 'UNDONE_OPERATION' | translate }}</p>
+    </mat-dialog-content>
+
+    <mat-dialog-actions class="template-actions">
+      <button class="dialog-secondary" type="button" [mat-dialog-close]="false">{{ 'BUTTON_CANCEL' | translate }}</button>
+      <button class="dialog-danger" type="button" [disabled]="!canConfirmTransactionDeletion()" [mat-dialog-close]="true" cdkFocusInitial>
+        {{ 'BUTTON_DELETE' | translate }}
+      </button>
+    </mat-dialog-actions>
+  </div>
+</ng-template>
+
 <ng-template #confirmDeleteAllTemplate let-data>
   <div class="confirm-dialog">
     <h2 mat-dialog-title>{{ data.title }}</h2>
@@ -100,6 +143,22 @@
       <button class="dialog-secondary" type="button" [mat-dialog-close]="false">{{ 'BUTTON_CANCEL' | translate }}</button>
       <button class="dialog-danger" type="button" [mat-dialog-close]="true" cdkFocusInitial>
         {{ 'BUTTON_DELETE' | translate }}
+      </button>
+    </mat-dialog-actions>
+  </div>
+</ng-template>
+
+<ng-template #accountTransactionsWarningTemplate>
+  <div class="confirm-dialog">
+    <h2 mat-dialog-title>{{ 'SETTINGS.ACCOUNT_DELETE_BLOCKED.TITLE' | translate }}</h2>
+
+    <mat-dialog-content>
+      <p>{{ 'SETTINGS.ACCOUNT_DELETE_BLOCKED.MESSAGE' | translate }}</p>
+    </mat-dialog-content>
+
+    <mat-dialog-actions class="template-actions single-action">
+      <button class="dialog-primary" type="button" mat-dialog-close cdkFocusInitial>
+        {{ 'BUTTON_CLOSE' | translate }}
       </button>
     </mat-dialog-actions>
   </div>

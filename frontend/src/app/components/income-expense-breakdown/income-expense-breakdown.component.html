@@ -32,7 +32,7 @@
         <li class="row" *ngFor="let c of vm().INCOME?.categories">
           <span class="cat">{{ c.macroCategory }}</span>
           <span class="val">
-            {{ c.total | number:'1.0-2' }} {{ defaultCurrency }}
+            {{ c.total | number:'1.0-2' }} {{ c.currency }}
             <small class="pct">{{ c.percent | number:'1.0-0' }}%</small>
           </span>
         </li>
@@ -56,7 +56,7 @@
         <li class="row" *ngFor="let c of vm().EXPENSE?.categories">
           <span class="cat">{{ c.macroCategory }}</span>
           <span class="val">
-            {{ c.total | number:'1.2-2' }} {{ defaultCurrency }}
+            {{ c.total | number:'1.2-2' }} {{ c.currency }}
             <small class="pct">{{ c.percent | number:'1.0-0' }}%</small>
           </span>
         </li>

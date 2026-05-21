@@ -3,13 +3,15 @@ export interface TransactionModel {
   accountId: number;
   amount: number;
   currencyCode: string;
-  date: Date;
+  date: Date | string;
   description?: string;
-  categoryId: number;
+  categoryId?: number | null;
   transactionType: TransactionTypeEnum;
   isRecurring?: boolean;
   recurrencePeriod?: RecurrencePeriodEnum;
-  recurrenceEndDate?: Date;
+  recurrenceEndDate?: Date | string;
+  transferGroupId?: string;
+  transferCounterpartyAccountId?: number;
 }
 
 

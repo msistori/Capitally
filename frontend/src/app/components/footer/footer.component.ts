@@ -5,6 +5,7 @@ import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { TransactionModel } from 'src/app/models/transaction.model';
 import { AddTransactionModalComponent } from '../insert-transaction/add-transaction-modal/add-transaction-modal.component';
 import { SettingsModalComponent } from './../../pages/settings/settings-modal/settings-modal.component';
+import { RefreshService } from 'src/app/services/refresh.service';
 
 @Component({
   selector: 'app-footer',
@@ -18,7 +19,11 @@ export class FooterComponent {
   private router = inject(Router);
   private storage = inject(StorageService);
 
-  constructor(private transactionDialog: MatDialog, private settingsDialog: MatDialog) { }
+  constructor(
+    private transactionDialog: MatDialog,
+    private settingsDialog: MatDialog,
+    private refreshService: RefreshService
+  ) { }
 
   get showFab(): boolean {
     const token = this.storage.getAccessToken();
@@ -33,7 +38,7 @@ export class FooterComponent {
   }
 
   goToAccounts(): void {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(['/accounts']);
   }
 
   goToSummary(): void {
@@ -56,7 +61,7 @@ export class FooterComponent {
   }
 
   get settingsDialogOpen(): boolean {
-    return !!this.dialogTransactionModal;
+    return !!this.dialogSettingsModal;
   }
 
   openTransactionModal() {
@@ -71,10 +76,17 @@ export class FooterComponent {
 
     this.dialogTransactionModal.afterClosed().subscribe((tx) => {
       this.dialogTransactionModal = undefined;
+      if (tx) {
+        this.refreshService.triggerRefresh();
+      }
     });
   }
 
   get transactionDialogOpen(): boolean {
     return !!this.dialogTransactionModal;
+  }
+
+  isRoute(path: string): boolean {
+    return this.router.url.startsWith(path);
   }
 }

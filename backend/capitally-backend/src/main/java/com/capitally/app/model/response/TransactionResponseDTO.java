@@ -22,4 +22,6 @@ public class TransactionResponseDTO {
     private Boolean isRecurring;
     private TransactionRecurrencePeriodEnum recurrencePeriod;
     private LocalDate recurrenceEndDate;
+    private String transferGroupId;
+    private BigInteger transferCounterpartyAccountId;
 }

@@ -5,6 +5,12 @@
   background: none;
   border: none;
   cursor: pointer;
+
+  &.active .icon {
+    background: radial-gradient(circle at center, #0d3340 0%, #005f73 58%, rgba(79, 209, 197, 0.7) 100%);
+    box-shadow: 0 0 18px rgba(79, 209, 197, 0.72);
+    color: #ffffff;
+  }
 }
 
 /* Icona FAB */
@@ -47,6 +53,11 @@
     //border: 2px solid rgba(255, 255, 255, 0.3);
     box-shadow: none;
   }
+
+  .footer-action.active .icon {
+    color: #ffffff;
+    text-shadow: 0 0 12px rgba(79, 209, 197, 0.9);
+  }
 }
 
 /* ---------------- DESKTOP ---------------- */
@@ -60,9 +71,9 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   }
 
-  .footer-action:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 999px;
+  .footer-action:hover .icon {
+    box-shadow: 0 0 18px rgba(79, 209, 197, 0.58);
+    color: #ffffff;
   }
 
   .label {

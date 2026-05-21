@@ -48,12 +48,17 @@ public class DashboardService {
     }
 
     public List<CurrentBalanceResponseDTO> getCurrentBalancePerCurrency(BigInteger userId) {
-        List<AccountEntity> userAccounts = accountRepository.findByUserId(userId);
+        List<AccountEntity> userAccounts = accountRepository.findByUserId(userId).stream()
+                .filter(this::isIncludedInTotalBalance)
+                .toList();
 
         Map<String, BigDecimal> balancePerCurrency = new HashMap<>();
 
         for (AccountEntity account : userAccounts) {
             BigDecimal initialBalance = Optional.ofNullable(account.getInitialBalance()).orElse(BigDecimal.ZERO);
+            Optional.ofNullable(account.getCurrencyInitialBalance())
+                    .map(currency -> currency.getCode())
+                    .ifPresent(currency -> balancePerCurrency.merge(currency, initialBalance, BigDecimal::add));
 
             Map<String, BigDecimal> transactionSumsByCurrency = transactionRepository.findAllByAccountId(account.getId()).stream()
                     .collect(Collectors.groupingBy(
@@ -66,8 +71,7 @@ public class DashboardService {
 
             for (Map.Entry<String, BigDecimal> entry : transactionSumsByCurrency.entrySet()) {
                 String currency = entry.getKey();
-                BigDecimal total = initialBalance.add(entry.getValue());
-                balancePerCurrency.merge(currency, total, BigDecimal::add);
+                balancePerCurrency.merge(currency, entry.getValue(), BigDecimal::add);
             }
         }
 
@@ -77,7 +81,9 @@ public class DashboardService {
     }
 
     public List<BalanceTrendPerCurrencyResponseDTO> getBalanceTrendPerCurrency(BigInteger userId, LocalDate startDate, LocalDate endDate) {
-        List<AccountEntity> userAccounts = accountRepository.findByUserId(userId);
+        List<AccountEntity> userAccounts = accountRepository.findByUserId(userId).stream()
+                .filter(this::isIncludedInTotalBalance)
+                .toList();
 
         Map<String, Map<String, BigDecimal>> monthlyCurrencyMovements = new TreeMap<>();
 
@@ -88,28 +94,25 @@ public class DashboardService {
 
             List<TransactionEntity> transactions = transactionRepository.findAllByAccountId(account.getId());
 
-            Map<String, List<TransactionEntity>> byCurrency = transactions.stream()
-                    .collect(Collectors.groupingBy(t -> t.getCurrency().getCode()));
+            Optional.ofNullable(account.getCurrencyInitialBalance())
+                    .map(currency -> currency.getCode())
+                    .ifPresent(currency -> monthlyCurrencyMovements
+                            .computeIfAbsent(creationMonth, m -> new HashMap<>())
+                            .merge(currency, initialBalance, BigDecimal::add));
 
-            for (Map.Entry<String, List<TransactionEntity>> entry : byCurrency.entrySet()) {
-                String currency = entry.getKey();
+            for (TransactionEntity t : transactions) {
+                LocalDate date = t.getDate();
+                if (date == null || date.isBefore(startDate) || date.isAfter(endDate)) continue;
+
+                String currency = t.getCurrency().getCode();
+                String month = YearMonth.from(date).toString();
+                BigDecimal signedAmount = TransactionTypeEnum.EXPENSE.equals(t.getTransactionType())
+                        ? t.getAmount().negate()
+                        : t.getAmount();
+
                 monthlyCurrencyMovements
-                        .computeIfAbsent(creationMonth, m -> new HashMap<>())
-                        .merge(currency, initialBalance, BigDecimal::add);
-
-                for (TransactionEntity t : entry.getValue()) {
-                    LocalDate date = t.getDate();
-                    if (date == null || date.isBefore(startDate) || date.isAfter(endDate)) continue;
-
-                    String month = YearMonth.from(date).toString();
-                    BigDecimal signedAmount = TransactionTypeEnum.EXPENSE.equals(t.getTransactionType())
-                            ? t.getAmount().negate()
-                            : t.getAmount();
-
-                    monthlyCurrencyMovements
-                            .computeIfAbsent(month, m -> new HashMap<>())
-                            .merge(currency, signedAmount, BigDecimal::add);
-                }
+                        .computeIfAbsent(month, m -> new HashMap<>())
+                        .merge(currency, signedAmount, BigDecimal::add);
             }
         }
 
@@ -162,6 +165,8 @@ public class DashboardService {
         Map<TransactionTypeEnum, Map<String, Map<String, BigDecimal>>> totals = new EnumMap<>(TransactionTypeEnum.class);
 
         for (TransactionEntity t : txs) {
+            if (isTransfer(t)) continue;
+
             TransactionTypeEnum type = t.getTransactionType();
             if (transactionType != null && type != transactionType) continue;
 
@@ -189,6 +194,40 @@ public class DashboardService {
                         .comparing(IncomeExpenseBreakdownResponseDTO::getTransactionType)
                         .thenComparing(IncomeExpenseBreakdownResponseDTO::getMacroCategory)
                         .thenComparing(IncomeExpenseBreakdownResponseDTO::getCurrency))
+                .toList();
+    }
+
+    public List<AnnualIncomeExpenseResponseDTO> getAnnualIncomeExpense(
+            BigInteger userId,
+            LocalDate startDate,
+            LocalDate endDate) {
+
+        List<TransactionEntity> transactions = transactionRepository.findByUserIdAndDateBetween(userId, startDate, endDate);
+        Map<String, AnnualIncomeExpenseResponseDTO> totalsByMonthAndCurrency = new TreeMap<>();
+
+        for (TransactionEntity tx : transactions) {
+            if (isTransfer(tx) || tx.getDate() == null || tx.getCurrency() == null) continue;
+
+            String month = YearMonth.from(tx.getDate()).toString();
+            String currency = tx.getCurrency().getCode();
+            String key = month + "|" + currency;
+            BigDecimal amount = Optional.ofNullable(tx.getAmount()).orElse(BigDecimal.ZERO);
+
+            AnnualIncomeExpenseResponseDTO row = totalsByMonthAndCurrency.computeIfAbsent(
+                    key,
+                    ignored -> new AnnualIncomeExpenseResponseDTO(month, currency, BigDecimal.ZERO, BigDecimal.ZERO)
+            );
+
+            switch (tx.getTransactionType()) {
+                case INCOME -> row.setIncome(row.getIncome().add(amount));
+                case EXPENSE -> row.setExpense(row.getExpense().add(amount));
+            }
+        }
+
+        return totalsByMonthAndCurrency.values().stream()
+                .sorted(Comparator
+                        .comparing(AnnualIncomeExpenseResponseDTO::getMonth)
+                        .thenComparing(AnnualIncomeExpenseResponseDTO::getCurrency))
                 .toList();
     }
 
@@ -248,6 +287,8 @@ public class DashboardService {
         Map<String, BigDecimal> totalExpense = new HashMap<>();
 
         for (TransactionEntity tx : transactions) {
+            if (isTransfer(tx)) continue;
+
             Map<String, BigDecimal> target = switch (tx.getTransactionType()) {
                 case INCOME -> totalIncome;
                 case EXPENSE -> totalExpense;
@@ -263,6 +304,14 @@ public class DashboardService {
                 totalExpense,
                 recurringCount
         );
+    }
+
+    private boolean isIncludedInTotalBalance(AccountEntity account) {
+        return !Boolean.FALSE.equals(account.getIncludeInTotalBalance());
+    }
+
+    private boolean isTransfer(TransactionEntity transaction) {
+        return transaction.getTransferGroupId() != null && !transaction.getTransferGroupId().isBlank();
     }
 
 }

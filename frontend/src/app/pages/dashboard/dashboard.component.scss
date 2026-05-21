@@ -10,7 +10,7 @@
   /* background moved to global body::before */
 
   app-balance-summary,
-  app-monthly-summary {
+  app-annual-income-expense {
     flex-shrink: 0;
   }
 
@@ -46,11 +46,12 @@
     align-items: center;
   }
 
-  .dashboard-container app-monthly-summary {
+  .dashboard-container app-annual-income-expense {
     grid-column: 7 / -1;
     grid-row: 1;
     min-height: 0;
-    overflow: auto;
+    height: 100%;
+    overflow: hidden;
   }
 
   .dashboard-container app-recent-transactions {

@@ -82,6 +82,20 @@ public class DashboardController {
         return dashboardService.getIncomeExpenseBreakdown(userId, startDate, endDate, transactionType);
     }
 
+    @Operation(summary = "Returns monthly income and expense totals by currency for the specified period.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved monthly income and expense totals"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/annual-income-expense")
+    public List<AnnualIncomeExpenseResponseDTO> getAnnualIncomeExpense(
+            @RequestParam BigInteger userId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        return dashboardService.getAnnualIncomeExpense(userId, startDate, endDate);
+    }
+
 
     @Operation(summary = "Returns upcoming recurring transactions scheduled until the given date.")
     @ApiResponses(value = {

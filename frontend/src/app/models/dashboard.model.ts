@@ -24,6 +24,13 @@ export interface IncomeExpenseBreakdownResponseDTO {
   total: number;
 }
 
+export interface AnnualIncomeExpenseResponseDTO {
+  month: string;
+  currency: string;
+  income: number;
+  expense: number;
+}
+
 export interface BalanceTrendPerCurrencyResponseDTO {
   currencyCode: string;
   trend: { month: string; cumulativeBalance: number }[];

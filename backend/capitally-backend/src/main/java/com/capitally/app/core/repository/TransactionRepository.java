@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,4 +25,12 @@ public interface TransactionRepository extends JpaRepository<TransactionEntity, 
     List<TransactionEntity> findByUser_IdAndCategory_Id(BigInteger userId, BigInteger categoryId);
 
     List<TransactionEntity> findByUser_IdAndAccount_Name(BigInteger userId, String accountName);
+
+    List<TransactionEntity> findByUser_IdAndTransferGroupIdIsNotNull(BigInteger userId);
+
+    boolean existsByUser_IdAndAccount_Id(BigInteger userId, BigInteger accountId);
+
+    boolean existsByUser_IdAndAccount_IdIn(BigInteger userId, Collection<BigInteger> accountIds);
+
+    boolean existsByUser_IdAndTransferCounterpartyAccount_IdIn(BigInteger userId, Collection<BigInteger> accountIds);
 }

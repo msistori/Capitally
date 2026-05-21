@@ -1,8 +1,7 @@
 package com.capitally.app.service;
 
 import com.capitally.app.core.entity.AccountEntity;
-import com.capitally.app.core.entity.CategoryEntity;
-import com.capitally.app.core.entity.TransactionEntity;
+import com.capitally.app.core.entity.CurrencyEntity;
 import com.capitally.app.core.repository.AccountRepository;
 import com.capitally.app.core.repository.TransactionRepository;
 import com.capitally.app.mapper.AccountMapper;
@@ -10,9 +9,11 @@ import com.capitally.app.model.request.AccountRequestDTO;
 import com.capitally.app.model.response.AccountResponseDTO;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -36,6 +37,9 @@ public class AccountService {
 
     public AccountResponseDTO postAccount(AccountRequestDTO input) {
         AccountEntity entity = accountMapper.mapAccountDTOToEntity(input);
+        entity.setCurrencyInitialBalance(buildInitialBalanceCurrency(input.getCurrencyInitialBalanceCode()));
+        normalizeInitialBalanceCurrency(entity);
+        normalizeAccountDetails(entity);
         return accountMapper.mapAccountEntityToDTO(accountRepository.save(entity));
     }
 
@@ -62,6 +66,11 @@ public class AccountService {
 
         existing.setName(dto.getName());
         existing.setInitialBalance(dto.getInitialBalance());
+        existing.setIconName(dto.getIconName());
+        existing.setIncludeInTotalBalance(dto.getIncludeInTotalBalance());
+        existing.setCurrencyInitialBalance(buildInitialBalanceCurrency(dto.getCurrencyInitialBalanceCode()));
+        normalizeInitialBalanceCurrency(existing);
+        normalizeAccountDetails(existing);
 
         return accountMapper.mapAccountEntityToDTO(accountRepository.save(existing));
     }
@@ -70,7 +79,7 @@ public class AccountService {
         if(accountId != null) {
             Optional<AccountEntity> accountToDelete = accountRepository.findByIdAndUser_Id(accountId, userId);
             if(accountToDelete.isPresent()) {
-                moveTransactionsFromAccountsToDefault(userId, accountToDelete.get());
+                ensureAccountsHaveNoTransactions(userId, List.of(accountId));
                 accountRepository.deleteById(accountId);
             }
         } else {
@@ -82,8 +91,10 @@ public class AccountService {
             List<AccountEntity> accountsToDelete = accountRepository.findAll(spec);
 
             if(!CollectionUtils.isEmpty(accountsToDelete)) {
-                accountsToDelete.forEach(a -> moveTransactionsFromAccountsToDefault(userId, a));
-
+                ensureAccountsHaveNoTransactions(
+                        userId,
+                        accountsToDelete.stream().map(AccountEntity::getId).toList()
+                );
                 accountRepository.delete(spec);
             }
         }
@@ -107,19 +118,43 @@ public class AccountService {
         };
     }
 
-    private void moveTransactionsFromAccountsToDefault(BigInteger userId, AccountEntity accountEntity) {
-        AccountEntity defaultAccount = accountRepository.findByNameAndUser_Id(DEFAULT_ACCOUNT, userId)
-                .orElse(null);
+    private void normalizeInitialBalanceCurrency(AccountEntity entity) {
+        if (entity.getInitialBalance() == null) {
+            entity.setCurrencyInitialBalance(null);
+        }
+    }
 
-        if (defaultAccount == null) {
-            return ;
+    private void normalizeAccountDetails(AccountEntity entity) {
+        if (entity.getIconName() == null || entity.getIconName().isBlank()) {
+            entity.setIconName("account_balance_wallet");
         }
 
-        List<TransactionEntity> transactions =
-                transactionRepository.findByUser_IdAndAccount_Name(userId, accountEntity.getName());
+        if (entity.getIncludeInTotalBalance() == null) {
+            entity.setIncludeInTotalBalance(true);
+        }
+    }
 
-        transactions.forEach(t -> t.setAccount(defaultAccount));
+    private CurrencyEntity buildInitialBalanceCurrency(String currencyInitialBalanceCode) {
+        if (currencyInitialBalanceCode == null || currencyInitialBalanceCode.isBlank()) {
+            return null;
+        }
 
-        transactionRepository.saveAll(transactions);
+        return CurrencyEntity.builder()
+                .code(currencyInitialBalanceCode)
+                .build();
+    }
+
+    private void ensureAccountsHaveNoTransactions(BigInteger userId, List<BigInteger> accountIds) {
+        if (CollectionUtils.isEmpty(accountIds)) {
+            return;
+        }
+
+        if (transactionRepository.existsByUser_IdAndAccount_IdIn(userId, accountIds)
+                || transactionRepository.existsByUser_IdAndTransferCounterpartyAccount_IdIn(userId, accountIds)) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Accounts with transactions cannot be deleted"
+            );
+        }
     }
 }

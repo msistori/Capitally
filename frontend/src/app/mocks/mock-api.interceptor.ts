@@ -21,6 +21,7 @@ import {
 import { categoriesMock } from './categories.mock';
 import { currenciesMock } from './currencies.mock';
 import {
+  annualIncomeExpenseMock,
   balanceTrendMock,
   dashboardOverviewMock,
   incomeExpenseBreakdownMock
@@ -28,6 +29,7 @@ import {
 import { importTransactionsMock } from './import-export.mock';
 import { MockApiConfig, MockEndpointKey } from './mock-api.types';
 import { transactionsMock } from './transactions.mock';
+import { transfersMock } from './transfers.mock';
 
 @Injectable()
 export class MockApiInterceptor implements HttpInterceptor {
@@ -65,6 +67,10 @@ export class MockApiInterceptor implements HttpInterceptor {
       return this.json(incomeExpenseBreakdownMock);
     }
 
+    if (req.method === 'GET' && path === '/dashboard/annual-income-expense' && this.isEndpointEnabled(config, 'dashboardAnnualIncomeExpense')) {
+      return this.json(annualIncomeExpenseMock);
+    }
+
     if (path === '/transaction' && this.isEndpointEnabled(config, 'transactions')) {
       return this.handleTransactions(req);
     }
@@ -73,8 +79,12 @@ export class MockApiInterceptor implements HttpInterceptor {
       return this.handleCategories(req);
     }
 
-    if (path === '/account' && this.isEndpointEnabled(config, 'accounts')) {
-      return this.handleAccounts(req);
+    if ((path === '/account' || path.startsWith('/account/')) && this.isEndpointEnabled(config, 'accounts')) {
+      return this.handleAccounts(req, path);
+    }
+
+    if ((path === '/transfer' || path === '/api/transfer') && this.isEndpointEnabled(config, 'transfers')) {
+      return this.handleTransfers(req);
     }
 
     if (req.method === 'GET' && path === '/currency' && this.isEndpointEnabled(config, 'currencies')) {
@@ -104,7 +114,18 @@ export class MockApiInterceptor implements HttpInterceptor {
 
   private handleTransactions(req: HttpRequest<any>): HttpResponse<any> | null {
     if (req.method === 'GET') {
-      return this.json(transactionsMock);
+      const userId = Number(req.params.get('userId'));
+      const accountId = Number(req.params.get('accountId'));
+      const transactions = transactionsMock.filter(transaction => {
+        const item = transaction as any;
+        const matchesUser = !userId || Number(transaction.userId) === userId;
+        const matchesAccount = !accountId
+          || Number(item.accountId) === accountId
+          || Number(item.transferCounterpartyAccountId) === accountId;
+        return matchesUser && matchesAccount;
+      });
+
+      return this.json(transactions);
     }
 
     if (req.method === 'POST') {
@@ -112,6 +133,18 @@ export class MockApiInterceptor implements HttpInterceptor {
     }
 
     if (req.method === 'DELETE') {
+      const accountId = Number(req.params.get('accountId'));
+
+      for (let index = transactionsMock.length - 1; index >= 0; index--) {
+        const transaction = transactionsMock[index] as any;
+
+        if (!accountId
+          || Number(transaction.accountId) === accountId
+          || Number(transaction.transferCounterpartyAccountId) === accountId) {
+          transactionsMock.splice(index, 1);
+        }
+      }
+
       return this.json(null);
     }
 
@@ -138,17 +171,62 @@ export class MockApiInterceptor implements HttpInterceptor {
     return null;
   }
 
-  private handleAccounts(req: HttpRequest<any>): HttpResponse<any> | null {
+  private handleAccounts(req: HttpRequest<any>, path: string): HttpResponse<any> | null {
     if (req.method === 'GET') {
       return this.json(accountsMock);
     }
 
     if (req.method === 'POST') {
-      return this.json({ id: Date.now(), ...req.body });
+      const account = { id: Date.now(), ...req.body };
+      accountsMock.push(account);
+      return this.json(account);
+    }
+
+    if (req.method === 'PUT') {
+      const id = Number(path.split('/').pop());
+      const index = accountsMock.findIndex(account => account.id === id);
+      const updated = { ...(accountsMock[index] ?? { id }), ...req.body, id };
+
+      if (index >= 0) {
+        accountsMock[index] = updated;
+      }
+
+      return this.json(updated);
     }
 
     if (req.method === 'DELETE') {
+      const accountId = Number(req.params.get('accountId'));
+      const index = accountsMock.findIndex(account => account.id === accountId);
+
+      if (index >= 0) {
+        accountsMock.splice(index, 1);
+      }
+
       return this.json(null);
+    }
+
+    return null;
+  }
+
+  private handleTransfers(req: HttpRequest<any>): HttpResponse<any> | null {
+    if (req.method === 'GET') {
+      return this.json(transfersMock);
+    }
+
+    if (req.method === 'POST') {
+      const source = accountsMock.find(account => account.id === Number(req.body?.sourceAccountId));
+      const destination = accountsMock.find(account => account.id === Number(req.body?.destinationAccountId));
+
+      return this.json({
+        transferGroupId: `mock-transfer-${Date.now()}`,
+        sourceTransactionId: Date.now(),
+        destinationTransactionId: Date.now() + 1,
+        sourceAccountName: source?.name ?? '',
+        sourceAccountIconName: source?.iconName ?? 'account_balance_wallet',
+        destinationAccountName: destination?.name ?? '',
+        destinationAccountIconName: destination?.iconName ?? 'account_balance_wallet',
+        ...req.body
+      });
     }
 
     return null;

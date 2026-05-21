@@ -23,6 +23,12 @@ public class AccountEntity extends AuditableEntity {
 
     private String name;
     private BigDecimal initialBalance;
+    private String iconName;
+    private Boolean includeInTotalBalance;
+
+    @ManyToOne
+    @JoinColumn(name = "currency_initial_balance")
+    private CurrencyEntity currencyInitialBalance;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

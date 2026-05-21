@@ -1,7 +1,12 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { DashboardService } from '../../services/dashboard.service';
-import { BalanceTrendResponseDTO, DashboardOverviewResponseDTO, IncomeExpenseBreakdownResponseDTO } from '../../models/dashboard.model';
+import {
+  AnnualIncomeExpenseResponseDTO,
+  BalanceTrendResponseDTO,
+  DashboardOverviewResponseDTO,
+  IncomeExpenseBreakdownResponseDTO
+} from '../../models/dashboard.model';
 import { RefreshService } from '../../services/refresh.service';
 import { StorageService } from '../../auth/storage.service';
 
@@ -18,9 +23,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     upcomingRecurringCount: []
   };
   yearlyBalance: BalanceTrendResponseDTO[] = [];
+  annualIncomeExpense: AnnualIncomeExpenseResponseDTO[] = [];
   incomeExpenseBreakdownData: IncomeExpenseBreakdownResponseDTO[] = [];
 
   currentYear = new Date().getFullYear();
+  annualIncomeExpenseYear = new Date().getFullYear();
   private selectedYear = new Date().getFullYear();
   private selectedMonth = new Date().getMonth();
 
@@ -56,6 +63,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       error: err => console.error('Error loading yearly balance trend', err)
     });
 
+    this.loadAnnualIncomeExpense(this.annualIncomeExpenseYear);
+
     const { startDate, endDate } = this.monthRange(this.selectedYear, this.selectedMonth);
     this.dashboardService.getIncomeExpenseBreakdown(this.userId, startDate, endDate).subscribe({
       next: res => this.incomeExpenseBreakdownData = res,
@@ -71,6 +80,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.dashboardService.getIncomeExpenseBreakdown(this.userId, range.startDate, range.endDate).subscribe({
       next: res => this.incomeExpenseBreakdownData = res,
       error: err => console.error('Error loading income-expense breakdown', err)
+    });
+  }
+
+  onAnnualIncomeExpenseYearChange(year: number): void {
+    this.annualIncomeExpenseYear = year;
+    this.loadAnnualIncomeExpense(year);
+  }
+
+  private loadAnnualIncomeExpense(year: number): void {
+    this.dashboardService.getAnnualIncomeExpense(this.userId, `${year}-01-01`, `${year}-12-31`).subscribe({
+      next: data => this.annualIncomeExpense = [...data].sort((a, b) => a.month.localeCompare(b.month)),
+      error: err => console.error('Error loading annual income-expense', err)
     });
   }
 

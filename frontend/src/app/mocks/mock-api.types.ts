@@ -4,11 +4,13 @@ export type MockEndpointKey =
   | 'dashboardOverview'
   | 'dashboardBalanceTrend'
   | 'dashboardIncomeExpenseBreakdown'
+  | 'dashboardAnnualIncomeExpense'
   | 'transactions'
   | 'categories'
   | 'accounts'
   | 'currencies'
-  | 'importExport';
+  | 'importExport'
+  | 'transfers';
 
 export interface MockApiConfig {
   enabled: boolean;

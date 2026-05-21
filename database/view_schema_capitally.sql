@@ -6,6 +6,7 @@ SELECT
   SUM(t.amount) AS total
 FROM t_transaction t
 JOIN t_category c ON c.id = t.category_id
+WHERE t.transfer_group_id IS NULL
 GROUP BY
   t.user_id,
   to_char(t.date, 'YYYY-MM'),

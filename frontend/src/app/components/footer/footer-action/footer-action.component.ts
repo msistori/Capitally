@@ -9,6 +9,7 @@ export class FooterActionComponent {
   @Input() icon = '';
   @Input() label = '';
   @Input() disabled = false;
+  @Input() active = false;
   @Output() action = new EventEmitter<void>();
 
   onClick(): void {

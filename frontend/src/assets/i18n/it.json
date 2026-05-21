@@ -130,9 +130,71 @@
   "BALANCE": {
     "BALANCE_TITLE": "Saldo Totale"
   },
+  "ACCOUNTS": {
+    "TITLE": "Conti",
+    "TOTAL_LABEL": "Saldo Totale Conti",
+    "EMPTY": "Nessun conto presente",
+    "EXCLUDED_BADGE": "Escluso dal saldo totale",
+    "BACK": "Indietro",
+    "NEW_ACCOUNT": {
+      "TITLE": "Nuovo Conto",
+      "ACTION": "Nuovo Conto",
+      "ICON_LABEL": "Seleziona Icona",
+      "NAME": "Nome Conto",
+      "NAME_PLACEHOLDER": "Es. Conto Corrente",
+      "INITIAL_BALANCE": "Saldo Iniziale",
+      "CURRENCY": "Valuta",
+      "EXCLUDE_TOTAL": "Escludi dal saldo totale",
+      "SAVE": "Salva"
+    },
+    "EDIT_ACCOUNT": {
+      "TITLE": "Modifica Conto",
+      "BALANCES_TITLE": "Saldo totale per valuta",
+      "ADD_CURRENCY": "Aggiungi valuta",
+      "CURRENCY": "Valuta",
+      "TOTAL_BALANCE": "Saldo totale",
+      "SAVE": "Salva",
+      "DELETE": "Elimina conto"
+    },
+    "DELETE_BLOCKED": {
+      "TITLE": "Conto con transazioni",
+      "MESSAGE": "Sono presenti transazioni su questo conto. Prima di eliminarlo, cancella quelle transazioni o spostale singolarmente su un altro conto."
+    },
+    "TRANSFER": {
+      "TITLE": "Nuovo Giroconto",
+      "SUBTITLE": "Trasferisci importi tra i tuoi conti in modo semplice e sicuro.",
+      "ACTION": "Giroconto",
+      "FROM": "Da",
+      "TO": "A",
+      "AMOUNT": "Importo",
+      "CURRENCY": "Valuta",
+      "DATE": "Data",
+      "DESCRIPTION": "Causale (opzionale)",
+      "DESCRIPTION_PLACEHOLDER": "Es. Giroconto tra conti",
+      "SAME_ACCOUNT_ERROR": "Scegli due conti diversi.",
+      "CONFIRM": "Conferma"
+    },
+    "HISTORY": {
+      "TITLE": "Storico Giroconti",
+      "ACTION": "Storico Giroconti",
+      "PERIOD": "Periodo",
+      "PERIOD_1M": "Ultimo mese",
+      "PERIOD_3M": "Ultimi 3 mesi",
+      "PERIOD_12M": "Ultimi 12 mesi",
+      "PERIOD_ALL": "Tutti",
+      "FILTERS": "Filtri",
+      "EMPTY": "Nessun giroconto nel periodo selezionato"
+    }
+  },
   "MONTHLY_SUMMARY": {
     "MONTHLY_SUMMARY_TITLE": "Entrate / Uscite Mensili",
     "NO_DATA": "Nessun Dato Mensile"
+  },
+  "ANNUAL_INCOME_EXPENSE": {
+    "TITLE": "Entrate / Uscite Annuali",
+    "INCOMES": "Entrate",
+    "EXPENSES": "Uscite",
+    "NO_DATA": "Nessun dato annuale"
   },
   "YEARLY_BALANCE_TREND": {
     "MONTH_NAMES": [
@@ -171,7 +233,7 @@
       "DISPLAY_TITLE": "Visualizzazione"
     },
     "RESET": {
-      "TRANSACTIONS": "Cancella tutte le transazioni",
+      "TRANSACTIONS": "Cancella transazioni",
       "CATEGORIES": "Cancella tutte le categorie",
       "ACCOUNTS": "Cancella tutti i conti"
     },
@@ -189,6 +251,18 @@
         "TITLE": "Conferma cancellazione dei conti",
         "MESSAGE": "Sei sicuro di voler eliminare tutti i tuoi conti?"
       }
+    },
+    "TRANSACTION_DELETE": {
+      "TITLE": "Cancella transazioni",
+      "MESSAGE": "Scegli se eliminare le transazioni di un conto specifico o tutte le transazioni.",
+      "SCOPE_LABEL": "Tipo cancellazione transazioni",
+      "SCOPE_ACCOUNT": "Per conto",
+      "SCOPE_ALL": "Tutte",
+      "ACCOUNT": "Conto"
+    },
+    "ACCOUNT_DELETE_BLOCKED": {
+      "TITLE": "Conti con transazioni",
+      "MESSAGE": "Sono presenti transazioni su uno o piu conti. Prima di eliminare i conti, cancella quelle transazioni o spostale singolarmente su un altro conto."
     },
     "IMPORT_EXPORT": {
       "IMPORT": {

@@ -71,8 +71,8 @@
             "proxyConfig": "proxy.conf.json"
           },
           "configurations": {
-            "production": { "browserTarget": "frontend:build:production" },
-            "local": { "browserTarget": "frontend:build:local" }
+            "production": { "buildTarget": "frontend:build:production" },
+            "local": { "buildTarget": "frontend:build:local" }
           }
         },
         "extract-i18n": {

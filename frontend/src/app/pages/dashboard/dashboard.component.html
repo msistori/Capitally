@@ -4,12 +4,12 @@
     [totalBalance]="overviewData.totalBalancePerCurrency ? overviewData.totalBalancePerCurrency : {}">
   </app-balance-summary>
 
-  <!-- monthly-summary -->
-  <app-monthly-summary
-    *ngIf="overviewData"
-    [income]="overviewData.totalIncomeThisMonth ? overviewData.totalIncomeThisMonth : {}"
-    [expense]="overviewData.totalExpenseThisMonth ? overviewData.totalExpenseThisMonth : {}">
-  </app-monthly-summary>
+  <!-- annual income-expense -->
+  <app-annual-income-expense
+    [items]="annualIncomeExpense"
+    [year]="annualIncomeExpenseYear"
+    (yearChange)="onAnnualIncomeExpenseYearChange($event)">
+  </app-annual-income-expense>
 
   <!-- recent-transactions -->
   <app-recent-transactions></app-recent-transactions>

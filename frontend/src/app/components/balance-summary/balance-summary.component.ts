@@ -25,13 +25,15 @@ export class BalanceSummaryComponent {
   });
 
   constructor() {
-    effect(() => {
+    effect((onCleanup) => {
       const def = this.defaultCurrencySig();
-      this.fx.getRates(def).subscribe({
+      const sub = this.fx.getRates(def).subscribe({
         next: r => this.ratesSig.set(r || {}),
         error: () => this.ratesSig.set({})
       });
-    });
+
+      onCleanup(() => sub.unsubscribe());
+    }, { allowSignalWrites: true });
   }
 
   readonly entries = computed(() => {
