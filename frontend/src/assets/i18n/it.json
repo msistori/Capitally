@@ -2,6 +2,13 @@
   "APP": {
     "TITLE": "Capitally"
   },
+  "NAV": {
+    "HOME": "Home",
+    "ACCOUNTS": "Conti",
+    "ADD_TRANSACTION": "Nuova transazione",
+    "SUMMARY": "Resoconto",
+    "SETTINGS": "Impostazioni"
+  },
   "BUTTON_CLOSE": "Chiudi",
   "BUTTON_NEW": "Nuova",
   "BUTTON_MODIFY": "Modifica",
@@ -125,6 +132,8 @@
   },
   "TRANSACTION": {
     "TITLE": "Nuova Transazione",
+    "EDIT_TITLE": "Modifica Transazione",
+    "UPDATE": "Aggiorna",
     "RECENT_TRANSACTIONS_TITLE": "Ultime Transazioni"
   },
   "BALANCE": {
@@ -132,7 +141,7 @@
   },
   "ACCOUNTS": {
     "TITLE": "Conti",
-    "TOTAL_LABEL": "Saldo Totale Conti",
+    "TOTAL_LABEL": "Saldo Totale",
     "EMPTY": "Nessun conto presente",
     "EXCLUDED_BADGE": "Escluso dal saldo totale",
     "BACK": "Indietro",
@@ -184,6 +193,92 @@
       "PERIOD_ALL": "Tutti",
       "FILTERS": "Filtri",
       "EMPTY": "Nessun giroconto nel periodo selezionato"
+    }
+  },
+  "SUMMARY": {
+    "TITLE": "Resoconto",
+    "SUBTITLE": "Panoramica di transazioni, saldi e andamento.",
+    "NEW_TRANSACTION": "Nuova transazione",
+    "NEW_TRANSACTION_SHORT": "Nuova",
+    "FILTERS": {
+      "TITLE": "Filtri resoconto",
+      "TYPE": "Tipo filtro",
+      "PERIOD": "Periodo",
+      "START_DATE": "Da",
+      "END_DATE": "A",
+      "ACCOUNT": "Conto",
+      "CATEGORY": "Categoria",
+      "SUBCATEGORY": "Sottocategoria",
+      "MIN_AMOUNT": "Importo minimo",
+      "MAX_AMOUNT": "Importo massimo",
+      "ALL_ACCOUNTS": "Tutti i conti",
+      "ALL_CATEGORIES": "Tutte le categorie",
+      "ALL_SUBCATEGORIES": "Tutte le sottocategorie",
+      "ACTIVE_COUNT": "Filtri attivi: {{count}}",
+      "RESET": "Pulisci filtri"
+    },
+    "EXPORT": {
+      "BUTTON": "Esporta",
+      "ALL": "Esporta tutto",
+      "FILTERED": "Esporta filtrate",
+      "CONFIRM_FILTERED_OR_ALL": "Vuoi esportare tutte le transazioni o solo quelle filtrate nel resoconto?",
+      "CONFIRM_ALL": "Non ci sono filtri attivi. Confermi l'esportazione di tutte le transazioni?",
+      "CONFIRM_EXPORT": "Conferma esportazione"
+    },
+    "PERIOD": {
+      "ALL": "Tutto",
+      "CURRENT_MONTH": "Mese corrente",
+      "PREVIOUS_MONTH": "Mese precedente",
+      "LAST_3_MONTHS": "Ultimi 3 mesi",
+      "CURRENT_YEAR": "Anno corrente",
+      "LAST_YEAR": "Anno scorso",
+      "TWO_YEARS_AGO": "Due anni fa",
+      "CUSTOM": "Range personalizzato"
+    },
+    "STATS": {
+      "TITLE": "Statistiche",
+      "TOTAL_BALANCE": "Saldo totale",
+      "BALANCE_HINT": "Saldo stimato alla fine del periodo",
+      "INCOME": "Entrate",
+      "EXPENSE": "Uscite",
+      "NET": "Differenza",
+      "VS_PREVIOUS": "vs periodo precedente",
+      "ALL_PERIODS": "Su tutte le transazioni",
+      "TOP_CATEGORY": "Categoria maggiore spesa",
+      "MOST_USED_ACCOUNT": "Conto più utilizzato",
+      "AVG_DAILY_EXPENSE": "Media uscite",
+      "PER_DAY": "al giorno",
+      "TOTAL_TRANSACTIONS": "Transazioni",
+      "TRANSACTIONS_COUNT": "transazioni",
+      "NO_DATA": "Nessun dato"
+    },
+    "CHARTS": {
+      "CATEGORIES_TITLE": "Categorie",
+      "ACCOUNTS_TITLE": "Saldo nei conti",
+      "ACCOUNTS_HINT": "Distribuzione stimata",
+      "INCOME_EXPENSE_TITLE": "Entrate vs uscite",
+      "INCOME": "Entrate",
+      "EXPENSE": "Uscite",
+      "NO_DATA": "Nessun dato per questo periodo"
+    },
+    "CALENDAR": {
+      "TITLE": "Calendario intervallo personalizzato",
+      "PREV_YEAR": "Anno precedente",
+      "NEXT_YEAR": "Anno successivo",
+      "PREV_MONTH": "Mese precedente",
+      "NEXT_MONTH": "Mese successivo"
+    },
+    "TRANSACTIONS": {
+      "TITLE": "Transazioni",
+      "VISIBLE_ITEMS": "risultati",
+      "SEARCH": "Cerca",
+      "SEARCH_PLACEHOLDER": "Descrizione, categoria o conto",
+      "LOAD_MORE": "Carica altre",
+      "EMPTY": "Nessuna transazione nel periodo selezionato",
+      "NO_DESCRIPTION": "Transazione senza descrizione",
+      "UNKNOWN_ACCOUNT": "Conto non trovato",
+      "NO_CATEGORY": "Senza categoria",
+      "TRANSFER": "Giroconto"
     }
   },
   "MONTHLY_SUMMARY": {

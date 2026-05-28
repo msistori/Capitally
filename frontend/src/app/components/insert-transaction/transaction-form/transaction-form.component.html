@@ -119,6 +119,6 @@
   </div>
 
   <button mat-raised-button class="submit-button" type="submit">
-    {{ 'FORM.SUBMIT' | translate }}
+    {{ (isEditMode ? 'TRANSACTION.UPDATE' : 'FORM.SUBMIT') | translate }}
   </button>
 </form>

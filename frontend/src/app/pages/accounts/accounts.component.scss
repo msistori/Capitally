@@ -453,6 +453,8 @@ input,
   grid-template-columns: minmax(0, 1fr);
   margin-bottom: 1rem;
   padding: 0.85rem;
+  position: relative;
+  z-index: 35;
 }
 
 .filter-action {

@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, inject } from '@angular/core';
+import { Component, OnChanges, OnInit, Output, EventEmitter, Input, SimpleChanges, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { RecurrencePeriodEnum, TransactionModel, TransactionTypeEnum } from '../../../models/transaction.model';
@@ -18,7 +18,8 @@ import { StorageService } from '../../../auth/storage.service';
   templateUrl: './transaction-form.component.html',
   styleUrls: ['./transaction-form.component.scss']
 })
-export class TransactionFormComponent implements OnInit {
+export class TransactionFormComponent implements OnInit, OnChanges {
+  @Input() transaction: TransactionModel | null = null;
   @Output() submitted = new EventEmitter<TransactionModel>();
   form!: FormGroup;
   currencies: { code: string; name?: string }[] = [];
@@ -38,6 +39,10 @@ export class TransactionFormComponent implements OnInit {
   viewDate: Date = new Date();
 
   RecurrencePeriodEnum = RecurrencePeriodEnum;
+
+  get isEditMode(): boolean {
+    return !!this.transaction?.id;
+  }
 
   constructor(
     private fb: FormBuilder,
@@ -64,6 +69,8 @@ export class TransactionFormComponent implements OnInit {
       recurringEndDate: [null]
     });
 
+    this.applyTransactionToForm();
+
     this.currencyService.getCurrencies().subscribe(data => {
       this.currencies = data;
       this.filteredCurrencies = data;
@@ -77,6 +84,7 @@ export class TransactionFormComponent implements OnInit {
       .subscribe(data => {
         this.categories = data;
         this.recentCategories = this.categories.slice(0, 3);
+        this.applySelectedCategoryLabel();
       });
 
     this.accountService.getAccounts(this.userId.toString())
@@ -98,6 +106,12 @@ export class TransactionFormComponent implements OnInit {
 
     this.viewDate = this.form.get('recurringEndDate')!.value ?? new Date();
     this.buildMonthMatrixRecurringEndDate(this.viewDate);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if ('transaction' in changes && this.form) {
+      this.applyTransactionToForm();
+    }
   }
 
   filterCurrencies(searchTerm: string): void {
@@ -291,13 +305,88 @@ export class TransactionFormComponent implements OnInit {
 
   submit(): void {
     if (this.form.invalid) return;
-    const payload: TransactionModel = this.form.value;
-    payload.userId = this.userId;
-    if (!payload.isRecurring) payload.recurrenceEndDate = undefined;
-    this.transactionService.postTransaction(payload)
-      .subscribe(
-        tx => this.submitted.emit(tx),
-        err => console.error('Save error', err)
-      );
+
+    const value = this.form.getRawValue();
+    const payload: TransactionModel = {
+      ...(this.transaction ?? {}),
+      userId: this.userId,
+      accountId: Number(value.accountId),
+      amount: Number(value.amount),
+      currencyCode: value.currencyCode,
+      date: this.formatDateInput(value.date),
+      description: value.description,
+      categoryId: value.categoryId,
+      transactionType: value.transactionType,
+      isRecurring: value.isRecurring,
+      recurrencePeriod: value.isRecurring ? value.recurringPeriod : undefined,
+      recurrenceEndDate: value.isRecurring && value.recurringEndDate
+        ? this.formatDateInput(value.recurringEndDate)
+        : undefined
+    };
+
+    const request = this.transaction?.id
+      ? this.transactionService.putTransaction(this.transaction.id, payload)
+      : this.transactionService.postTransaction(payload);
+
+    request.subscribe(
+      tx => this.submitted.emit(tx),
+      err => console.error('Save error', err)
+    );
+  }
+
+  private applyTransactionToForm(): void {
+    if (!this.form || !this.transaction) return;
+
+    const date = this.toFormDate(this.transaction.date);
+    const recurringEndDate = this.transaction.recurrenceEndDate
+      ? this.toFormDate(this.transaction.recurrenceEndDate)
+      : null;
+
+    this.form.patchValue({
+      accountId: this.transaction.accountId,
+      amount: Number(this.transaction.amount || 0),
+      currencyCode: this.transaction.currencyCode || this.storage.getDefaultCurrency(),
+      transactionType: this.transaction.transactionType,
+      categoryId: this.transaction.categoryId ?? null,
+      date,
+      description: this.transaction.description || '',
+      isRecurring: !!this.transaction.isRecurring,
+      recurringPeriod: this.transaction.recurrencePeriod ?? null,
+      recurringEndDate
+    }, { emitEvent: false });
+
+    this.buildMonthMatrixDate(date);
+    this.viewDate = recurringEndDate ?? new Date();
+    this.buildMonthMatrixRecurringEndDate(this.viewDate);
+    this.applySelectedCategoryLabel();
+  }
+
+  private applySelectedCategoryLabel(): void {
+    const categoryId = this.form?.get('categoryId')?.value;
+    if (!categoryId) {
+      this.selectedCategory = null;
+      return;
+    }
+
+    this.selectedCategory = this.categories.find(category => category.id === Number(categoryId))?.category ?? null;
+  }
+
+  private toFormDate(value: Date | string): Date {
+    if (value instanceof Date) return value;
+
+    const parts = String(value).slice(0, 10).split('-').map(Number);
+    if (parts.length === 3 && parts.every(part => Number.isFinite(part))) {
+      return new Date(parts[0], parts[1] - 1, parts[2]);
+    }
+
+    return new Date(value);
+  }
+
+  private formatDateInput(value: Date | string): string {
+    const date = value instanceof Date ? value : this.toFormDate(value);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 }

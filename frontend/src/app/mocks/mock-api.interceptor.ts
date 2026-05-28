@@ -71,8 +71,8 @@ export class MockApiInterceptor implements HttpInterceptor {
       return this.json(annualIncomeExpenseMock);
     }
 
-    if (path === '/transaction' && this.isEndpointEnabled(config, 'transactions')) {
-      return this.handleTransactions(req);
+    if ((path === '/transaction' || path.startsWith('/transaction/')) && this.isEndpointEnabled(config, 'transactions')) {
+      return this.handleTransactions(req, path);
     }
 
     if (path.startsWith('/category') && this.isEndpointEnabled(config, 'categories')) {
@@ -112,7 +112,7 @@ export class MockApiInterceptor implements HttpInterceptor {
     return profile === 'account' ? accountMeResponse : guestMeResponse;
   }
 
-  private handleTransactions(req: HttpRequest<any>): HttpResponse<any> | null {
+  private handleTransactions(req: HttpRequest<any>, path: string): HttpResponse<any> | null {
     if (req.method === 'GET') {
       const userId = Number(req.params.get('userId'));
       const accountId = Number(req.params.get('accountId'));
@@ -129,7 +129,21 @@ export class MockApiInterceptor implements HttpInterceptor {
     }
 
     if (req.method === 'POST') {
-      return this.json({ id: Date.now(), ...req.body });
+      const transaction = { id: Date.now(), ...req.body };
+      transactionsMock.unshift(transaction);
+      return this.json(transaction);
+    }
+
+    if (req.method === 'PUT') {
+      const id = Number(path.split('/').pop());
+      const index = transactionsMock.findIndex(transaction => Number((transaction as any).id) === id);
+      const updated = { ...(transactionsMock[index] ?? { id }), ...req.body, id };
+
+      if (index >= 0) {
+        transactionsMock[index] = updated;
+      }
+
+      return this.json(updated);
     }
 
     if (req.method === 'DELETE') {

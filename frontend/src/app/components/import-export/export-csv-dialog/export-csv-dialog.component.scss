@@ -41,6 +41,10 @@ $danger: #b42318;
   }
 }
 
+.confirmation-info {
+  margin-bottom: 0;
+}
+
 .dialog-icon {
   align-items: center;
   background: $secondary;
@@ -153,5 +157,9 @@ $danger: #b42318;
   .grid,
   .actions {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .actions.confirm-actions {
+    grid-template-columns: repeat(3, 1fr);
   }
 }

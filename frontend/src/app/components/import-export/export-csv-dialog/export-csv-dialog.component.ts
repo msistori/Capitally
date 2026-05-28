@@ -1,11 +1,17 @@
 import { HttpResponse } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, Inject, Optional } from '@angular/core';
 import { Validators, FormBuilder } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { finalize } from 'rxjs';
 import { TransactionExportFilterInputDTO } from 'src/app/models/import-export-transactions.model';
 import { TransactionTypeEnum } from 'src/app/models/transaction.model';
 import { ImportExportTransactionsService } from 'src/app/services/import-export-transactions.service';
+
+export interface ExportCsvDialogData {
+  initialFilter?: TransactionExportFilterInputDTO;
+  confirmationMode?: boolean;
+  hasActiveFilters?: boolean;
+}
 
 @Component({
   selector: 'app-export-csv-dialog',
@@ -37,8 +43,19 @@ export class ExportCsvDialogComponent {
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<ExportCsvDialogComponent>,
-    private txService: ImportExportTransactionsService
-  ) {}
+    private txService: ImportExportTransactionsService,
+    @Optional() @Inject(MAT_DIALOG_DATA) private data?: ExportCsvDialogData
+  ) {
+    this.applyInitialFilter(data?.initialFilter);
+  }
+
+  get isConfirmationMode(): boolean {
+    return this.data?.confirmationMode === true;
+  }
+
+  get hasActiveFilters(): boolean {
+    return this.data?.hasActiveFilters === true;
+  }
   
   close(): void {
     this.dialogRef.close(false);
@@ -50,17 +67,33 @@ export class ExportCsvDialogComponent {
     this.form.markAllAsTouched();
     if (this.form.invalid) return;
     
-    const filter = this.toFilter();
-    
+    this.exportWithFilter(this.toFilter());
+  }
+
+  exportAll(): void {
+    this.exportWithFilter();
+  }
+
+  exportFiltered(): void {
+    this.exportWithFilter(this.data?.initialFilter);
+  }
+
+  exportConfirmedSelection(): void {
+    this.hasActiveFilters ? this.exportFiltered() : this.exportAll();
+  }
+
+  private exportWithFilter(filter?: TransactionExportFilterInputDTO): void {
+    if (this.exporting) return;
+
     this.exporting = true;
     this.txService
-    .getExportTransactions(filter)
-    .pipe(finalize(() => (this.exporting = false)))
-    .subscribe({
-      next: (res: HttpResponse<Blob>) => this.handleDownload(res),
-      error: () => {
-      }
-    });
+      .getExportTransactions(filter)
+      .pipe(finalize(() => (this.exporting = false)))
+      .subscribe({
+        next: (res: HttpResponse<Blob>) => this.handleDownload(res),
+        error: () => {
+        }
+      });
   }
   
   private handleDownload(res: HttpResponse<Blob>): void {
@@ -102,6 +135,28 @@ export class ExportCsvDialogComponent {
     const mm = String(d.getMonth() + 1).padStart(2, '0');
     const dd = String(d.getDate()).padStart(2, '0');
     return `${yyyy}-${mm}-${dd}`;
+  }
+
+  private applyInitialFilter(filter?: TransactionExportFilterInputDTO): void {
+    if (!filter) return;
+
+    this.form.patchValue({
+      account: filter.account ?? '',
+      minAmount: filter.minAmount ?? null,
+      maxAmount: filter.maxAmount ?? null,
+      description: filter.description ?? '',
+      startDate: filter.startDate ? this.toLocalDate(filter.startDate) : null,
+      endDate: filter.endDate ? this.toLocalDate(filter.endDate) : null,
+      macroCategory: filter.macroCategory ?? '',
+      category: filter.category ?? '',
+      currency: filter.currency ?? '',
+      transactionType: filter.transactionType ?? null
+    });
+  }
+
+  private toLocalDate(value: string): Date {
+    const [year, month, day] = value.split('-').map(Number);
+    return new Date(year, month - 1, day);
   }
   
   private downloadBlob(blob: Blob, filename: string): void {
