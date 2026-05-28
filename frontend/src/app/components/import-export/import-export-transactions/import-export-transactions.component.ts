@@ -1,6 +1,8 @@
-import { Component, Input, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { ImportExportTransactionsModel, ImportResponseHelper } from 'src/app/models/import-export-transactions.model';
+import { TranslateService } from '@ngx-translate/core';
+import { ImportExportTransactionsModel, ImportResponseHelper, ImportResult } from 'src/app/models/import-export-transactions.model';
 import { ImportExportTransactionsService } from 'src/app/services/import-export-transactions.service';
 import { ImportCsvDialogComponent } from '../import-csv-dialog/import-csv-dialog.component';
 import { ImportResultDialogComponent } from '../import-result-dialog/import-result-dialog.component';
@@ -19,7 +21,8 @@ export class ImportExportTransactionsComponent {
   constructor(
     private dialog: MatDialog,
     private importExportTransactionsService: ImportExportTransactionsService,
-    private refreshService: RefreshService
+    private refreshService: RefreshService,
+    private translateService: TranslateService
   ) { }
 
   openTemplateDialog(): void {
@@ -70,7 +73,9 @@ export class ImportExportTransactionsComponent {
           this.showImportErrors(response);
         }
       },
-      error: () => {
+      error: (error: HttpErrorResponse) => {
+        const importError = this.getImportErrorResponse(error);
+        importError ? this.showImportErrors(importError) : this.showGenericImportError();
       }
     });
   }
@@ -107,7 +112,7 @@ export class ImportExportTransactionsComponent {
       data: {
         summary: response.summary,
         hasErrors: true,
-        errors: response.errors,
+        errors: response.errors?.length ? response.errors : [this.getGenericImportError()],
         failed: true
       }
     });
@@ -119,5 +124,60 @@ export class ImportExportTransactionsComponent {
         this.parentDialogRef.close();
       }
     });
+  }
+
+  private showGenericImportError(): void {
+    this.showImportErrors({
+      result: ImportResult.FAILED,
+      summary: {
+        totalRows: 0,
+        importedTransactions: 0,
+        newAccounts: [],
+        newCategories: {}
+      },
+      errors: [this.getGenericImportError()]
+    });
+  }
+
+  private getImportErrorResponse(error: HttpErrorResponse): ImportExportTransactionsModel | null {
+    if (error.error && typeof error.error === 'object' && 'result' in error.error) {
+      return error.error as ImportExportTransactionsModel;
+    }
+
+    const message = this.getErrorMessage(error);
+    if (!message) return null;
+
+    return {
+      result: ImportResult.FAILED,
+      summary: {
+        totalRows: 0,
+        importedTransactions: 0,
+        newAccounts: [],
+        newCategories: {}
+      },
+      errors: [{ message }]
+    };
+  }
+
+  private getErrorMessage(error: HttpErrorResponse): string | null {
+    if (typeof error.error === 'string' && error.error.trim()) {
+      return error.error;
+    }
+
+    if (error.error?.message) {
+      return error.error.message;
+    }
+
+    if (error.message) {
+      return error.message;
+    }
+
+    return null;
+  }
+
+  private getGenericImportError(): { message: string } {
+    return {
+      message: this.translateService.instant('SETTINGS.IMPORT_EXPORT.IMPORT.GENERIC_ERROR') as string
+    };
   }
 }

@@ -25,7 +25,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -36,8 +36,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.capitally.app.utils.CapitallyErrors.*;
 
 @Service
 @RequiredArgsConstructor
@@ -100,7 +98,7 @@ public class TransactionsImportExportService {
         } catch (Exception e) {
             response.addError("Errore critico durante l'importazione: " + e.getMessage());
             response.setResult(TransactionImportResponseDTO.ImportResult.FAILED);
-            throw new RuntimeException("Import fallito", e);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
 
         return response;
@@ -156,13 +154,13 @@ public class TransactionsImportExportService {
                 rowNum++;
                 try {
                     TransactionImportDTO dto = TransactionImportDTO.builder()
-                            .accountName(record.get("account_name"))
+                            .accountName(blankToNull(record.get("account_name")))
                             .amount(parseDecimalWithComma(record.get("amount")))
-                            .currencyCode(record.get("currency"))
+                            .currencyCode(blankToNull(record.get("currency")))
                             .date(LocalDate.parse(record.get("date"), DATE_FORMATTER))
-                            .description(record.get("description"))
-                            .macroCategory(record.get("macrocategory"))
-                            .category(record.get("category"))
+                            .description(blankToNull(record.get("description")))
+                            .macroCategory(blankToNull(record.get("macrocategory")))
+                            .category(blankToNull(record.get("category")))
                             .transactionType(TransactionTypeEnum.valueOf(record.get("transaction_type")))
                             .isRecurring(Boolean.parseBoolean(record.get("is_recurring")))
                             .recurrencePeriod(record.isMapped("recurrence_period") && !record.get("recurrence_period").isEmpty()
@@ -188,6 +186,15 @@ public class TransactionsImportExportService {
         return transactions;
     }
 
+    private String blankToNull(String value) {
+        if (value == null) {
+            return null;
+        }
+
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
+    }
+
     private BigDecimal parseDecimalWithComma(String value) {
         String normalized = value.replace(',', '.');
         return new BigDecimal(normalized);
@@ -197,6 +204,12 @@ public class TransactionsImportExportService {
                                              UserEntity user,
                                              TransactionImportResponseDTO response) {
         ValidationResult result = new ValidationResult();
+
+        validateRequiredFields(transactions, response, result);
+
+        if (result.hasCriticalErrors()) {
+            return result;
+        }
 
         // Valida currencies (BLOCCANTE - non vengono create automaticamente)
         Set<String> currencyCodes = transactions.stream()
@@ -229,6 +242,7 @@ public class TransactionsImportExportService {
 
         // Sincronizza categories (vengono create automaticamente se mancanti)
         Map<String, List<String>> categories = transactions.stream()
+                .filter(t -> t.getMacroCategory() != null || t.getCategory() != null)
                 .map(t -> new AbstractMap.SimpleEntry<>(t.getMacroCategory(), t.getCategory()))
                 .distinct()
                 .collect(Collectors.groupingBy(
@@ -240,6 +254,41 @@ public class TransactionsImportExportService {
         result.setNewCategories(newCategories);
 
         return result;
+    }
+
+    private void validateRequiredFields(List<TransactionImportDTO> transactions,
+                                        TransactionImportResponseDTO response,
+                                        ValidationResult result) {
+        for (TransactionImportDTO transaction : transactions) {
+            validateRequiredField(transaction.getAccountName(), transaction.getRowNumber(), "account_name", response, result);
+            validateRequiredField(transaction.getCurrencyCode(), transaction.getRowNumber(), "currency", response, result);
+
+            boolean hasMacroCategory = transaction.getMacroCategory() != null;
+            boolean hasCategory = transaction.getCategory() != null;
+
+            if (hasMacroCategory != hasCategory) {
+                result.setCriticalError(true);
+                response.addError(
+                        transaction.getRowNumber(),
+                        hasMacroCategory ? "category" : "macrocategory",
+                        "Macro categoria e categoria devono essere entrambe valorizzate o entrambe vuote",
+                        hasMacroCategory ? transaction.getMacroCategory() : transaction.getCategory()
+                );
+            }
+        }
+    }
+
+    private void validateRequiredField(String value,
+                                       Integer rowNumber,
+                                       String field,
+                                       TransactionImportResponseDTO response,
+                                       ValidationResult result) {
+        if (value != null) {
+            return;
+        }
+
+        result.setCriticalError(true);
+        response.addError(rowNumber, field, "Campo obbligatorio mancante", null);
     }
 
     public Set<String> syncMissingAccounts(BigInteger userId, Set<String> incomingAccounts) {

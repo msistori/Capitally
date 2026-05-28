@@ -8,6 +8,23 @@ $glass-soft: rgba(255, 255, 255, 0.48);
 $glass-strong: rgba(255, 255, 255, 0.82);
 
 :host {
+  --summary-chart-card-padding-y: 1.9rem;
+  --summary-chart-header-height: 2.5rem;
+  --summary-chart-card-gap: 0.8rem;
+  --summary-chart-grid-gap: 0.85rem;
+  --summary-wide-chart-height: 17rem;
+  --summary-donut-chart-height: 16rem;
+  --summary-desktop-charts-height: calc(
+    var(--summary-chart-card-padding-y) +
+    var(--summary-chart-card-padding-y) +
+    var(--summary-chart-header-height) +
+    var(--summary-chart-header-height) +
+    var(--summary-chart-card-gap) +
+    var(--summary-chart-card-gap) +
+    var(--summary-wide-chart-height) +
+    var(--summary-donut-chart-height) +
+    var(--summary-chart-grid-gap)
+  );
   --summary-primary: #005f73;
   --summary-grid: rgba(0, 95, 115, 0.2);
   --summary-income: #0f8f4e;
@@ -406,7 +423,7 @@ input {
 
 .chart-card {
   display: grid;
-  gap: 0.8rem;
+  gap: var(--summary-chart-card-gap);
   min-width: 0;
   padding: 0.95rem;
 
@@ -432,12 +449,12 @@ input {
 }
 
 .chart-frame {
-  height: 17rem;
+  height: var(--summary-wide-chart-height);
   min-width: 0;
   position: relative;
 
   &.donut {
-    height: 16rem;
+    height: var(--summary-donut-chart-height);
   }
 }
 
@@ -711,8 +728,18 @@ input {
     grid-column: 1 / -1;
   }
 
+  .chart-card header {
+    min-height: var(--summary-chart-header-height);
+  }
+
   .transactions-panel {
-    max-height: calc(100vh - 13.5rem);
-    overflow: auto;
+    box-sizing: border-box;
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    height: var(--summary-desktop-charts-height);
+    max-height: var(--summary-desktop-charts-height);
+  }
+
+  .transaction-list {
+    overflow-y: auto;
   }
 }

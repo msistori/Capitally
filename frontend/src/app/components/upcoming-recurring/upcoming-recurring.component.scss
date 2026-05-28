@@ -1,0 +1,151 @@
+$primary: #005f73;
+$income: #1da779;
+$expense: #bf1f23;
+
+:host {
+  display: block;
+  min-height: 0;
+}
+
+.upcoming-recurring {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  min-height: 0;
+  max-height: 100%;
+  padding: 1rem;
+  color: $primary;
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  background-color: rgba(255, 255, 255, .42);
+  border: 1px solid rgba(209, 213, 219, .5);
+  border-radius: 1rem;
+  overflow: hidden;
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .count {
+    min-width: 1.5rem;
+    height: 1.5rem;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: $primary;
+    color: #fff;
+    font-size: .8rem;
+    font-weight: 800;
+  }
+
+  ul {
+    display: grid;
+    gap: .5rem;
+    min-height: 0;
+    overflow: auto;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: .6rem;
+    padding: .55rem;
+    border-radius: 1rem;
+    background-color: rgba(255, 255, 255, .65);
+    border: 1px solid rgba(209, 213, 219, .5);
+  }
+
+  .date-badge {
+    width: 2.7rem;
+    height: 2.7rem;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    border-radius: .85rem;
+    background: rgba(202, 240, 248, .85);
+    color: $primary;
+    text-transform: uppercase;
+
+    .day {
+      font-size: 1rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .month {
+      font-size: .65rem;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+  }
+
+  .tx-info {
+    display: grid;
+    gap: .15rem;
+    min-width: 0;
+  }
+
+  .tx-description,
+  .tx-meta {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tx-description {
+    font-weight: 800;
+  }
+
+  .tx-meta {
+    font-size: .75rem;
+    opacity: .78;
+  }
+
+  .tx-amount {
+    font-size: .95rem;
+    font-weight: 800;
+    white-space: nowrap;
+
+    &.positive {
+      color: $income;
+    }
+
+    &.negative {
+      color: $expense;
+    }
+  }
+
+  .empty {
+    margin: 0;
+    padding: .75rem 0;
+    text-align: center;
+    font-weight: 700;
+    opacity: .75;
+  }
+}
+
+@media (max-width: 480px) {
+  .upcoming-recurring {
+    li {
+      grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .tx-amount {
+      grid-column: 2;
+      justify-self: start;
+    }
+  }
+}

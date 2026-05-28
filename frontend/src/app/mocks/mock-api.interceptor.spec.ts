@@ -3,6 +3,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { TestBed } from '@angular/core/testing';
 
 import { environment } from '../../environments/environment';
+import { upcomingRecurringMock } from './dashboard.mock';
 import { MockApiInterceptor } from './mock-api.interceptor';
 
 describe('MockApiInterceptor', () => {
@@ -86,7 +87,7 @@ describe('MockApiInterceptor', () => {
 
     http.get<any>('/dashboard/overview?userId=1').subscribe(response => {
       expect(response.totalBalancePerCurrency.EUR).toBe(8534.05);
-      expect(response.upcomingRecurringCount).toBe(0);
+      expect(response.upcomingRecurringCount).toBe(upcomingRecurringMock.length);
       done();
     });
 

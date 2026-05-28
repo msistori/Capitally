@@ -5,7 +5,8 @@ import {
   AnnualIncomeExpenseResponseDTO,
   BalanceTrendResponseDTO,
   DashboardOverviewResponseDTO,
-  IncomeExpenseBreakdownResponseDTO
+  IncomeExpenseBreakdownResponseDTO,
+  UpcomingRecurringTransactionModel
 } from '../../models/dashboard.model';
 import { RefreshService } from '../../services/refresh.service';
 import { StorageService } from '../../auth/storage.service';
@@ -20,11 +21,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     totalBalancePerCurrency: {},
     totalIncomeThisMonth: {},
     totalExpenseThisMonth: {},
-    upcomingRecurringCount: []
+    upcomingRecurringCount: 0
   };
   yearlyBalance: BalanceTrendResponseDTO[] = [];
   annualIncomeExpense: AnnualIncomeExpenseResponseDTO[] = [];
   incomeExpenseBreakdownData: IncomeExpenseBreakdownResponseDTO[] = [];
+  upcomingRecurringTransactions: UpcomingRecurringTransactionModel[] = [];
 
   currentYear = new Date().getFullYear();
   annualIncomeExpenseYear = new Date().getFullYear();
@@ -61,6 +63,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.dashboardService.getYearlyBalanceTrend(this.userId, yearStart, yearEnd).subscribe({
       next: data => this.yearlyBalance = [...data].sort((a, b) => a.month.localeCompare(b.month)),
       error: err => console.error('Error loading yearly balance trend', err)
+    });
+
+    this.dashboardService.getUpcomingRecurringTransactions(this.userId, this.upcomingRecurringUntilDate()).subscribe({
+      next: data => this.upcomingRecurringTransactions = [...(data || [])]
+        .sort((a, b) => a.nextDate.localeCompare(b.nextDate)),
+      error: err => console.error('Error loading upcoming recurring transactions', err)
     });
 
     this.loadAnnualIncomeExpense(this.annualIncomeExpenseYear);
@@ -116,5 +124,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const m = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
     return `${y}-${m}-${day}`;
+  }
+
+  private upcomingRecurringUntilDate(): string {
+    const until = new Date();
+    until.setMonth(until.getMonth() + 2);
+    return this.formatLocalDate(until);
   }
 }

@@ -36,6 +36,7 @@
       "TITLE": "Welcome!",
       "USERNAME": "Username",
       "EMAIL": "Email",
+      "EMAIL_INVALID_ERROR": "Enter a valid email address",
       "PASSWORD_MIN_ERROR": "Password must be at least 6 characters long",
       "SUBMIT": "Sign up",
       "SIGN_IN": "Already have an account? Sign in",
@@ -140,6 +141,10 @@
   "BALANCE": {
     "BALANCE_TITLE": "Total Balance"
   },
+  "RECURRING": {
+    "UPCOMING_TITLE": "Upcoming recurring",
+    "NO_UPCOMING": "No upcoming recurring transactions"
+  },
   "ACCOUNTS": {
     "TITLE": "Accounts",
     "TOTAL_LABEL": "Total Balance",
@@ -172,6 +177,7 @@
     },
     "TRANSFER": {
       "TITLE": "New Transfer",
+      "EDIT_TITLE": "Edit Transfer",
       "SUBTITLE": "Move money between your accounts simply and safely.",
       "ACTION": "Transfer",
       "FROM": "From",
@@ -182,7 +188,8 @@
       "DESCRIPTION": "Reason (optional)",
       "DESCRIPTION_PLACEHOLDER": "E.g. Transfer between accounts",
       "SAME_ACCOUNT_ERROR": "Choose two different accounts.",
-      "CONFIRM": "Confirm"
+      "CONFIRM": "Confirm",
+      "SAVE": "Save"
     },
     "HISTORY": {
       "TITLE": "Transfer History",
@@ -366,7 +373,8 @@
         "DIALOG_TITLE": "Import transactions CSV",
         "UPLOAD_FILE": "Select or drag the transactions CSV file here",
         "IMPORT": "Import",
-        "FORMAT_ERROR": "The file must be in CSV format"
+        "FORMAT_ERROR": "The file must be in CSV format",
+        "GENERIC_ERROR": "Unable to import the CSV. Check the file format and separator."
       },
       "EXPORT": {
         "TITLE": "Export transactions",

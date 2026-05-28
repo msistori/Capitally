@@ -67,12 +67,20 @@ export class SettingsModalComponent {
     this.translateService.addLangs(this.availableLanguages);
     const saved = localStorage.getItem('lang');
     const browser = this.translateService.getBrowserLang();
-    const fallback = 'en';
+    const fallback = 'it';
     const initLang = saved && this.availableLanguages.includes(saved)
       ? saved
       : browser && this.availableLanguages.includes(browser) ? browser : fallback;
     this.translateService.use(initLang);
     this.currentLang = initLang;
+
+    this.translateService.onLangChange
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(event => {
+        if (this.availableLanguages.includes(event.lang)) {
+          this.currentLang = event.lang;
+        }
+      });
 
     this.currencyService.getCurrencies().subscribe(data => {
       this.currencies = data;

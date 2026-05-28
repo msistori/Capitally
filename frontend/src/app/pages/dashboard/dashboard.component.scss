@@ -14,10 +14,18 @@
     flex-shrink: 0;
   }
 
-  app-recent-transactions {
+  .transaction-column {
     flex: 1 1 auto;
     min-height: fit-content;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    app-recent-transactions {
+      flex: 1 1 auto;
+      min-height: fit-content;
+      overflow-y: auto;
+    }
   }
 }
 
@@ -54,11 +62,25 @@
     overflow: hidden;
   }
 
-  .dashboard-container app-recent-transactions {
+  .dashboard-container .transaction-column {
     grid-column: 1 / 5;
     grid-row: 2;
     min-height: 0;
+    overflow: hidden;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: var(--v-gap);
+  }
+
+  .dashboard-container .transaction-column app-recent-transactions {
+    min-height: 0;
     overflow: auto;
+  }
+
+  .dashboard-container .transaction-column app-upcoming-recurring {
+    min-height: 0;
+    max-height: 42%;
+    overflow: hidden;
   }
 
   .dashboard-container app-balance-trend {
@@ -75,7 +97,7 @@
     overflow: hidden;
   }
 
-  .dashboard-container app-recent-transactions,
+  .dashboard-container .transaction-column,
   .dashboard-container app-balance-trend,
   .dashboard-container app-income-expense-breakdown {
     min-height: 0;

@@ -36,6 +36,7 @@
       "TITLE": "Benvenuto!",
       "USERNAME": "Username",
       "EMAIL": "Email",
+      "EMAIL_INVALID_ERROR": "Inserisci un indirizzo email valido",
       "PASSWORD_MIN_ERROR": "La password deve avere almeno 6 caratteri",
       "SUBMIT": "Iscriviti",
       "SIGN_IN": "Hai già un account? Fai l'accesso!",
@@ -139,6 +140,10 @@
   "BALANCE": {
     "BALANCE_TITLE": "Saldo Totale"
   },
+  "RECURRING": {
+    "UPCOMING_TITLE": "Ricorrenti in arrivo",
+    "NO_UPCOMING": "Nessuna ricorrenza in arrivo"
+  },
   "ACCOUNTS": {
     "TITLE": "Conti",
     "TOTAL_LABEL": "Saldo Totale",
@@ -171,6 +176,7 @@
     },
     "TRANSFER": {
       "TITLE": "Nuovo Giroconto",
+      "EDIT_TITLE": "Modifica Giroconto",
       "SUBTITLE": "Trasferisci importi tra i tuoi conti in modo semplice e sicuro.",
       "ACTION": "Giroconto",
       "FROM": "Da",
@@ -181,7 +187,8 @@
       "DESCRIPTION": "Causale (opzionale)",
       "DESCRIPTION_PLACEHOLDER": "Es. Giroconto tra conti",
       "SAME_ACCOUNT_ERROR": "Scegli due conti diversi.",
-      "CONFIRM": "Conferma"
+      "CONFIRM": "Conferma",
+      "SAVE": "Salva"
     },
     "HISTORY": {
       "TITLE": "Storico Giroconti",
@@ -365,7 +372,8 @@
         "DIALOG_TITLE": "Importa transazioni CSV",
         "UPLOAD_FILE": "Seleziona o trascina qui il file CSV delle transazioni",
         "IMPORT": "Importa",
-        "FORMAT_ERROR": "Il file deve essere in formato CSV"
+        "FORMAT_ERROR": "Il file deve essere in formato CSV",
+        "GENERIC_ERROR": "Impossibile importare il CSV. Verifica il formato del file e il separatore usato."
       },
       "EXPORT": {
         "TITLE": "Esporta transazioni",

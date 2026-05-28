@@ -24,7 +24,8 @@ import {
   annualIncomeExpenseMock,
   balanceTrendMock,
   dashboardOverviewMock,
-  incomeExpenseBreakdownMock
+  incomeExpenseBreakdownMock,
+  upcomingRecurringMock
 } from './dashboard.mock';
 import { importTransactionsMock } from './import-export.mock';
 import { MockApiConfig, MockEndpointKey } from './mock-api.types';
@@ -71,6 +72,10 @@ export class MockApiInterceptor implements HttpInterceptor {
       return this.json(annualIncomeExpenseMock);
     }
 
+    if (req.method === 'GET' && path === '/dashboard/upcoming-recurring' && this.isEndpointEnabled(config, 'dashboardUpcomingRecurring')) {
+      return this.json(upcomingRecurringMock);
+    }
+
     if ((path === '/transaction' || path.startsWith('/transaction/')) && this.isEndpointEnabled(config, 'transactions')) {
       return this.handleTransactions(req, path);
     }
@@ -83,8 +88,8 @@ export class MockApiInterceptor implements HttpInterceptor {
       return this.handleAccounts(req, path);
     }
 
-    if ((path === '/transfer' || path === '/api/transfer') && this.isEndpointEnabled(config, 'transfers')) {
-      return this.handleTransfers(req);
+    if ((path === '/transfer' || path === '/api/transfer' || path.startsWith('/transfer/') || path.startsWith('/api/transfer/')) && this.isEndpointEnabled(config, 'transfers')) {
+      return this.handleTransfers(req, path);
     }
 
     if (req.method === 'GET' && path === '/currency' && this.isEndpointEnabled(config, 'currencies')) {
@@ -222,7 +227,7 @@ export class MockApiInterceptor implements HttpInterceptor {
     return null;
   }
 
-  private handleTransfers(req: HttpRequest<any>): HttpResponse<any> | null {
+  private handleTransfers(req: HttpRequest<any>, path: string): HttpResponse<any> | null {
     if (req.method === 'GET') {
       return this.json(transfersMock);
     }
@@ -241,6 +246,28 @@ export class MockApiInterceptor implements HttpInterceptor {
         destinationAccountIconName: destination?.iconName ?? 'account_balance_wallet',
         ...req.body
       });
+    }
+
+    if (req.method === 'PUT') {
+      const transferGroupId = decodeURIComponent(path.split('/').pop() ?? '');
+      const index = transfersMock.findIndex(transfer => transfer.transferGroupId === transferGroupId);
+      const source = accountsMock.find(account => account.id === Number(req.body?.sourceAccountId));
+      const destination = accountsMock.find(account => account.id === Number(req.body?.destinationAccountId));
+      const updated = {
+        ...(transfersMock[index] ?? { transferGroupId }),
+        ...req.body,
+        transferGroupId,
+        sourceAccountName: source?.name ?? '',
+        sourceAccountIconName: source?.iconName ?? 'account_balance_wallet',
+        destinationAccountName: destination?.name ?? '',
+        destinationAccountIconName: destination?.iconName ?? 'account_balance_wallet'
+      };
+
+      if (index >= 0) {
+        transfersMock[index] = updated;
+      }
+
+      return this.json(updated);
     }
 
     return null;

@@ -1,0 +1,37 @@
+<section class="upcoming-recurring">
+  <header class="header">
+    <h3>{{ 'RECURRING.UPCOMING_TITLE' | translate }}</h3>
+    <span class="count" *ngIf="items.length">{{ items.length }}</span>
+  </header>
+
+  <ul *ngIf="visibleItems.length; else emptyState">
+    <li *ngFor="let item of visibleItems; trackBy: trackByOccurrence">
+      <div class="date-badge">
+        <span class="day">{{ item.nextDate | date:'dd' }}</span>
+        <span class="month">{{ item.nextDate | date:'MMM' }}</span>
+      </div>
+
+      <div class="tx-info">
+        <span class="tx-description">
+          {{ item.description || ('SUMMARY.TRANSACTIONS.NO_DESCRIPTION' | translate) }}
+        </span>
+        <span class="tx-meta">
+          {{ item.account || ('SUMMARY.TRANSACTIONS.UNKNOWN_ACCOUNT' | translate) }}
+          / {{ item.category || ('SUMMARY.TRANSACTIONS.NO_CATEGORY' | translate) }}
+          / {{ ('FORM.RECURRING.' + item.frequency) | translate }}
+        </span>
+      </div>
+
+      <div class="tx-amount" [ngClass]="{
+        'positive': item.transactionType === TransactionTypeEnum.INCOME,
+        'negative': item.transactionType === TransactionTypeEnum.EXPENSE
+      }">
+        <span class="sign">{{ amountSign(item) }}</span>{{ item.amount | currency: item.currency:'symbol-narrow' }}
+      </div>
+    </li>
+  </ul>
+
+  <ng-template #emptyState>
+    <p class="empty">{{ 'RECURRING.NO_UPCOMING' | translate }}</p>
+  </ng-template>
+</section>

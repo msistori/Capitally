@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -8,6 +8,20 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls: ['./import-csv-dialog.component.scss']
 })
 export class ImportCsvDialogComponent {
+  private readonly requiredCsvHeaders = [
+    'date',
+    'macrocategory',
+    'category',
+    'account_name',
+    'amount',
+    'currency',
+    'description',
+    'transaction_type',
+    'is_recurring',
+    'recurrence_period',
+    'recurrence_end_date'
+  ];
+
   selectedFile: File | null = null;
   error: string = '';
 
@@ -16,9 +30,12 @@ export class ImportCsvDialogComponent {
     private translateService: TranslateService
   ) {}
 
-  onFileSelected(event: any): void {
-    const file = event.target.files[0];
-    this.validateAndSetFile(file);
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (file) {
+      void this.validateAndSetFile(file);
+    }
   }
 
   onDragOver(event: DragEvent): void {
@@ -32,19 +49,45 @@ export class ImportCsvDialogComponent {
     
     const file = event.dataTransfer?.files[0];
     if (file) {
-      this.validateAndSetFile(file);
+      void this.validateAndSetFile(file);
     }
   }
 
-  validateAndSetFile(file: File): void {
+  async validateAndSetFile(file: File): Promise<void> {
     this.error = '';
+    this.selectedFile = null;
     
-    if (!file.name.endsWith('.csv')) {
+    if (!file.name.toLowerCase().endsWith('.csv')) {
       this.error = this.translateService.instant('SETTINGS.IMPORT_EXPORT.IMPORT.FORMAT_ERROR') as string;
+      return;
+    }
+
+    const hasValidHeader = await this.hasValidCsvHeader(file);
+    if (!hasValidHeader) {
+      this.error = this.translateService.instant('SETTINGS.IMPORT_EXPORT.IMPORT.GENERIC_ERROR') as string;
       return;
     }
     
     this.selectedFile = file;
+  }
+
+  private async hasValidCsvHeader(file: File): Promise<boolean> {
+    try {
+      const content = await file.slice(0, 4096).text();
+      const firstLine = content.split(/\r?\n/).find(line => line.trim());
+      if (!firstLine) {
+        return false;
+      }
+
+      const headers = firstLine
+        .replace(/^\uFEFF/, '')
+        .split(';')
+        .map(header => header.trim().toLowerCase());
+
+      return this.requiredCsvHeaders.every(header => headers.includes(header));
+    } catch {
+      return false;
+    }
   }
 
   onConfirm(): void {

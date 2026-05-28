@@ -572,6 +572,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
   private applyTransactionSearch(): void {
     const search = this.searchControl.value.trim().toLowerCase();
     const rows = this.periodTransactions
+      .filter(transaction => !this.isTransferTransaction(transaction))
       .map(transaction => this.toTransactionRow(transaction))
       .filter(row => {
         if (!search) return true;

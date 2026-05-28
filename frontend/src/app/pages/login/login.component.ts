@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -7,8 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from 'src/app/services/auth.service';
-import { TranslateService } from '@ngx-translate/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { switchMap } from 'rxjs';
 import { GuestService } from 'src/app/services/guest.service';
 
@@ -32,7 +31,6 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private router = inject(Router);
-  private destroyRef = inject(DestroyRef);
 
   constructor(private translate: TranslateService, private guestService: GuestService) {
     this.guestService.clearGuestLogin();
@@ -52,7 +50,7 @@ export class LoginComponent {
 
   registerForm = this.fb.nonNullable.group({
     username: ['', [Validators.required, Validators.minLength(2)]],
-    email: ['', [Validators.required, Validators.email]],
+    email: ['', [Validators.required, Validators.email, Validators.pattern(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)]],
     password: ['', [Validators.required, Validators.minLength(6)]]
   });
 
@@ -79,8 +77,16 @@ export class LoginComponent {
         }
       });
     } else {
+      const username = this.registerForm.controls.username.value.trim();
+      const email = this.registerForm.controls.email.value.trim();
+      this.registerForm.controls.username.setValue(username, { emitEvent: false });
+      this.registerForm.controls.email.setValue(email, { emitEvent: false });
+
       if (this.registerForm.invalid) {
-        if (this.registerForm.controls.password.hasError('minlength')) {
+        this.registerForm.markAllAsTouched();
+        if (this.registerForm.controls.email.hasError('email') || this.registerForm.controls.email.hasError('pattern')) {
+          this.error.set(this.translate.instant('LOGIN_PAGE.REGISTER.EMAIL_INVALID_ERROR'));
+        } else if (this.registerForm.controls.password.hasError('minlength')) {
           this.error.set(this.translate.instant('LOGIN_PAGE.REGISTER.PASSWORD_MIN_ERROR'));
         }
         return;
@@ -88,8 +94,8 @@ export class LoginComponent {
 
       this.loading.set(true);
       
-      const { username, email, password } = this.registerForm.getRawValue();
-      this.auth.register(this.registerForm.getRawValue()).pipe(
+      const { password } = this.registerForm.getRawValue();
+      this.auth.register({ username, email, password }).pipe(
         switchMap(() =>
           this.auth.login({
             usernameOrEmail: email,

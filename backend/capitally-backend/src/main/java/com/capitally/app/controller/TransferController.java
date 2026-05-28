@@ -26,6 +26,14 @@ public class TransferController {
         return ResponseEntity.ok(transferService.postTransfer(input));
     }
 
+    @PutMapping("/{transferGroupId}")
+    public ResponseEntity<TransferResponseDTO> putTransfer(
+            @PathVariable String transferGroupId,
+            @RequestBody TransferRequestDTO input
+    ) {
+        return ResponseEntity.ok(transferService.putTransfer(transferGroupId, input));
+    }
+
     @GetMapping
     public ResponseEntity<List<TransferResponseDTO>> getTransfers(
             @RequestParam BigInteger userId,

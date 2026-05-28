@@ -50,10 +50,18 @@ public abstract class TransactionsImportExportMapper {
     }
 
     protected CategoryEntity findCategory(String category, String macroCategory, UserEntity user) {
+        if (isBlank(category) && isBlank(macroCategory)) {
+            return null;
+        }
+
         return categoryRepository.findByCategoryAndMacroCategoryAndUser_Id(category, macroCategory, user.getId())
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Category '%s' in macro-category '%s' not found for user %s",
                                 category, macroCategory, user.getId())
                 ));
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
     }
 }

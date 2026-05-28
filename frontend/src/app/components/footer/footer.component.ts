@@ -64,6 +64,10 @@ export class FooterComponent {
     return !!this.dialogSettingsModal;
   }
 
+  get anyDialogOpen(): boolean {
+    return this.transactionDialogOpen || this.settingsDialogOpen;
+  }
+
   openTransactionModal() {
     if (this.dialogTransactionModal) return;
 

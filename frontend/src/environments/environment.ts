@@ -10,6 +10,7 @@ export const environment = {
       dashboardBalanceTrend: true,
       dashboardIncomeExpenseBreakdown: true,
       dashboardAnnualIncomeExpense: true,
+      dashboardUpcomingRecurring: true,
       transactions: true,
       categories: true,
       accounts: true,

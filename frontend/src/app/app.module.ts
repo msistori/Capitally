@@ -30,6 +30,7 @@ import { AnnualIncomeExpenseComponent } from './components/annual-income-expense
 import { TransactionsModule } from './components/insert-transaction/transactions.module';
 import { DuplicateCategoryAlertComponent } from './alerts/duplicate-category-alert/duplicate-category-alert.component';
 import { BalanceTrendComponent } from './components/balance-trend/balance-trend.component';
+import { UpcomingRecurringComponent } from './components/upcoming-recurring/upcoming-recurring.component';
 
 import { MAT_RIPPLE_GLOBAL_OPTIONS, RippleGlobalOptions } from '@angular/material/core';
 import { registerLocaleData } from '@angular/common';
@@ -64,6 +65,7 @@ const globalRippleConfig: RippleGlobalOptions = { disabled: true };
     AnnualIncomeExpenseComponent,
     DuplicateCategoryAlertComponent,
     BalanceTrendComponent,
+    UpcomingRecurringComponent,
     IncomeExpenseBreakdownComponent,
     FooterComponent,
     FooterActionComponent,

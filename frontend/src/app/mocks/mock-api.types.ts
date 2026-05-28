@@ -5,6 +5,7 @@ export type MockEndpointKey =
   | 'dashboardBalanceTrend'
   | 'dashboardIncomeExpenseBreakdown'
   | 'dashboardAnnualIncomeExpense'
+  | 'dashboardUpcomingRecurring'
   | 'transactions'
   | 'categories'
   | 'accounts'
