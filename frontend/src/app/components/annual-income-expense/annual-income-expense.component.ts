@@ -159,6 +159,7 @@ export class AnnualIncomeExpenseComponent implements OnInit, OnChanges, OnDestro
     this.totalExpense = expenseData.reduce((sum, value) => sum + value, 0);
     const incomePercentages = incomeData.map(value => this.toPercentage(value, this.totalIncome));
     const expensePercentages = expenseData.map(value => this.toPercentage(value, this.totalExpense));
+    this.updatePercentageAxisMax([...incomePercentages, ...expensePercentages]);
 
     this.noData = [...incomeData, ...expenseData].every(value => value === 0);
     this.rawDatasetValues = [incomeData, expenseData];
@@ -167,10 +168,12 @@ export class AnnualIncomeExpenseComponent implements OnInit, OnChanges, OnDestro
     {
       label: `${this.incomeLabel}: ${this.formatCurrency(this.totalIncome)}`,
       data: incomePercentages,
+      backgroundColor: '#0f8f4e',
     },
     {
       label: `${this.expenseLabel}: ${this.formatCurrency(this.totalExpense)}`,
       data: expensePercentages,
+      backgroundColor: '#d51f2a',
     }
   ];
 
@@ -189,6 +192,13 @@ export class AnnualIncomeExpenseComponent implements OnInit, OnChanges, OnDestro
   private toPercentage(value: number, total: number): number {
     if (!total) return 0;
     return Math.round((value / total) * 1000) / 10;
+  }
+
+  private updatePercentageAxisMax(values: number[]): void {
+    const yScale = this.barOptions.scales?.['y'];
+    if (yScale) {
+      yScale.max = values.some(value => value > 50) ? 100 : 50;
+    }
   }
 
   private formatCurrency(value: number): string {

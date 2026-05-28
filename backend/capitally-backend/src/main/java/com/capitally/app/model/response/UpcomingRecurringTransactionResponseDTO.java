@@ -1,6 +1,7 @@
 package com.capitally.app.model.response;
 
 import com.capitally.app.core.enums.TransactionRecurrencePeriodEnum;
+import com.capitally.app.core.enums.TransactionTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,4 +20,5 @@ public class UpcomingRecurringTransactionResponseDTO {
     private TransactionRecurrencePeriodEnum frequency;
     private String category;
     private String account;
+    private TransactionTypeEnum transactionType;
 }

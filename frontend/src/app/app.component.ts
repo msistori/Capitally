@@ -11,6 +11,7 @@ import { filter } from 'rxjs';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+  private readonly availableLanguages = ['it', 'en'];
   private loader = inject(LoaderService);
   private router = inject(Router);
   loading = computed(() => this.loader.isLoading());
@@ -19,7 +20,15 @@ export class AppComponent implements OnInit {
   constructor(private translate: TranslateService) {}
 
   ngOnInit(): void {
-    this.translate.use('it');
+    this.translate.addLangs(this.availableLanguages);
+    const saved = localStorage.getItem('lang');
+    const browser = this.translate.getBrowserLang();
+    const fallback = 'it';
+    const initLang = saved && this.availableLanguages.includes(saved)
+      ? saved
+      : browser && this.availableLanguages.includes(browser) ? browser : fallback;
+
+    this.translate.use(initLang);
 
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))

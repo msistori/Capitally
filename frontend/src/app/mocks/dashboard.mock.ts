@@ -1,3 +1,36 @@
+export const upcomingRecurringMock = [
+  {
+    description: 'Demo | Spotify',
+    amount: 10.99,
+    currency: 'EUR',
+    nextDate: '2026-06-02',
+    frequency: 'MONTHLY',
+    category: 'Spotify',
+    account: 'Fineco Everyday',
+    transactionType: 'EXPENSE'
+  },
+  {
+    description: 'Demo | Affitto',
+    amount: 740.00,
+    currency: 'EUR',
+    nextDate: '2026-06-03',
+    frequency: 'MONTHLY',
+    category: 'Affitto',
+    account: 'Fineco Everyday',
+    transactionType: 'EXPENSE'
+  },
+  {
+    description: 'Demo | Stipendio maggio',
+    amount: 2200.00,
+    currency: 'EUR',
+    nextDate: '2026-06-27',
+    frequency: 'MONTHLY',
+    category: 'Stipendio',
+    account: 'ISP Stipendio',
+    transactionType: 'INCOME'
+  }
+];
+
 export const dashboardOverviewMock = {
   totalBalancePerCurrency: {
     EUR: 8534.05,
@@ -11,7 +44,7 @@ export const dashboardOverviewMock = {
     EUR: 175.00,
     USD: 25.00
   },
-  upcomingRecurringCount: 0
+  upcomingRecurringCount: upcomingRecurringMock.length
 };
 
 export const balanceTrendMock = [

@@ -25,10 +25,12 @@ $expense: #bf1f23;
 
 .ieb {
   display: grid;
-  gap: .75rem;
+  gap: .55rem;
   padding: .5rem 1rem;
   height: 100%;
+  max-height: 100%;
   min-height: 0;
+  box-sizing: border-box;
   overflow: hidden;
   /* contain inner scroll */
   /* title (row1) + month-nav (row2) + scrollable body (row3) */
@@ -42,7 +44,7 @@ $expense: #bf1f23;
   background-color: rgba(255, 255, 255, 0.42);
   border: 1px solid rgba(209, 213, 219, 0.5);
   border-radius: 1rem;
-  padding: 1.5rem;
+  padding: 1rem;
 
   h3 {
     margin: 0;
@@ -63,7 +65,7 @@ $expense: #bf1f23;
   display: grid;
   grid-template-columns: 3rem 1fr 3rem;
   align-items: center;
-  padding: .25rem .25rem;
+  padding: .1rem .25rem;
 
   .nav-btn {
     display: grid;
@@ -98,9 +100,11 @@ $expense: #bf1f23;
   display: grid;
   grid-template-columns: 1fr 1px 1fr;
   gap: 0;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   /* internal scroll when needed */
   min-height: 0;
+  box-sizing: border-box;
   /* allow to shrink within container */
   align-content: start;
   /* don't stretch rows when extra space exists */
@@ -113,7 +117,7 @@ $expense: #bf1f23;
 }
 
 .col {
-  padding: .75rem;
+  padding: .5rem;
 
   .col-header {
     display: flex;
@@ -153,7 +157,7 @@ $expense: #bf1f23;
     display: grid;
     grid-template-columns: 1fr auto;
     align-items: baseline;
-    padding: .5rem .6rem;
+    padding: .42rem .55rem;
     border-radius: .75rem;
     background: rgba(255, 255, 255, .55);
     border: 1px solid rgba(209, 213, 219, .45);
@@ -219,7 +223,7 @@ $expense: #bf1f23;
   }
 }
 
-@media(min-width: 600px) {
+@media (min-width: 600px) and (max-width: 1023px) {
   .ieb {
     max-height: 36vh;
     height: fit-content;

@@ -257,8 +257,9 @@ public class DashboardService {
                                     tx.getCurrency().getCode(),
                                     next,
                                     tx.getRecurrencePeriod(),
-                                    tx.getCategory().getCategory(),
-                                    tx.getAccount().getName()
+                                    tx.getCategory() != null ? tx.getCategory().getCategory() : null,
+                                    tx.getAccount().getName(),
+                                    tx.getTransactionType()
                             ));
                         }
                         next = next.plus(step);
@@ -266,11 +267,17 @@ public class DashboardService {
 
                     return occurrences.stream();
                 })
+                .sorted(Comparator
+                        .comparing(UpcomingRecurringTransactionResponseDTO::getNextDate)
+                        .thenComparing(
+                                UpcomingRecurringTransactionResponseDTO::getDescription,
+                                Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)
+                        ))
                 .toList();
     }
 
     public DashboardOverviewResponseDTO getDashboardOverview(BigInteger userId) {
-        YearMonth currentMonth = YearMonth.of(2025, Month.AUGUST);
+        YearMonth currentMonth = YearMonth.now();
         LocalDate startOfMonth = currentMonth.atDay(1);
         LocalDate endOfMonth = currentMonth.atEndOfMonth();
 

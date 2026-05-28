@@ -443,6 +443,92 @@ input,
   text-align: center;
 }
 
+.transfer-calendar-card {
+  background: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 95, 115, 0.55);
+  color: $primary;
+  display: grid;
+  gap: 0.75rem;
+  margin: 0 auto;
+  max-width: 34rem;
+  padding: 1rem;
+  text-align: center;
+  width: min(100%, 34rem);
+}
+
+.transfer-calendar-label {
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-align: left;
+}
+
+.transfer-calendar-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+
+  button {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    color: $primary;
+    cursor: pointer;
+    display: inline-flex;
+    height: 2.25rem;
+    justify-content: center;
+    width: 2.25rem;
+  }
+
+  strong {
+    font-weight: 800;
+  }
+}
+
+.transfer-calendar-weekdays,
+.transfer-calendar-week {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.transfer-calendar-weekdays span {
+  color: $primary;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.transfer-calendar-day {
+  align-items: center;
+  aspect-ratio: 1;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  color: $primary;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-weight: 800;
+  justify-content: center;
+  margin: 0 auto;
+  max-height: 2.25rem;
+  max-width: 2.25rem;
+  min-width: 2rem;
+
+  &.outside {
+    opacity: 0.35;
+  }
+
+  &.selected {
+    background: $primary;
+    color: #fff;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $primary;
+    outline-offset: 2px;
+  }
+}
+
 .history-filters {
   align-items: end;
   -webkit-backdrop-filter: blur(16px);
@@ -467,9 +553,18 @@ input,
 }
 
 .transfer-card {
+  color: inherit;
+  cursor: pointer;
   display: grid;
   gap: 0.7rem;
+  font: inherit;
   padding: 0.85rem;
+  text-align: left;
+
+  &:focus-visible {
+    outline: 2px solid $primary;
+    outline-offset: 3px;
+  }
 }
 
 .transfer-route {

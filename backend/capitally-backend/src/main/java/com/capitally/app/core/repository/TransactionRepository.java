@@ -28,6 +28,8 @@ public interface TransactionRepository extends JpaRepository<TransactionEntity, 
 
     List<TransactionEntity> findByUser_IdAndTransferGroupIdIsNotNull(BigInteger userId);
 
+    List<TransactionEntity> findByUser_IdAndTransferGroupId(BigInteger userId, String transferGroupId);
+
     boolean existsByUser_IdAndAccount_Id(BigInteger userId, BigInteger accountId);
 
     boolean existsByUser_IdAndAccount_IdIn(BigInteger userId, Collection<BigInteger> accountIds);

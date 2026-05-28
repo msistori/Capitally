@@ -1,10 +1,10 @@
-import { TransactionTypeEnum } from "./transaction.model";
+import { RecurrencePeriodEnum, TransactionTypeEnum } from "./transaction.model";
 
 export interface DashboardOverviewResponseDTO {
   totalBalancePerCurrency: { [currencyCode: string]: number };
   totalIncomeThisMonth:  { [currencyCode: string]: number };
   totalExpenseThisMonth:  { [currencyCode: string]: number };
-  upcomingRecurringCount: UpcomingRecurringTransactionModel[];
+  upcomingRecurringCount: number;
 }
 
 export interface CurrentBalanceResponseDTO {
@@ -37,9 +37,14 @@ export interface BalanceTrendPerCurrencyResponseDTO {
 }
 
 export interface UpcomingRecurringTransactionModel {
-  description: string;
-  nextDate: string;
+  description?: string | null;
   amount: number;
+  currency: string;
+  nextDate: string;
+  frequency: RecurrencePeriodEnum;
+  category?: string | null;
+  account?: string | null;
+  transactionType?: TransactionTypeEnum;
 }
 
 export interface BalanceTrendResponseDTO {

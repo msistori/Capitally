@@ -1,10 +1,21 @@
+:host {
+  display: block;
+  height: 100%;
+  min-height: 0;
+}
+
 .recent-transactions {
-    backdrop-filter: blur(16px);
-    background-color: #ffffff1a;
-    border: 1px solid rgba(209, 213, 219, .5);
-    border-radius: 1rem;
-    padding: 1.5rem;
-    
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+  backdrop-filter: blur(16px);
+  background-color: #ffffff1a;
+  border: 1px solid rgba(209, 213, 219, .5);
+  border-radius: 1rem;
+  padding: 1rem;
+
   h3 {
     font-size: 1.1rem;
     margin: 0;
@@ -17,12 +28,14 @@
     list-style: none;
     padding: 0;
     margin: 0;
+    min-height: 0;
+    overflow-y: auto;
   }
 
   li {
-    padding: 0.4rem;
+    padding: 0.35rem 0.55rem;
     border-radius: 0.75rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.45rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -58,11 +71,5 @@
     &.negative {
       color: #bf1f23;
     }
-  }
-
-  :host {
-    display: block;
-    height: 100%;
-    overflow-y: auto;
   }
 }

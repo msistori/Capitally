@@ -208,10 +208,35 @@
         </label>
       </div>
 
-      <label class="field">
-        <span>{{ 'ACCOUNTS.TRANSFER.DATE' | translate }}</span>
-        <input type="date" formControlName="date" />
-      </label>
+      <div class="transfer-calendar-card">
+        <span class="transfer-calendar-label">{{ 'ACCOUNTS.TRANSFER.DATE' | translate }}</span>
+
+        <div class="transfer-calendar-header">
+          <button type="button" (click)="previousTransferWeek()" [attr.aria-label]="'SUMMARY.CALENDAR.PREV_MONTH' | translate">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <strong>{{ transferCalendarMonthLabel() | titlecase }}</strong>
+          <button type="button" (click)="nextTransferWeek()" [attr.aria-label]="'SUMMARY.CALENDAR.NEXT_MONTH' | translate">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+
+        <div class="transfer-calendar-weekdays">
+          <span *ngFor="let day of transferWeekDays">{{ day }}</span>
+        </div>
+
+        <div class="transfer-calendar-week">
+          <button
+            type="button"
+            class="transfer-calendar-day"
+            *ngFor="let day of currentTransferWeek"
+            [class.outside]="isTransferDayOutsideMonth(day)"
+            [class.selected]="isTransferDaySelected(day)"
+            (click)="selectTransferDay(day)">
+            {{ day.getDate() }}
+          </button>
+        </div>
+      </div>
 
       <label class="field">
         <span>{{ 'ACCOUNTS.TRANSFER.DESCRIPTION' | translate }}</span>
@@ -227,7 +252,7 @@
           {{ 'BUTTON_CANCEL' | translate }}
         </button>
         <button class="primary-action compact" type="submit">
-          {{ 'ACCOUNTS.TRANSFER.CONFIRM' | translate }}
+          {{ (editingTransferGroupId ? 'ACCOUNTS.TRANSFER.SAVE' : 'ACCOUNTS.TRANSFER.CONFIRM') | translate }}
         </button>
       </div>
     </form>
@@ -247,7 +272,11 @@
       </div>
 
       <div class="transfer-list" *ngIf="transfers.length; else emptyTransfers">
-        <article class="transfer-card" *ngFor="let transfer of transfers; trackBy: trackByTransfer">
+        <button
+          class="transfer-card"
+          type="button"
+          *ngFor="let transfer of transfers; trackBy: trackByTransfer"
+          (click)="editTransfer(transfer)">
           <div class="transfer-route">
             <div class="transfer-account">
               <span class="account-icon small" aria-hidden="true">
@@ -276,7 +305,7 @@
             <span>{{ transfer.description }}</span>
             <strong>{{ transfer.amount | currency: transfer.currencyCode:'symbol-narrow':'1.2-2' }}</strong>
           </div>
-        </article>
+        </button>
       </div>
 
       <ng-template #emptyTransfers>

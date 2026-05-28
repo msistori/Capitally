@@ -3,6 +3,7 @@ import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, V
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { forkJoin, Observable, of, Subscription, switchMap } from 'rxjs';
 import { StorageService } from '../../auth/storage.service';
 import { AccountModel } from '../../models/account.model';
@@ -54,6 +55,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private host = inject(ElementRef<HTMLElement>);
   private dialog = inject(MatDialog);
+  public translateService = inject(TranslateService);
 
   readonly userId = Number(this.storage.getUserId() || 1);
   readonly iconOptions = [
@@ -84,6 +86,9 @@ export class AccountsComponent implements OnInit, OnDestroy {
   accountSummaries: AccountSummary[] = [];
   rates: Record<string, number> = {};
   editingAccountId: number | null = null;
+  editingTransferGroupId: string | null = null;
+  transferWeekDays: string[] = [];
+  transferCalendarMatrix: Date[][] = [];
   private editingOriginalBalances: Record<string, number> = {};
 
   historyPeriodControl = new FormControl<HistoryPeriod>('3m', { nonNullable: true });
@@ -119,6 +124,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
     this.loadRates();
     this.loadAccountsData();
     this.loadTransfers();
+    this.refreshTransferWeekDays();
+    this.buildTransferCalendarMatrix(this.parseDateInput(this.transferForm.controls.date.value));
 
     this.sub.add(this.route.queryParamMap.subscribe(params => {
       this.applyView(this.parseView(params.get('view')));
@@ -126,6 +133,10 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
     this.sub.add(this.historyPeriodControl.valueChanges.subscribe(() => {
       this.applyTransferFilters();
+    }));
+
+    this.sub.add(this.transferForm.controls.date.valueChanges.subscribe(value => {
+      this.buildTransferCalendarMatrix(this.parseDateInput(value));
     }));
 
     this.sub.add(this.storage.defaultCurrency$.subscribe(code => {
@@ -139,6 +150,10 @@ export class AccountsComponent implements OnInit, OnDestroy {
       this.loadAccountsData();
       this.loadTransfers();
     }));
+
+    this.sub.add(this.translateService.onLangChange.subscribe(() => {
+      this.refreshTransferWeekDays();
+    }));
   }
 
   ngOnDestroy(): void {
@@ -148,6 +163,10 @@ export class AccountsComponent implements OnInit, OnDestroy {
   get titleKey(): string {
     if (this.view === 'new-account' && this.editingAccountId) {
       return 'ACCOUNTS.EDIT_ACCOUNT.TITLE';
+    }
+
+    if (this.view === 'new-transfer' && this.editingTransferGroupId) {
+      return 'ACCOUNTS.TRANSFER.EDIT_TITLE';
     }
 
     const titles: Record<AccountsView, string> = {
@@ -182,6 +201,12 @@ export class AccountsComponent implements OnInit, OnDestroy {
     });
   }
 
+  editTransfer(transfer: TransferModel): void {
+    this.router.navigate(['/accounts'], {
+      queryParams: { view: 'new-transfer', transferGroupId: transfer.transferGroupId }
+    });
+  }
+
   private applyView(view: AccountsView): void {
     const changed = this.view !== view;
     this.view = view;
@@ -195,8 +220,13 @@ export class AccountsComponent implements OnInit, OnDestroy {
       }
     }
 
-    if (view === 'new-transfer' && changed) {
-      this.resetTransferForm();
+    if (view === 'new-transfer') {
+      const transferGroupId = this.route.snapshot.queryParamMap.get('transferGroupId');
+      if (transferGroupId) {
+        this.populateTransferForm(transferGroupId);
+      } else if (changed || this.editingTransferGroupId) {
+        this.resetTransferForm();
+      }
     }
 
     if (view === 'history') {
@@ -340,7 +370,11 @@ export class AccountsComponent implements OnInit, OnDestroy {
       description: value.description.trim() || undefined
     };
 
-    this.transferService.postTransfer(transfer).subscribe({
+    const request$ = this.editingTransferGroupId
+      ? this.transferService.putTransfer(this.editingTransferGroupId, transfer)
+      : this.transferService.postTransfer(transfer);
+
+    request$.subscribe({
       next: () => {
         this.loadAccountsData();
         this.loadTransfers();
@@ -356,6 +390,9 @@ export class AccountsComponent implements OnInit, OnDestroy {
       next: transfers => {
         this.allTransfers = transfers;
         this.applyTransferFilters();
+        if (this.view === 'new-transfer' && this.editingTransferGroupId) {
+          this.populateTransferForm(this.editingTransferGroupId);
+        }
       },
       error: err => console.error('Error loading transfers', err)
     });
@@ -406,6 +443,45 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   trackByIcon(_: number, icon: string): string {
     return icon;
+  }
+
+  get currentTransferWeek(): Date[] {
+    const selected = this.parseDateInput(this.transferForm.controls.date.value);
+    return this.transferCalendarMatrix.find(week => week.some(day => this.sameDay(day, selected)))
+      ?? this.transferCalendarMatrix[0]
+      ?? [];
+  }
+
+  transferCalendarMonthLabel(): string {
+    const locale = ({ it: 'it-IT', en: 'en-US' } as Record<string, string>)[this.translateService.currentLang] || 'it-IT';
+    return this.parseDateInput(this.transferForm.controls.date.value)
+      .toLocaleDateString(locale, { month: 'long', year: 'numeric' });
+  }
+
+  previousTransferWeek(): void {
+    const selected = this.parseDateInput(this.transferForm.controls.date.value);
+    selected.setDate(selected.getDate() - 7);
+    this.transferForm.controls.date.setValue(this.formatDateInput(selected));
+  }
+
+  nextTransferWeek(): void {
+    const selected = this.parseDateInput(this.transferForm.controls.date.value);
+    selected.setDate(selected.getDate() + 7);
+    this.transferForm.controls.date.setValue(this.formatDateInput(selected));
+  }
+
+  selectTransferDay(day: Date): void {
+    this.transferForm.controls.date.setValue(this.formatDateInput(day));
+  }
+
+  isTransferDaySelected(day: Date): boolean {
+    return this.sameDay(day, this.parseDateInput(this.transferForm.controls.date.value));
+  }
+
+  isTransferDayOutsideMonth(day: Date): boolean {
+    const selected = this.parseDateInput(this.transferForm.controls.date.value);
+    return day.getMonth() !== selected.getMonth()
+      || day.getFullYear() !== selected.getFullYear();
   }
 
   private loadAccountsData(): void {
@@ -553,6 +629,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
   }
 
   private resetTransferForm(): void {
+    this.editingTransferGroupId = null;
     this.transferForm.reset({
       sourceAccountId: null,
       destinationAccountId: null,
@@ -561,6 +638,26 @@ export class AccountsComponent implements OnInit, OnDestroy {
       date: this.formatDateInput(new Date()),
       description: ''
     });
+    this.buildTransferCalendarMatrix(this.parseDateInput(this.transferForm.controls.date.value));
+  }
+
+  private populateTransferForm(transferGroupId: string): void {
+    const transfer = this.allTransfers.find(item => item.transferGroupId === transferGroupId);
+    if (!transfer) {
+      this.editingTransferGroupId = transferGroupId;
+      return;
+    }
+
+    this.editingTransferGroupId = transferGroupId;
+    this.transferForm.reset({
+      sourceAccountId: transfer.sourceAccountId,
+      destinationAccountId: transfer.destinationAccountId,
+      amount: Number(transfer.amount),
+      currencyCode: transfer.currencyCode,
+      date: transfer.date,
+      description: transfer.description ?? ''
+    });
+    this.buildTransferCalendarMatrix(this.parseDateInput(transfer.date));
   }
 
   private getHistoryRange(): { startDate?: string; endDate?: string } {
@@ -622,6 +719,56 @@ export class AccountsComponent implements OnInit, OnDestroy {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  }
+
+  private parseDateInput(value: string | null | undefined): Date {
+    const parts = String(value ?? '').slice(0, 10).split('-').map(Number);
+    if (parts.length === 3 && parts.every(part => Number.isFinite(part))) {
+      return new Date(parts[0], parts[1] - 1, parts[2]);
+    }
+
+    return new Date();
+  }
+
+  private buildTransferCalendarMatrix(date: Date): void {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const first = new Date(year, month, 1);
+    const startOffset = (first.getDay() + 6) % 7;
+    const daysCount = new Date(year, month + 1, 0).getDate();
+    const cells: Date[] = [];
+
+    for (let index = startOffset - 1; index >= 0; index--) {
+      cells.push(new Date(year, month, -index));
+    }
+
+    for (let day = 1; day <= daysCount; day++) {
+      cells.push(new Date(year, month, day));
+    }
+
+    let nextDay = 1;
+    while (cells.length % 7) {
+      cells.push(new Date(year, month + 1, nextDay));
+      nextDay++;
+    }
+
+    this.transferCalendarMatrix = [];
+    for (let index = 0; index < cells.length; index += 7) {
+      this.transferCalendarMatrix.push(cells.slice(index, index + 7));
+    }
+  }
+
+  private refreshTransferWeekDays(): void {
+    const weekDays = this.translateService.instant('FORM.WEEK_DAYS') as string[] | string;
+    this.transferWeekDays = Array.isArray(weekDays)
+      ? weekDays
+      : ['Lu', 'Ma', 'Me', 'Gi', 'Ve', 'Sa', 'Do'];
+  }
+
+  private sameDay(first: Date, second: Date): boolean {
+    return first.getDate() === second.getDate()
+      && first.getMonth() === second.getMonth()
+      && first.getFullYear() === second.getFullYear();
   }
 
   private createBalanceRow(currencyCode: string, amount: number | null): FormGroup {

@@ -27,4 +27,8 @@ export class TransferService {
   postTransfer(transfer: TransferRequestModel): Observable<TransferModel> {
     return this.http.post<TransferModel>(`${this.apiUrl}`, transfer);
   }
+
+  putTransfer(transferGroupId: string, transfer: TransferRequestModel): Observable<TransferModel> {
+    return this.http.put<TransferModel>(`${this.apiUrl}/${encodeURIComponent(transferGroupId)}`, transfer);
+  }
 }

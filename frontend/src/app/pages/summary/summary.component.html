@@ -284,48 +284,56 @@
       </article>
     </div>
 
-    <section class="transactions-panel glass-card">
-      <header class="transactions-heading">
-        <div>
-          <h2>{{ 'SUMMARY.TRANSACTIONS.TITLE' | translate }}</h2>
-          <span>{{ transactionRows.length }} {{ 'SUMMARY.TRANSACTIONS.VISIBLE_ITEMS' | translate }}</span>
+    <aside class="summary-side-panel">
+      <section class="transactions-panel glass-card">
+        <header class="transactions-heading">
+          <div>
+            <h2>{{ 'SUMMARY.TRANSACTIONS.TITLE' | translate }}</h2>
+            <span>{{ transactionRows.length }} {{ 'SUMMARY.TRANSACTIONS.VISIBLE_ITEMS' | translate }}</span>
+          </div>
+          <button class="primary-action compact" type="button" (click)="openNewTransaction()">
+            <mat-icon>add</mat-icon>
+            <span>{{ 'SUMMARY.NEW_TRANSACTION_SHORT' | translate }}</span>
+          </button>
+        </header>
+
+        <label class="field search-field">
+          <span>{{ 'SUMMARY.TRANSACTIONS.SEARCH' | translate }}</span>
+          <input type="search" [formControl]="searchControl" [placeholder]="'SUMMARY.TRANSACTIONS.SEARCH_PLACEHOLDER' | translate" />
+        </label>
+
+        <div class="transaction-list" *ngIf="visibleTransactionRows.length; else emptyTransactions">
+          <button
+            class="transaction-card"
+            type="button"
+            *ngFor="let row of visibleTransactionRows; trackBy: trackByTransaction"
+            (click)="openEditTransaction(row)">
+            <span class="transaction-type" [class.income]="row.type === TransactionTypeEnum.INCOME" [class.expense]="row.type === TransactionTypeEnum.EXPENSE">
+              <mat-icon>{{ row.type === TransactionTypeEnum.INCOME ? 'south_west' : 'north_east' }}</mat-icon>
+            </span>
+
+            <span class="transaction-copy">
+              <strong>{{ row.description }}</strong>
+              <small>{{ row.categoryName }} &middot; {{ row.accountName }} &middot; {{ row.date | date:'dd/MM/yyyy' }}</small>
+            </span>
+
+            <strong class="transaction-amount" [class.positive]="row.type === TransactionTypeEnum.INCOME" [class.negative]="row.type === TransactionTypeEnum.EXPENSE">
+              {{ row.type === TransactionTypeEnum.INCOME ? '+' : '-' }}{{ row.amount | currency: row.currencyCode:'symbol-narrow':'1.2-2' }}
+            </strong>
+          </button>
         </div>
-        <button class="primary-action compact" type="button" (click)="openNewTransaction()">
-          <mat-icon>add</mat-icon>
-          <span>{{ 'SUMMARY.NEW_TRANSACTION_SHORT' | translate }}</span>
+
+        <button class="outline-action load-more" type="button" *ngIf="canLoadMore" (click)="loadMoreTransactions()">
+          {{ 'SUMMARY.TRANSACTIONS.LOAD_MORE' | translate }}
         </button>
-      </header>
+      </section>
 
-      <label class="field search-field">
-        <span>{{ 'SUMMARY.TRANSACTIONS.SEARCH' | translate }}</span>
-        <input type="search" [formControl]="searchControl" [placeholder]="'SUMMARY.TRANSACTIONS.SEARCH_PLACEHOLDER' | translate" />
-      </label>
-
-      <div class="transaction-list" *ngIf="visibleTransactionRows.length; else emptyTransactions">
-        <button
-          class="transaction-card"
-          type="button"
-          *ngFor="let row of visibleTransactionRows; trackBy: trackByTransaction"
-          (click)="openEditTransaction(row)">
-          <span class="transaction-type" [class.income]="row.type === TransactionTypeEnum.INCOME" [class.expense]="row.type === TransactionTypeEnum.EXPENSE">
-            <mat-icon>{{ row.type === TransactionTypeEnum.INCOME ? 'south_west' : 'north_east' }}</mat-icon>
-          </span>
-
-          <span class="transaction-copy">
-            <strong>{{ row.description }}</strong>
-            <small>{{ row.categoryName }} &middot; {{ row.accountName }} &middot; {{ row.date | date:'dd/MM/yyyy' }}</small>
-          </span>
-
-          <strong class="transaction-amount" [class.positive]="row.type === TransactionTypeEnum.INCOME" [class.negative]="row.type === TransactionTypeEnum.EXPENSE">
-            {{ row.type === TransactionTypeEnum.INCOME ? '+' : '-' }}{{ row.amount | currency: row.currencyCode:'symbol-narrow':'1.2-2' }}
-          </strong>
-        </button>
-      </div>
-
-      <button class="outline-action load-more" type="button" *ngIf="canLoadMore" (click)="loadMoreTransactions()">
-        {{ 'SUMMARY.TRANSACTIONS.LOAD_MORE' | translate }}
-      </button>
-    </section>
+      <app-upcoming-recurring
+        class="summary-recurring"
+        *ngIf="upcomingRecurringTransactions.length"
+        [items]="upcomingRecurringTransactions">
+      </app-upcoming-recurring>
+    </aside>
   </section>
 </main>
 

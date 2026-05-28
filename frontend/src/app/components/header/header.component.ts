@@ -1,6 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -10,6 +11,7 @@ import { AuthService } from 'src/app/services/auth.service';
 })
 export class HeaderComponent {
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   readonly availableLanguages = ['it', 'en'];
   currentLang!: string;
@@ -28,6 +30,14 @@ export class HeaderComponent {
       : browser && this.availableLanguages.includes(browser) ? browser : fallback;
     this.translate.use(initLang);
     this.currentLang = initLang;
+
+    this.translate.onLangChange
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(event => {
+        if (this.availableLanguages.includes(event.lang)) {
+          this.currentLang = event.lang;
+        }
+      });
 
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {

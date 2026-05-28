@@ -92,6 +92,51 @@ public class TransferService {
                 .toList();
     }
 
+    @Transactional
+    public TransferResponseDTO putTransfer(String transferGroupId, TransferRequestDTO input) {
+        validate(input);
+
+        List<TransactionEntity> transactions = transactionRepository.findByUser_IdAndTransferGroupId(input.getUserId(), transferGroupId);
+        Map<TransactionTypeEnum, TransactionEntity> byType = transactions.stream()
+                .collect(Collectors.toMap(TransactionEntity::getTransactionType, t -> t, (first, second) -> first));
+
+        TransactionEntity debit = byType.get(TransactionTypeEnum.EXPENSE);
+        TransactionEntity credit = byType.get(TransactionTypeEnum.INCOME);
+
+        if (debit == null || credit == null) {
+            throw new IllegalArgumentException("Transfer not found");
+        }
+
+        AccountEntity source = accountRepository.findByIdAndUser_Id(input.getSourceAccountId(), input.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("Source account not found"));
+        AccountEntity destination = accountRepository.findByIdAndUser_Id(input.getDestinationAccountId(), input.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("Destination account not found"));
+        CurrencyEntity currency = currencyRepository.getReferenceById(input.getCurrencyCode());
+        LocalDate transferDate = input.getDate() != null ? input.getDate() : LocalDate.now();
+        String description = normalizeDescription(input.getDescription());
+
+        debit.setAccount(source);
+        debit.setAmount(input.getAmount());
+        debit.setCurrency(currency);
+        debit.setDate(transferDate);
+        debit.setDescription(description);
+        debit.setTransactionType(TransactionTypeEnum.EXPENSE);
+        debit.setIsRecurring(false);
+        debit.setTransferCounterpartyAccount(destination);
+
+        credit.setAccount(destination);
+        credit.setAmount(input.getAmount());
+        credit.setCurrency(currency);
+        credit.setDate(transferDate);
+        credit.setDescription(description);
+        credit.setTransactionType(TransactionTypeEnum.INCOME);
+        credit.setIsRecurring(false);
+        credit.setTransferCounterpartyAccount(source);
+
+        transactionRepository.saveAll(List.of(debit, credit));
+        return toResponse(debit, credit);
+    }
+
     private void validate(TransferRequestDTO input) {
         if (input.getUserId() == null) {
             throw new IllegalArgumentException("User is required");

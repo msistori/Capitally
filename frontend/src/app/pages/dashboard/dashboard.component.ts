@@ -20,7 +20,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     totalBalancePerCurrency: {},
     totalIncomeThisMonth: {},
     totalExpenseThisMonth: {},
-    upcomingRecurringCount: []
+    upcomingRecurringCount: 0
   };
   yearlyBalance: BalanceTrendResponseDTO[] = [];
   annualIncomeExpense: AnnualIncomeExpenseResponseDTO[] = [];

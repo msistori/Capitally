@@ -9,9 +9,11 @@ import { TranslateService } from '@ngx-translate/core';
 import { StorageService } from '../../auth/storage.service';
 import { AccountModel } from '../../models/account.model';
 import { CategoryModel } from '../../models/category.model';
+import { UpcomingRecurringTransactionModel } from '../../models/dashboard.model';
 import { TransactionModel, TransactionTypeEnum } from '../../models/transaction.model';
 import { AccountService } from '../../services/account.service';
 import { CategoryService } from '../../services/category.service';
+import { DashboardService } from '../../services/dashboard.service';
 import { FxRateService } from '../../services/fx-rate.service';
 import { RefreshService } from '../../services/refresh.service';
 import { TransactionService } from '../../services/transaction.service';
@@ -96,6 +98,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
   private storage = inject(StorageService);
   private accountService = inject(AccountService);
   private categoryService = inject(CategoryService);
+  private dashboardService = inject(DashboardService);
   private transactionService = inject(TransactionService);
   private fxRateService = inject(FxRateService);
   private refreshService = inject(RefreshService);
@@ -127,6 +130,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
   categories: CategoryModel[] = [];
   transactions: TransactionModel[] = [];
   periodTransactions: TransactionModel[] = [];
+  upcomingRecurringTransactions: UpcomingRecurringTransactionModel[] = [];
   transactionRows: TransactionRow[] = [];
   visibleTransactionRows: TransactionRow[] = [];
   visibleCount = DEFAULT_VISIBLE_TRANSACTIONS;
@@ -444,9 +448,13 @@ export class SummaryComponent implements OnInit, OnDestroy {
     forkJoin({
       accounts: this.accountService.getAccounts(this.userId),
       categories: this.categoryService.getCategories(this.userId),
-      transactions: this.transactionService.getTransactions(this.userId)
+      transactions: this.transactionService.getTransactions(this.userId),
+      upcomingRecurring: this.dashboardService.getUpcomingRecurringTransactions(
+        this.userId,
+        this.upcomingRecurringUntilDate()
+      ).pipe(catchError(() => of([] as UpcomingRecurringTransactionModel[])))
     }).subscribe({
-      next: ({ accounts, categories, transactions }) => {
+      next: ({ accounts, categories, transactions, upcomingRecurring }) => {
         this.accounts = accounts
           .map(account => ({
             ...account,
@@ -457,6 +465,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.transactions = [...transactions].sort((a, b) => {
           return this.toLocalDate(b.date).getTime() - this.toLocalDate(a.date).getTime();
         });
+        this.upcomingRecurringTransactions = [...upcomingRecurring]
+          .sort((a, b) => a.nextDate.localeCompare(b.nextDate));
         this.rebuildSummary();
       },
       error: err => console.error('Error loading summary data', err)
@@ -572,6 +582,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
   private applyTransactionSearch(): void {
     const search = this.searchControl.value.trim().toLowerCase();
     const rows = this.periodTransactions
+      .filter(transaction => !this.isTransferTransaction(transaction))
       .map(transaction => this.toTransactionRow(transaction))
       .filter(row => {
         if (!search) return true;
@@ -820,6 +831,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
     const totals = new Map<string, { income: number; expense: number }>();
 
     for (const transaction of transactions) {
+      if (this.isTransferTransaction(transaction)) continue;
+
       const category = this.categoryName(transaction);
       const current = totals.get(category) ?? { income: 0, expense: 0 };
       const amount = this.toDefaultCurrency(Number(transaction.amount || 0), transaction.currencyCode);
@@ -1138,6 +1151,12 @@ export class SummaryComponent implements OnInit, OnDestroy {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  }
+
+  private upcomingRecurringUntilDate(): string {
+    const until = new Date();
+    until.setMonth(until.getMonth() + 2);
+    return this.formatDateInput(until);
   }
 
   private formatCurrency(value: number): string {

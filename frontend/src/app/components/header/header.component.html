@@ -1,8 +1,8 @@
 <header [ngClass]="hideLogout ? 'header login-header' : 'header'">
-  <div class="logo-container">
+  <a class="logo-container" routerLink="/dashboard" aria-label="Go to dashboard">
     <img src="assets/logo_white.svg" alt="Capitally logo" class="logo" />
     <span class="title">Capitally</span>
-  </div>
+  </a>
 
   <div class="header-options">
     <button *ngFor="let lang of availableLanguages" (click)="changeLanguage(lang)"
