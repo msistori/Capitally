@@ -168,12 +168,12 @@ export class AnnualIncomeExpenseComponent implements OnInit, OnChanges, OnDestro
     {
       label: `${this.incomeLabel}: ${this.formatCurrency(this.totalIncome)}`,
       data: incomePercentages,
-      backgroundColor: '#1da779',
+      backgroundColor: '#0f8f4e',
     },
     {
       label: `${this.expenseLabel}: ${this.formatCurrency(this.totalExpense)}`,
       data: expensePercentages,
-      backgroundColor: '#bf1f23',
+      backgroundColor: '#d51f2a',
     }
   ];
 

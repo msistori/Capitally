@@ -6,10 +6,12 @@ import { MatSelectModule } from '@angular/material/select';
 import { NgChartsModule } from 'ng2-charts';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { UpcomingRecurringComponent } from '../../components/upcoming-recurring/upcoming-recurring.component';
 import { SummaryComponent } from './summary.component';
 
 @NgModule({
   declarations: [
+    UpcomingRecurringComponent,
     SummaryComponent
   ],
   imports: [

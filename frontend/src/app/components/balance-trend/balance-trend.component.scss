@@ -1,18 +1,28 @@
 $primary: #005f73;
 $bg: #caf0f8;
 
+:host {
+    display: block;
+    height: 100%;
+    min-height: 0;
+}
+
 .balance-trend {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    height: 100%;
+    min-height: 0;
+    box-sizing: border-box;
     color: $primary;
     border-radius: 1rem;
-    padding: 1.5rem;
+    padding: 1rem;
     -webkit-backdrop-filter: blur(16px);
     backdrop-filter: blur(16px);
     background-color: #ffffff6a;
     border: 1px solid rgba(209, 213, 219, .5);
     border-radius: 1rem;
+    overflow: hidden;
 
     .header {
         display: flex;
@@ -57,12 +67,15 @@ $bg: #caf0f8;
 
     .chart-card {
         position: relative;
+        flex: 1 1 auto;
+        min-height: 0;
         border-radius: 1rem;
-        padding: .75rem;
+        padding: .35rem .5rem 0;
 
         .chart-wrapper {
             position: relative;
-            height: 25vh;
+            height: 100%;
+            min-height: 0;
         }
 
         .overlay {

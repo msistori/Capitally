@@ -11,16 +11,8 @@
     (yearChange)="onAnnualIncomeExpenseYearChange($event)">
   </app-annual-income-expense>
 
-  <div class="transaction-column">
-    <!-- recent-transactions -->
-    <app-recent-transactions></app-recent-transactions>
-
-    <!-- upcoming recurring transactions -->
-    <app-upcoming-recurring
-      *ngIf="upcomingRecurringTransactions.length"
-      [items]="upcomingRecurringTransactions">
-    </app-upcoming-recurring>
-  </div>
+  <!-- recent-transactions -->
+  <app-recent-transactions></app-recent-transactions>
 
   <!-- balance trend -->
   <app-balance-trend [items]="yearlyBalance"></app-balance-trend>

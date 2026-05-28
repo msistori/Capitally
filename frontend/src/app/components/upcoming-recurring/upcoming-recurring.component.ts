@@ -14,8 +14,7 @@ export class UpcomingRecurringComponent {
 
   get visibleItems(): UpcomingRecurringTransactionModel[] {
     return [...(this.items || [])]
-      .sort((a, b) => a.nextDate.localeCompare(b.nextDate))
-      .slice(0, 5);
+      .sort((a, b) => a.nextDate.localeCompare(b.nextDate));
   }
 
   trackByOccurrence(_index: number, item: UpcomingRecurringTransactionModel): string {
