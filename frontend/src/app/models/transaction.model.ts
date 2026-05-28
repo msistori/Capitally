@@ -1,4 +1,5 @@
 export interface TransactionModel {
+  id?: number;
   userId: number;
   accountId: number;
   amount: number;

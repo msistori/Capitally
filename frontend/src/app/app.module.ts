@@ -46,6 +46,7 @@ import { GuestInterceptor } from './interceptors/guest.interceptor';
 import { MockApiInterceptor } from './mocks/mock-api.interceptor';
 import { GuestRestrictionDialogComponent } from './components/guest-restriction-dialog/guest-restriction-dialog.component';
 import { AccountsModule } from './pages/accounts/accounts.module';
+import { SummaryModule } from './pages/summary/summary.module';
 
 registerLocaleData(localeIt);
 registerLocaleData(localeEn);
@@ -93,6 +94,7 @@ const globalRippleConfig: RippleGlobalOptions = { disabled: true };
     TransactionsModule,
     SettingsModule,
     AccountsModule,
+    SummaryModule,
     MatDialogModule,
     LoadingOverlayComponent
   ],

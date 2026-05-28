@@ -42,7 +42,7 @@ export class FooterComponent {
   }
 
   goToSummary(): void {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(['/summary']);
   }
 
   openSettingsModal(): void {

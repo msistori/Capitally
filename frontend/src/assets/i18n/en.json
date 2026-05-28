@@ -2,6 +2,13 @@
   "APP": {
     "TITLE": "Capitally"
   },
+  "NAV": {
+    "HOME": "Home",
+    "ACCOUNTS": "Accounts",
+    "ADD_TRANSACTION": "New Transaction",
+    "SUMMARY": "Summary",
+    "SETTINGS": "Settings"
+  },
   "BUTTON_CLOSE": "Close",
   "BUTTON_NEW": "New",
   "BUTTON_MODIFY": "Modify",
@@ -126,6 +133,8 @@
   },
   "TRANSACTION": {
     "TITLE": "New Transaction",
+    "EDIT_TITLE": "Edit Transaction",
+    "UPDATE": "Update",
     "RECENT_TRANSACTIONS_TITLE": "Recent Transactions"
   },
   "BALANCE": {
@@ -133,7 +142,7 @@
   },
   "ACCOUNTS": {
     "TITLE": "Accounts",
-    "TOTAL_LABEL": "Total Accounts Balance",
+    "TOTAL_LABEL": "Total Balance",
     "EMPTY": "No accounts yet",
     "EXCLUDED_BADGE": "Excluded from total balance",
     "BACK": "Back",
@@ -185,6 +194,92 @@
       "PERIOD_ALL": "All",
       "FILTERS": "Filters",
       "EMPTY": "No transfers in the selected period"
+    }
+  },
+  "SUMMARY": {
+    "TITLE": "Summary",
+    "SUBTITLE": "Overview of transactions, balances and trends.",
+    "NEW_TRANSACTION": "New transaction",
+    "NEW_TRANSACTION_SHORT": "New",
+    "FILTERS": {
+      "TITLE": "Summary filters",
+      "TYPE": "Filter type",
+      "PERIOD": "Period",
+      "START_DATE": "From",
+      "END_DATE": "To",
+      "ACCOUNT": "Account",
+      "CATEGORY": "Category",
+      "SUBCATEGORY": "Subcategory",
+      "MIN_AMOUNT": "Minimum amount",
+      "MAX_AMOUNT": "Maximum amount",
+      "ALL_ACCOUNTS": "All accounts",
+      "ALL_CATEGORIES": "All categories",
+      "ALL_SUBCATEGORIES": "All subcategories",
+      "ACTIVE_COUNT": "Active filters: {{count}}",
+      "RESET": "Clear filters"
+    },
+    "EXPORT": {
+      "BUTTON": "Export",
+      "ALL": "Export all",
+      "FILTERED": "Export filtered",
+      "CONFIRM_FILTERED_OR_ALL": "Do you want to export all transactions or only the ones filtered in the summary?",
+      "CONFIRM_ALL": "No filters are active. Do you confirm exporting all transactions?",
+      "CONFIRM_EXPORT": "Confirm export"
+    },
+    "PERIOD": {
+      "ALL": "All",
+      "CURRENT_MONTH": "Current month",
+      "PREVIOUS_MONTH": "Previous month",
+      "LAST_3_MONTHS": "Last 3 months",
+      "CURRENT_YEAR": "Current year",
+      "LAST_YEAR": "Last year",
+      "TWO_YEARS_AGO": "Two years ago",
+      "CUSTOM": "Custom range"
+    },
+    "STATS": {
+      "TITLE": "Statistics",
+      "TOTAL_BALANCE": "Total balance",
+      "BALANCE_HINT": "Estimated balance at period end",
+      "INCOME": "Income",
+      "EXPENSE": "Expenses",
+      "NET": "Net",
+      "VS_PREVIOUS": "vs previous period",
+      "ALL_PERIODS": "Across all transactions",
+      "TOP_CATEGORY": "Top expense category",
+      "MOST_USED_ACCOUNT": "Most used account",
+      "AVG_DAILY_EXPENSE": "Average expenses",
+      "PER_DAY": "per day",
+      "TOTAL_TRANSACTIONS": "Transactions",
+      "TRANSACTIONS_COUNT": "transactions",
+      "NO_DATA": "No data"
+    },
+    "CHARTS": {
+      "CATEGORIES_TITLE": "Categories",
+      "ACCOUNTS_TITLE": "Account balances",
+      "ACCOUNTS_HINT": "Estimated distribution",
+      "INCOME_EXPENSE_TITLE": "Income vs expenses",
+      "INCOME": "Income",
+      "EXPENSE": "Expenses",
+      "NO_DATA": "No data for this period"
+    },
+    "CALENDAR": {
+      "TITLE": "Custom range calendar",
+      "PREV_YEAR": "Previous year",
+      "NEXT_YEAR": "Next year",
+      "PREV_MONTH": "Previous month",
+      "NEXT_MONTH": "Next month"
+    },
+    "TRANSACTIONS": {
+      "TITLE": "Transactions",
+      "VISIBLE_ITEMS": "results",
+      "SEARCH": "Search",
+      "SEARCH_PLACEHOLDER": "Description, category or account",
+      "LOAD_MORE": "Load more",
+      "EMPTY": "No transactions in the selected period",
+      "NO_DESCRIPTION": "Transaction without description",
+      "UNKNOWN_ACCOUNT": "Unknown account",
+      "NO_CATEGORY": "Uncategorized",
+      "TRANSFER": "Transfer"
     }
   },
   "MONTHLY_SUMMARY": {

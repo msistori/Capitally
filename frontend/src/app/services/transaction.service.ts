@@ -25,6 +25,10 @@ export class TransactionService {
     return this.http.post<TransactionModel>(`${this.apiUrl}`, transaction);
   }
 
+  putTransaction(transactionId: number, transaction: TransactionModel): Observable<TransactionModel> {
+    return this.http.put<TransactionModel>(`${this.apiUrl}/${transactionId}`, transaction);
+  }
+
   deleteTransactions(accountId?: number) {
     let params = new HttpParams();
 

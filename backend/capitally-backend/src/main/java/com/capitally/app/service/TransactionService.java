@@ -67,11 +67,18 @@ public class TransactionService {
                 .orElseThrow(() -> new IllegalArgumentException("Transaction not found"));
 
         existing.setAmount(dto.getAmount());
+        existing.setAccount(accountRepository.getReferenceById(dto.getAccountId()));
+        existing.setCurrency(currencyRepository.getReferenceById(dto.getCurrencyCode()));
         existing.setDate(dto.getDate());
         existing.setDescription(dto.getDescription());
+        existing.setCategory(dto.getCategoryId() != null ? categoryRepository.getReferenceById(dto.getCategoryId()) : null);
+        existing.setTransactionType(dto.getTransactionType());
         existing.setIsRecurring(dto.getIsRecurring());
         existing.setRecurrencePeriod(dto.getRecurrencePeriod());
         existing.setRecurrenceEndDate(dto.getRecurrenceEndDate());
+        if (dto.getTransferCounterpartyAccountId() != null) {
+            existing.setTransferCounterpartyAccount(accountRepository.getReferenceById(dto.getTransferCounterpartyAccountId()));
+        }
 
         return transactionMapper.mapTransactionEntityToDTO(transactionRepository.save(existing));
     }

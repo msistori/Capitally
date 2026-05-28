@@ -25,14 +25,16 @@ export class AnnualIncomeExpenseComponent implements OnInit, OnChanges, OnDestro
   datasets: BarDataset[] = [];
   defaultCurrency = this.storage.getDefaultCurrency();
   noData = true;
+  totalIncome = 0;
+  totalExpense = 0;
+  incomeLabel = 'Incomes';
+  expenseLabel = 'Expenses';
   readonly maxYear = new Date().getFullYear();
 
   private monthNames: string[] = [];
   private langSub?: Subscription;
   private currencySub?: Subscription;
   private rawDatasetValues: number[][] = [];
-  private compressionThreshold: number | null = null;
-  private yAxisTicks: number[] = [];
 
   barOptions: ChartOptions<'bar'> = {
     responsive: true,
@@ -51,9 +53,18 @@ export class AnnualIncomeExpenseComponent implements OnInit, OnChanges, OnDestro
       tooltip: {
         callbacks: {
           label: context => {
-            const label = context.dataset.label ?? '';
-            const value = this.rawDatasetValues[context.datasetIndex]?.[context.dataIndex] ?? Number(context.parsed.y ?? 0);
-            return `${label}: ${this.formatCurrency(value)}`;
+            const value =
+              this.rawDatasetValues[context.datasetIndex]?.[context.dataIndex] ??
+              Number(context.parsed.y ?? 0);
+
+            const percentageValue = Number(context.parsed.y ?? 0);
+
+            const label =
+              context.datasetIndex === 0
+                ? this.incomeLabel
+                : this.expenseLabel;
+
+            return `${label}: ${this.formatCurrency(value)} (${this.formatPercentage(percentageValue)})`;
           }
         }
       }
@@ -65,14 +76,11 @@ export class AnnualIncomeExpenseComponent implements OnInit, OnChanges, OnDestro
       },
       y: {
         beginAtZero: true,
-        afterBuildTicks: scale => {
-          if (this.yAxisTicks.length) {
-            scale.ticks = this.yAxisTicks.map(value => ({ value: this.toChartValue(value) }));
-          }
-        },
+        min: 0,
+        max: 100,
         ticks: {
           color: '#005f73',
-          callback: value => this.formatCurrency(this.restoreChartValue(Number(value)))
+          callback: value => this.formatPercentage(Number(value))
         },
         grid: { color: '#005f7333' }
       }
@@ -86,10 +94,12 @@ export class AnnualIncomeExpenseComponent implements OnInit, OnChanges, OnDestro
 
   ngOnInit(): void {
     this.monthNames = this.readMonthNames();
+    this.setTranslatedLabels();
     this.buildChart();
 
     this.langSub = this.translateService.onLangChange.subscribe((_: LangChangeEvent) => {
       this.monthNames = this.readMonthNames();
+      this.setTranslatedLabels();
       this.buildChart();
     });
 
@@ -97,6 +107,11 @@ export class AnnualIncomeExpenseComponent implements OnInit, OnChanges, OnDestro
       this.defaultCurrency = currency;
       this.buildChart();
     });
+  }
+
+  private setTranslatedLabels(): void {
+    this.incomeLabel = this.translateService.instant('ANNUAL_INCOME_EXPENSE.INCOMES');
+    this.expenseLabel = this.translateService.instant('ANNUAL_INCOME_EXPENSE.EXPENSES');
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -140,28 +155,24 @@ export class AnnualIncomeExpenseComponent implements OnInit, OnChanges, OnDestro
 
     const incomeData = Array.from({ length: monthsCount }, (_, index) => totals.get(index)?.income ?? 0);
     const expenseData = Array.from({ length: monthsCount }, (_, index) => totals.get(index)?.expense ?? 0);
+    this.totalIncome = incomeData.reduce((sum, value) => sum + value, 0);
+    this.totalExpense = expenseData.reduce((sum, value) => sum + value, 0);
+    const incomePercentages = incomeData.map(value => this.toPercentage(value, this.totalIncome));
+    const expensePercentages = expenseData.map(value => this.toPercentage(value, this.totalExpense));
+
     this.noData = [...incomeData, ...expenseData].every(value => value === 0);
     this.rawDatasetValues = [incomeData, expenseData];
-    this.compressionThreshold = this.findCompressionThreshold([...incomeData, ...expenseData]);
-    this.yAxisTicks = this.buildYAxisTicks([...incomeData, ...expenseData]);
-    this.setYAxisBounds();
 
     this.datasets = [
-      {
-        label: this.translateService.instant('ANNUAL_INCOME_EXPENSE.INCOMES'),
-        data: incomeData.map(value => this.toChartValue(value)),
-        backgroundColor: '#22c55e',
-        borderRadius: 6,
-        maxBarThickness: 28
-      },
-      {
-        label: this.translateService.instant('ANNUAL_INCOME_EXPENSE.EXPENSES'),
-        data: expenseData.map(value => this.toChartValue(value)),
-        backgroundColor: '#ef4444',
-        borderRadius: 6,
-        maxBarThickness: 28
-      }
-    ];
+    {
+      label: `${this.incomeLabel}: ${this.formatCurrency(this.totalIncome)}`,
+      data: incomePercentages,
+    },
+    {
+      label: `${this.expenseLabel}: ${this.formatCurrency(this.totalExpense)}`,
+      data: expensePercentages,
+    }
+  ];
 
     this.chart?.update();
   }
@@ -175,112 +186,9 @@ export class AnnualIncomeExpenseComponent implements OnInit, OnChanges, OnDestro
     return ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
   }
 
-  private findCompressionThreshold(values: number[]): number | null {
-    const nonZeroValues = values
-      .map(value => Math.abs(value))
-      .filter(value => value > 0)
-      .sort((a, b) => a - b);
-
-    if (nonZeroValues.length < 3) return null;
-
-    const median = this.percentile(nonZeroValues, 0.5);
-    const max = nonZeroValues[nonZeroValues.length - 1];
-    const threshold = median * 3;
-
-    return threshold > 0 && max > threshold * 1.6 ? threshold : null;
-  }
-
-  private percentile(sortedValues: number[], percentile: number): number {
-    const index = Math.min(sortedValues.length - 1, Math.max(0, Math.floor((sortedValues.length - 1) * percentile)));
-    return sortedValues[index];
-  }
-
-  private toChartValue(value: number): number {
-    if (!this.compressionThreshold) return value;
-
-    const sign = Math.sign(value);
-    const absoluteValue = Math.abs(value);
-    if (absoluteValue <= this.compressionThreshold) return value;
-
-    const compressedValue = this.compressionThreshold
-      + Math.sqrt(absoluteValue - this.compressionThreshold) * Math.sqrt(this.compressionThreshold);
-
-    return sign * compressedValue;
-  }
-
-  private restoreChartValue(value: number): number {
-    if (!this.compressionThreshold) return value;
-
-    const sign = Math.sign(value);
-    const absoluteValue = Math.abs(value);
-    if (absoluteValue <= this.compressionThreshold) return value;
-
-    const restoredValue = this.compressionThreshold
-      + Math.pow(absoluteValue - this.compressionThreshold, 2) / this.compressionThreshold;
-
-    return sign * restoredValue;
-  }
-
-  private buildYAxisTicks(values: number[]): number[] {
-    const minValue = Math.min(0, ...values);
-    const maxValue = Math.max(0, ...values);
-
-    if (this.compressionThreshold) {
-      return this.buildCompressedYAxisTicks(minValue, maxValue, this.compressionThreshold);
-    }
-
-    const maxAbsolute = Math.max(Math.abs(minValue), Math.abs(maxValue));
-
-    if (maxAbsolute === 0) return [0, 10];
-
-    const step = this.chooseNiceStep(maxAbsolute / 4);
-    const minTick = Math.floor(minValue / step) * step;
-    const maxTick = Math.ceil(maxValue / step) * step;
-    const ticks: number[] = [];
-
-    for (let value = minTick; value <= maxTick; value += step) {
-      ticks.push(value);
-    }
-
-    return ticks.length ? ticks : [0, step];
-  }
-
-  private buildCompressedYAxisTicks(minValue: number, maxValue: number, threshold: number): number[] {
-    const ticks = new Set<number>([0]);
-    const lowerStep = this.chooseNiceStep(threshold / 5);
-    const upperStep = this.chooseNiceStep(Math.max(lowerStep, (maxValue - threshold) / 3));
-    const minTick = Math.floor(minValue / lowerStep) * lowerStep;
-    const thresholdTick = Math.ceil(threshold / lowerStep) * lowerStep;
-    const maxTick = Math.ceil(maxValue / upperStep) * upperStep;
-
-    for (let value = minTick; value <= Math.min(thresholdTick, maxTick); value += lowerStep) {
-      ticks.add(value);
-    }
-
-    for (let value = Math.ceil((thresholdTick + upperStep) / upperStep) * upperStep; value <= maxTick; value += upperStep) {
-      ticks.add(value);
-    }
-
-    return Array.from(ticks).sort((a, b) => a - b);
-  }
-
-  private chooseNiceStep(rawStep: number): number {
-    const minStep = 10;
-    if (rawStep <= minStep) return minStep;
-
-    const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)));
-    const normalized = rawStep / magnitude;
-    const multiplier = normalized <= 1 ? 1 : normalized <= 2 ? 2 : normalized <= 5 ? 5 : 10;
-
-    return Math.max(minStep, multiplier * magnitude);
-  }
-
-  private setYAxisBounds(): void {
-    const yScale = this.barOptions.scales?.['y'] as any;
-    if (!yScale || !this.yAxisTicks.length) return;
-
-    yScale.min = this.toChartValue(this.yAxisTicks[0]);
-    yScale.max = this.toChartValue(this.yAxisTicks[this.yAxisTicks.length - 1]);
+  private toPercentage(value: number, total: number): number {
+    if (!total) return 0;
+    return Math.round((value / total) * 1000) / 10;
   }
 
   private formatCurrency(value: number): string {
@@ -289,5 +197,9 @@ export class AnnualIncomeExpenseComponent implements OnInit, OnChanges, OnDestro
       currency: this.defaultCurrency,
       maximumFractionDigits: 0
     });
+  }
+
+  private formatPercentage(value: number): string {
+    return `${value.toLocaleString('it-IT', { maximumFractionDigits: 1 })}%`;
   }
 }
