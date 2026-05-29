@@ -1,7 +1,7 @@
 <section class="recent-transactions">
   <h3>{{ 'TRANSACTION.RECENT_TRANSACTIONS_TITLE' | translate }}</h3>
   <ul>
-    <li *ngFor="let tx of transactions">
+    <li *ngFor="let tx of transactions" (click)="openEditTransaction(tx)">
       <div class="tx-info">
         <span class="tx-description">{{ tx.description }}</span>
         <span class="tx-date">{{ tx.date | date:'dd/MM/yyyy' }}</span>

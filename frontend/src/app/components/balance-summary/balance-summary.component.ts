@@ -2,6 +2,7 @@ import { Component, Input, computed, effect, inject, signal } from '@angular/cor
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FxRateService } from '../../services/fx-rate.service';
 import { StorageService } from '../../auth/storage.service';
+import { AccountBalanceResponseDTO } from '../../models/dashboard.model';
 
 @Component({
   selector: 'app-balance-summary',
@@ -10,9 +11,14 @@ import { StorageService } from '../../auth/storage.service';
 })
 export class BalanceSummaryComponent {
   private readonly totalBalanceSig = signal<Record<string, number>>({});
+  private readonly accountBalancesSig = signal<AccountBalanceResponseDTO[]>([]);
 
   @Input() set totalBalance(value: { [currencyCode: string]: number }) {
     this.totalBalanceSig.set(value || {});
+  }
+
+  @Input() set accountBalances(value: AccountBalanceResponseDTO[] | null | undefined) {
+    this.accountBalancesSig.set(value || []);
   }
 
   private readonly ratesSig = signal<Record<string, number>>({});
@@ -41,6 +47,34 @@ export class BalanceSummaryComponent {
     return Object.keys(tb).map(code => ({ code, amount: Number(tb[code] || 0) }));
   });
 
+  readonly currencyEntries = computed(() => {
+    return this.entries()
+      .filter(item => Number.isFinite(item.amount) && item.amount !== 0)
+      .sort((a, b) => Math.abs(b.amount) - Math.abs(a.amount) || a.code.localeCompare(b.code))
+      .slice(0, 3);
+  });
+
+  readonly hasMultipleCurrencies = computed(() => this.currencyEntries().length > 1);
+
+  readonly accountEntries = computed(() => {
+    if (this.hasMultipleCurrencies()) {
+      return [];
+    }
+
+    return this.accountBalancesSig()
+      .filter(item => Number(item.balance || 0) !== 0)
+      .map(item => ({
+        ...item,
+        balance: Number(item.balance || 0),
+        iconName: item.iconName || 'account_balance_wallet'
+      }))
+      .sort((a, b) => {
+        const balanceDistance = Math.abs(b.balance) - Math.abs(a.balance);
+        return balanceDistance || a.accountName.localeCompare(b.accountName) || a.currency.localeCompare(b.currency);
+      })
+      .slice(0, 3);
+  });
+
   readonly convertedTotal = computed(() => {
     const def = this.defaultCurrencySig();
     const rates = this.ratesSig();
@@ -59,8 +93,10 @@ export class BalanceSummaryComponent {
   });
 
   readonly showBreakdown = computed(() => {
-    const list = this.entries();
-    const def = this.defaultCurrencySig();
-    return !(list.length === 1 && list[0].code === def);
+    return this.hasMultipleCurrencies();
   });
+
+  trackByAccountBalance(_: number, item: AccountBalanceResponseDTO): string {
+    return `${item.accountId}-${item.currency}`;
+  }
 }

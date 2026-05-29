@@ -18,6 +18,7 @@ import { StorageService } from '../../auth/storage.service';
 export class DashboardComponent implements OnInit, OnDestroy {
   overviewData: DashboardOverviewResponseDTO = {
     totalBalancePerCurrency: {},
+    accountBalances: [],
     totalIncomeThisMonth: {},
     totalExpenseThisMonth: {},
     upcomingRecurringCount: 0

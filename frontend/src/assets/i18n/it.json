@@ -138,7 +138,8 @@
     "RECENT_TRANSACTIONS_TITLE": "Ultime Transazioni"
   },
   "BALANCE": {
-    "BALANCE_TITLE": "Saldo Totale"
+    "BALANCE_TITLE": "Saldo Totale",
+    "ACCOUNTS_TITLE": "Conti con saldo"
   },
   "RECURRING": {
     "UPCOMING_TITLE": "Ricorrenti in arrivo",
@@ -367,18 +368,28 @@
       "MESSAGE": "Sono presenti transazioni su uno o piu conti. Prima di eliminare i conti, cancella quelle transazioni o spostale singolarmente su un altro conto."
     },
     "IMPORT_EXPORT": {
+      "FILE_TYPES": {
+        "TRANSACTIONS": "Transazioni",
+        "TRANSFERS": "Giroconti",
+        "ACCOUNTS": "Conti"
+      },
       "IMPORT": {
         "TITLE": "Importa transazioni",
-        "DIALOG_TITLE": "Importa transazioni CSV",
+        "DIALOG_TITLE": "Importa CSV",
+        "TYPE_LABEL": "Tipo file CSV",
         "UPLOAD_FILE": "Seleziona o trascina qui il file CSV delle transazioni",
+        "UPLOAD_FILE_TRANSACTIONS": "Seleziona o trascina qui il CSV delle transazioni",
+        "UPLOAD_FILE_TRANSFERS": "Seleziona o trascina qui il CSV dei giroconti",
+        "UPLOAD_FILE_ACCOUNTS": "Seleziona o trascina qui il CSV dei conti",
         "IMPORT": "Importa",
         "FORMAT_ERROR": "Il file deve essere in formato CSV",
+        "HEADER_ERROR": "Il CSV non contiene le colonne previste per il tipo selezionato.",
         "GENERIC_ERROR": "Impossibile importare il CSV. Verifica il formato del file e il separatore usato."
       },
       "EXPORT": {
-        "TITLE": "Esporta transazioni",
-        "DIALOG_TITLE": "Esporta transazioni CSV",
-        "DESCRIPTION": "Imposta i filtri da applicare al file CSV. Lascia i campi vuoti per esportare tutte le transazioni.",
+        "TITLE": "Esporta dati",
+        "DIALOG_TITLE": "Esporta CSV",
+        "DESCRIPTION": "Imposta i filtri per transazioni e giroconti. Il file conti esporta sempre tutti i conti.",
         "FORM": {
           "ACCOUNT": "Conto",
           "CURRENCY": "Valuta",
@@ -396,21 +407,30 @@
             "DATE": "La data iniziale deve essere precedente a quella finale"
           },
           "EXPORTING": "Esportazione in corso",
-          "EXPORT": "Esporta"
+          "EXPORT": "Esporta",
+          "EXPORT_TRANSACTIONS": "Transazioni",
+          "EXPORT_TRANSFERS": "Giroconti",
+          "EXPORT_ACCOUNTS": "Conti"
         }
       },
       "TEMPLATE": {
         "TITLE": "Scarica template",
         "DIALOG_TITLE": "Scarica template CSV",
-        "DESCRIPTION": "Scarica il file modello con le colonne corrette per importare le transazioni.",
+        "DESCRIPTION": "Scarica il file modello con le colonne corrette per ogni import.",
         "DOWNLOAD": "Scarica template",
-        "DOWNLOADING": "Download in corso..."
+        "DOWNLOADING": "Download in corso...",
+        "DOWNLOAD_TRANSACTIONS": "Transazioni",
+        "DOWNLOAD_TRANSFERS": "Giroconti",
+        "DOWNLOAD_ACCOUNTS": "Conti"
       },
       "RESULT": {
         "SUCCESS_TITLE": "Importazione completata",
         "FAILED_TITLE": "Importazione fallita",
         "IMPORTED_PREFIX": "Importate",
         "IMPORTED_MIDDLE": "transazioni su",
+        "IMPORTED_MIDDLE_TRANSACTIONS": "transazioni su",
+        "IMPORTED_MIDDLE_TRANSFERS": "giroconti su",
+        "IMPORTED_MIDDLE_ACCOUNTS": "conti su",
         "IMPORTED_SUFFIX": "righe totali.",
         "NEW_ACCOUNTS": "Nuovi conti aggiunti",
         "NEW_CATEGORIES": "Nuove categorie aggiunte",

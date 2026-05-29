@@ -139,7 +139,8 @@
     "RECENT_TRANSACTIONS_TITLE": "Recent Transactions"
   },
   "BALANCE": {
-    "BALANCE_TITLE": "Total Balance"
+    "BALANCE_TITLE": "Total Balance",
+    "ACCOUNTS_TITLE": "Accounts with balance"
   },
   "RECURRING": {
     "UPCOMING_TITLE": "Upcoming recurring",
@@ -368,18 +369,28 @@
       "MESSAGE": "One or more accounts have transactions. Before deleting accounts, delete those transactions or move them one by one to another account."
     },
     "IMPORT_EXPORT": {
+      "FILE_TYPES": {
+        "TRANSACTIONS": "Transactions",
+        "TRANSFERS": "Transfers",
+        "ACCOUNTS": "Accounts"
+      },
       "IMPORT": {
         "TITLE": "Import transactions",
-        "DIALOG_TITLE": "Import transactions CSV",
+        "DIALOG_TITLE": "Import CSV",
+        "TYPE_LABEL": "CSV file type",
         "UPLOAD_FILE": "Select or drag the transactions CSV file here",
+        "UPLOAD_FILE_TRANSACTIONS": "Select or drag the transactions CSV file here",
+        "UPLOAD_FILE_TRANSFERS": "Select or drag the transfers CSV file here",
+        "UPLOAD_FILE_ACCOUNTS": "Select or drag the accounts CSV file here",
         "IMPORT": "Import",
         "FORMAT_ERROR": "The file must be in CSV format",
+        "HEADER_ERROR": "The CSV does not contain the expected columns for the selected type.",
         "GENERIC_ERROR": "Unable to import the CSV. Check the file format and separator."
       },
       "EXPORT": {
-        "TITLE": "Export transactions",
-        "DIALOG_TITLE": "Export transactions CSV",
-        "DESCRIPTION": "Set the filters to apply to the CSV file. Leave every field empty to export all transactions.",
+        "TITLE": "Export data",
+        "DIALOG_TITLE": "Export CSV",
+        "DESCRIPTION": "Set filters for transactions and transfers. The accounts file always exports every account.",
         "FORM": {
           "ACCOUNT": "Account",
           "CURRENCY": "Currency",
@@ -397,21 +408,30 @@
             "DATE": "The start date must be before the end date"
           },
           "EXPORTING": "Exporting",
-          "EXPORT": "Export"
+          "EXPORT": "Export",
+          "EXPORT_TRANSACTIONS": "Transactions",
+          "EXPORT_TRANSFERS": "Transfers",
+          "EXPORT_ACCOUNTS": "Accounts"
         }
       },
       "TEMPLATE": {
         "TITLE": "Download template",
         "DIALOG_TITLE": "Download CSV template",
-        "DESCRIPTION": "Download the sample file with the correct columns for importing transactions.",
+        "DESCRIPTION": "Download the sample file with the correct columns for each import.",
         "DOWNLOAD": "Download template",
-        "DOWNLOADING": "Downloading..."
+        "DOWNLOADING": "Downloading...",
+        "DOWNLOAD_TRANSACTIONS": "Transactions",
+        "DOWNLOAD_TRANSFERS": "Transfers",
+        "DOWNLOAD_ACCOUNTS": "Accounts"
       },
       "RESULT": {
         "SUCCESS_TITLE": "Import completed",
         "FAILED_TITLE": "Import failed",
         "IMPORTED_PREFIX": "Imported",
         "IMPORTED_MIDDLE": "transactions out of",
+        "IMPORTED_MIDDLE_TRANSACTIONS": "transactions out of",
+        "IMPORTED_MIDDLE_TRANSFERS": "transfers out of",
+        "IMPORTED_MIDDLE_ACCOUNTS": "accounts out of",
         "IMPORTED_SUFFIX": "total rows.",
         "NEW_ACCOUNTS": "New accounts added",
         "NEW_CATEGORIES": "New categories added",

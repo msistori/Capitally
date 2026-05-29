@@ -243,6 +243,46 @@ $form-secondary: #caf0f8;
   font-size: 1.7rem !important;
 }
 
+::ng-deep .description-autocomplete.mat-mdc-autocomplete-panel {
+  background: #fff;
+  border: 1px solid $form-primary;
+  border-radius: .5rem;
+  box-shadow: 0px 2px 8px $form-primary;
+  color: $form-primary;
+  font-weight: 600;
+  padding: 0;
+}
+
+::ng-deep .description-autocomplete .description-autocomplete-option {
+  border-top: 1px solid $form-primary;
+  border-radius: .5rem;
+  color: $form-primary;
+  text-align: center;
+}
+
+::ng-deep .description-autocomplete .description-autocomplete-option:first-child {
+  border-top: 0;
+}
+
+::ng-deep .description-autocomplete .mat-mdc-option.mdc-list-item--selected,
+::ng-deep .description-autocomplete .mat-mdc-option:hover {
+  background: $form-secondary;
+  color: $form-primary;
+}
+
+.remove-transaction {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(213, 31, 42, 0.35);
+  border-radius: 0.5rem;
+  color: #d51f2a;
+  cursor: pointer;
+  display: inline-flex;
+  height: 3.35rem;
+  justify-content: center;
+  width: 3.35rem;
+}
+
 .recurring-section {
   .recurring-toggle {
     width: 100%;
@@ -409,9 +449,21 @@ $form-secondary: #caf0f8;
     }
   }
 
+  @media (max-width: 380px) {
+    .remove-transaction {
+      justify-self: end;
+    }
+  }
+
   @media (max-width: 599px) {
     max-width: 100% !important;
     width: 100%;
+  }
+
+  @media (max-width: 639px) {
+    .remove-transaction {
+      justify-self: end;
+    }
   }
 
   @media (min-width: 1200px) {

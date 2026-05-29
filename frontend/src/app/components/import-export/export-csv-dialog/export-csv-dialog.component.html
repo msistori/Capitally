@@ -105,10 +105,17 @@
     </ng-container>
 
     <ng-template #formActions>
-      <button class="btn-primary" type="button" (click)="export()" [disabled]="exporting || form.invalid">
-        {{ exporting
-          ? ('SETTINGS.IMPORT_EXPORT.EXPORT.FORM.EXPORTING' | translate)
-          : ('SETTINGS.IMPORT_EXPORT.EXPORT.FORM.EXPORT' | translate)
+      <button
+        class="btn-primary"
+        type="button"
+        *ngFor="let type of exportTypes"
+        (click)="exportFile(type)"
+        [disabled]="exporting || form.invalid">
+        <mat-icon>{{ type === 'transactions' ? 'receipt_long' : (type === 'transfers' ? 'sync_alt' : 'account_balance') }}</mat-icon>
+        {{
+          exporting && exportingType === type
+            ? ('SETTINGS.IMPORT_EXPORT.EXPORT.FORM.EXPORTING' | translate)
+            : (('SETTINGS.IMPORT_EXPORT.EXPORT.FORM.EXPORT_' + type.toUpperCase()) | translate)
         }}
       </button>
     </ng-template>

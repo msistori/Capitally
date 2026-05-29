@@ -542,22 +542,57 @@ input {
   gap: 0.18rem;
   min-width: 0;
 
-  strong,
-  small {
+  .transaction-description,
+  .transaction-category-line,
+  .transaction-category-name,
+  .transaction-macro-category,
+  .transaction-account,
+  .transaction-date {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  strong {
+  .transaction-description {
     font-size: 0.96rem;
     font-weight: 900;
   }
 
-  small {
+  .transaction-meta {
     color: rgba(0, 95, 115, 0.68);
+    display: grid;
     font-size: 0.78rem;
     font-weight: 700;
+    gap: 0.08rem;
+    min-width: 0;
+  }
+
+  .transaction-category-line,
+  .transaction-account,
+  .transaction-date {
+    display: block;
+    min-width: 0;
+  }
+
+  .transaction-category-line {
+    align-items: baseline;
+    display: flex;
+    gap: 0.28rem;
+  }
+
+  .transaction-category-name {
+    display: inline-block;
+    min-width: 0;
+  }
+
+  .transaction-category-separator {
+    flex: 0 0 auto;
+  }
+
+  .transaction-macro-category {
+    flex: 0 1 auto;
+    font-weight: 900;
+    min-width: 0;
   }
 }
 

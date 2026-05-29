@@ -6,9 +6,26 @@
 
   <!-- Per-currency breakdown -->
   <ul class="per-currency" *ngIf="showBreakdown()">
-    <li *ngFor="let e of entries()">
+    <li *ngFor="let e of currencyEntries()">
       <span class="code">{{ e.code }}</span>
       <span class="amt">{{ e.amount | currency: e.code:'symbol-narrow' }}</span>
     </li>
   </ul>
+
+  <section class="accounts-breakdown" *ngIf="accountEntries().length">
+    <h3>{{ 'BALANCE.ACCOUNTS_TITLE' | translate }}</h3>
+
+    <ul>
+      <li *ngFor="let account of accountEntries(); trackBy: trackByAccountBalance">
+        <span class="account-name">
+          <mat-icon aria-hidden="true">{{ account.iconName }}</mat-icon>
+          <span>{{ account.accountName }}</span>
+        </span>
+        <span class="account-balance" [class.negative]="account.balance < 0">
+          <span class="account-currency">{{ account.currency }}</span>
+          <span class="account-amount">{{ account.balance | number:'1.2-2' }}</span>
+        </span>
+      </li>
+    </ul>
+  </section>
 </section>

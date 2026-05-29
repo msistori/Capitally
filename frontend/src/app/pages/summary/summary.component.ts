@@ -41,6 +41,7 @@ interface TransactionRow {
   date: Date;
   accountName: string;
   categoryName: string;
+  macroCategoryName: string;
   type: TransactionTypeEnum;
 }
 
@@ -555,20 +556,21 @@ export class SummaryComponent implements OnInit, OnDestroy {
     const range = this.resolveRange();
     this.selectedRangeLabel = this.buildRangeLabel(range);
     this.periodTransactions = this.transactions.filter(transaction => this.matchesSummaryFilters(transaction, range));
+    const actualTransactions = this.nonTransferTransactions(this.periodTransactions);
 
-    this.totalIncome = this.sumTransactions(this.periodTransactions, TransactionTypeEnum.INCOME);
-    this.totalExpense = this.sumTransactions(this.periodTransactions, TransactionTypeEnum.EXPENSE);
+    this.totalIncome = this.sumTransactions(actualTransactions, TransactionTypeEnum.INCOME);
+    this.totalExpense = this.sumTransactions(actualTransactions, TransactionTypeEnum.EXPENSE);
     this.netBalance = this.totalIncome - this.totalExpense;
-    this.transactionCount = this.periodTransactions.length;
-    this.topExpenseCategory = this.findTopExpenseCategory(this.periodTransactions);
-    this.mostUsedAccount = this.findMostUsedAccount(this.periodTransactions);
+    this.transactionCount = actualTransactions.length;
+    this.topExpenseCategory = this.findTopExpenseCategory(actualTransactions);
+    this.mostUsedAccount = this.findMostUsedAccount(actualTransactions);
 
-    const statsRange = this.resolveStatsRange(range);
+    const statsRange = this.resolveStatsRange(range, actualTransactions);
     this.averageDailyExpense = this.totalExpense / this.countDays(statsRange);
     this.previousNetDelta = range ? this.calculatePreviousNetDelta(range) : null;
     this.totalBalance = this.calculateTotalBalance(range);
 
-    this.buildCategoryChart(this.periodTransactions);
+    this.buildCategoryChart(actualTransactions);
     this.buildAccountChart(range);
     this.buildIncomeExpenseChart();
     this.applyTransactionSearch();
@@ -581,8 +583,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
   private applyTransactionSearch(): void {
     const search = this.searchControl.value.trim().toLowerCase();
-    const rows = this.periodTransactions
-      .filter(transaction => !this.isTransferTransaction(transaction))
+    const rows = this.nonTransferTransactions(this.periodTransactions)
       .map(transaction => this.toTransactionRow(transaction))
       .filter(row => {
         if (!search) return true;
@@ -673,10 +674,10 @@ export class SummaryComponent implements OnInit, OnDestroy {
     return this.resolveCustomRange();
   }
 
-  private resolveStatsRange(range: DateRange | null): DateRange {
+  private resolveStatsRange(range: DateRange | null, transactions: TransactionModel[]): DateRange {
     if (range) return range;
 
-    const dates = this.periodTransactions.map(transaction => this.toLocalDate(transaction.date));
+    const dates = transactions.map(transaction => this.toLocalDate(transaction.date));
     if (!dates.length) {
       const today = this.stripTime(new Date());
       return { start: today, end: today };
@@ -782,7 +783,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
     previousStart.setDate(previousEnd.getDate() - days + 1);
 
     const previousRange = { start: previousStart, end: previousEnd };
-    const previousTransactions = this.transactions.filter(transaction => this.isInRange(transaction, previousRange));
+    const previousTransactions = this.nonTransferTransactions(
+      this.transactions.filter(transaction => this.isInRange(transaction, previousRange))
+    );
     const previousIncome = this.sumTransactions(previousTransactions, TransactionTypeEnum.INCOME);
     const previousExpense = this.sumTransactions(previousTransactions, TransactionTypeEnum.EXPENSE);
 
@@ -995,6 +998,10 @@ export class SummaryComponent implements OnInit, OnDestroy {
   private toTransactionRow(transaction: TransactionModel): TransactionRow {
     const date = this.toLocalDate(transaction.date);
     const key = String(transaction.id ?? `${transaction.accountId}-${date.toISOString()}-${transaction.description ?? ''}`);
+    const category = this.transactionCategory(transaction);
+    const accountName = this.accountName(transaction.accountId);
+    const categoryName = this.categoryName(transaction, category);
+    const macroCategoryName = this.macroCategoryName(transaction, category);
 
     return {
       key,
@@ -1003,8 +1010,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
       amount: Number(transaction.amount || 0),
       currencyCode: transaction.currencyCode || this.defaultCurrency,
       date,
-      accountName: this.accountName(transaction.accountId),
-      categoryName: this.categoryName(transaction),
+      accountName,
+      categoryName,
+      macroCategoryName,
       type: transaction.transactionType
     };
   }
@@ -1022,19 +1030,37 @@ export class SummaryComponent implements OnInit, OnDestroy {
     return this.categories.find(category => category.id === Number(transaction.categoryId)) ?? null;
   }
 
-  private categoryName(transaction: TransactionModel): string {
+  private categoryName(transaction: TransactionModel, category = this.transactionCategory(transaction)): string {
     if (this.isTransferTransaction(transaction)) {
       return this.translateService.instant('SUMMARY.TRANSACTIONS.TRANSFER');
     }
 
-    return this.transactionCategory(transaction)?.category
+    return this.normalizeDisplayLabel(category?.category)
       ?? this.translateService.instant('SUMMARY.TRANSACTIONS.NO_CATEGORY');
+  }
+
+  private macroCategoryName(transaction: TransactionModel, category = this.transactionCategory(transaction)): string {
+    if (this.isTransferTransaction(transaction)) {
+      return '';
+    }
+
+    return this.normalizeDisplayLabel(category?.macroCategory) ?? '';
+  }
+
+  private normalizeDisplayLabel(value?: string | null): string | null {
+    if (!value) return null;
+
+    return value.trim() === 'Caff?' ? 'Caff\u00e8' : value;
   }
 
   private isTransferTransaction(transaction: TransactionModel): boolean {
     const transferGroupId = transaction.transferGroupId?.trim();
     return Boolean(transaction.transferCounterpartyAccountId)
-      || Boolean(transferGroupId?.startsWith('TRF-'));
+      || Boolean(transferGroupId);
+  }
+
+  private nonTransferTransactions(transactions: TransactionModel[]): TransactionModel[] {
+    return transactions.filter(transaction => !this.isTransferTransaction(transaction));
   }
 
   private convertRecordToDefaultCurrency(record: Record<string, number>): number {

@@ -22,12 +22,29 @@
   }
 }
 
+@media (max-width: 1023px) {
+  .dashboard-container {
+    height: auto;
+    min-height: 100%;
+    overflow: visible;
+    padding-bottom: 5.5rem;
+  }
+
+  .dashboard-container app-recent-transactions,
+  .dashboard-container app-balance-trend,
+  .dashboard-container app-income-expense-breakdown {
+    flex: 0 0 auto;
+    height: auto;
+    overflow: visible;
+  }
+}
+
 @media (min-width: 1024px) {
   .dashboard-container {
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     --v-gap: .75rem;
-    --bottom-row-height: clamp(16.5rem, 34vh, 21rem);
+    --bottom-row-height: clamp(12rem, 36vh, 25rem);
     grid-template-rows: minmax(0, 1fr) var(--bottom-row-height);
     grid-auto-rows: 0;
     gap: var(--v-gap);

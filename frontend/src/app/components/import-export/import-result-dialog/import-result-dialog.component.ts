@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ImportExportCsvType } from 'src/app/models/import-export-transactions.model';
 
 @Component({
   selector: 'app-import-result-dialog',
@@ -14,6 +15,22 @@ export class ImportResultDialogComponent {
 
   close(): void {
     this.dialogRef.close();
+  }
+
+  get importType(): ImportExportCsvType {
+    return this.data.importType ?? 'transactions';
+  }
+
+  getImportedCount(): number {
+    if (this.importType === 'accounts') {
+      return this.data.summary?.importedAccounts ?? 0;
+    }
+
+    if (this.importType === 'transfers') {
+      return this.data.summary?.importedTransfers ?? 0;
+    }
+
+    return this.data.summary?.importedTransactions ?? 0;
   }
 
   hasNewCategories(): boolean {

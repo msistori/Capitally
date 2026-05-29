@@ -1,7 +1,8 @@
 <main class="dashboard-container">
   <!-- balance-summary -->
   <app-balance-summary
-    [totalBalance]="overviewData.totalBalancePerCurrency ? overviewData.totalBalancePerCurrency : {}">
+    [totalBalance]="overviewData.totalBalancePerCurrency ? overviewData.totalBalancePerCurrency : {}"
+    [accountBalances]="overviewData.accountBalances ? overviewData.accountBalances : []">
   </app-balance-summary>
 
   <!-- annual income-expense -->

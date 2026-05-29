@@ -270,6 +270,7 @@ $secondary: #caf0f8;
     border: 1px solid $primary;
     border-radius: .75rem;
     background: #fff;
+    cursor: pointer;
   }
 
   button.active {
@@ -328,6 +329,7 @@ $secondary: #caf0f8;
     background: #fff;
     width: 100%;
     text-align: center;
+    cursor: pointer;
 
     img {
       width: 28px;

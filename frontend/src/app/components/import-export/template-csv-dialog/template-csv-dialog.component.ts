@@ -2,6 +2,7 @@ import { HttpResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { finalize } from 'rxjs/internal/operators/finalize';
+import { ImportExportCsvType } from 'src/app/models/import-export-transactions.model';
 import { ImportExportTransactionsService } from 'src/app/services/import-export-transactions.service';
 
 @Component({
@@ -11,6 +12,8 @@ import { ImportExportTransactionsService } from 'src/app/services/import-export-
 })
 export class TemplateCsvDialogComponent {
   downloading = false;
+  downloadingType: ImportExportCsvType | null = null;
+  readonly templateTypes: ImportExportCsvType[] = ['transactions', 'transfers', 'accounts'];
   
   constructor(
     private dialogRef: MatDialogRef<TemplateCsvDialogComponent>,
@@ -21,30 +24,33 @@ export class TemplateCsvDialogComponent {
     this.dialogRef.close(false);
   }
   
-  download(): void {
+  download(type: ImportExportCsvType): void {
     if (this.downloading) return;
     
     this.downloading = true;
+    this.downloadingType = type;
     this.txService
-    .getTemplateTransactions()
-    .pipe(finalize(() => (this.downloading = false)))
+    .getTemplateTransactions(type)
+    .pipe(finalize(() => {
+      this.downloading = false;
+      this.downloadingType = null;
+    }))
     .subscribe({
-      next: (res: HttpResponse<Blob>) => this.handleDownload(res),
+      next: (res: HttpResponse<Blob>) => this.handleDownload(res, type),
       error: () => {
       }
     });
   }
   
-  private handleDownload(res: HttpResponse<Blob>): void {
+  private handleDownload(res: HttpResponse<Blob>, type: ImportExportCsvType): void {
     const blob = res.body;
     if (!blob) return;
     
     const filename =
     this.extractFilename(res.headers.get('content-disposition')) ??
-    this.defaultFilename();
+    this.defaultFilename(type);
     
     this.downloadBlob(blob, filename);
-    this.dialogRef.close(true);
   }
   
   private extractFilename(contentDisposition: string | null): string | null {
@@ -59,12 +65,12 @@ export class TemplateCsvDialogComponent {
     return null;
   }
   
-  private defaultFilename(): string {
+  private defaultFilename(type: ImportExportCsvType): string {
     const d = new Date();
     const yyyy = d.getFullYear();
     const mm = String(d.getMonth() + 1).padStart(2, '0');
     const dd = String(d.getDate()).padStart(2, '0');
-    return `template_transactions_${yyyy}-${mm}-${dd}.csv`;
+    return `template_${type}_${yyyy}-${mm}-${dd}.csv`;
   }
   
   private downloadBlob(blob: Blob, filename: string): void {

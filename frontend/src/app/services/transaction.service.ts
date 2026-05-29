@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { EMPTY, Observable } from 'rxjs';
 import {
   TransactionModel
 } from '../models/transaction.model';
@@ -27,6 +27,16 @@ export class TransactionService {
 
   putTransaction(transactionId: number, transaction: TransactionModel): Observable<TransactionModel> {
     return this.http.put<TransactionModel>(`${this.apiUrl}/${transactionId}`, transaction);
+  }
+
+  deleteTransaction(transactionId?: number) {
+    let params = new HttpParams();
+
+    if (transactionId !== undefined) {
+      params = params.set('transactionId', transactionId);
+    } else return EMPTY;
+
+    return this.http.delete<void>(`${this.apiUrl}`, { params });
   }
 
   deleteTransactions(accountId?: number) {

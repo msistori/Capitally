@@ -115,7 +115,7 @@ export class AnnualIncomeExpenseComponent implements OnInit, OnChanges, OnDestro
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if ('items' in changes) this.buildChart();
+    if ('items' in changes || 'year' in changes) this.buildChart();
   }
 
   ngOnDestroy(): void {
@@ -137,7 +137,7 @@ export class AnnualIncomeExpenseComponent implements OnInit, OnChanges, OnDestro
   }
 
   private buildChart(): void {
-    const monthsCount = 12;
+    const monthsCount = this.visibleMonthsCount();
     this.labels = this.monthNames.length ? this.monthNames.slice(0, monthsCount) : this.defaultMonthLabels();
 
     const totals = new Map<number, { income: number; expense: number }>();
@@ -145,7 +145,7 @@ export class AnnualIncomeExpenseComponent implements OnInit, OnChanges, OnDestro
       if (item.currency !== this.defaultCurrency) continue;
 
       const monthIndex = Number(item.month.slice(5, 7)) - 1;
-      if (monthIndex < 0 || monthIndex > 11) continue;
+      if (monthIndex < 0 || monthIndex >= monthsCount) continue;
 
       const current = totals.get(monthIndex) ?? { income: 0, expense: 0 };
       current.income += Number(item.income ?? 0);
@@ -187,6 +187,14 @@ export class AnnualIncomeExpenseComponent implements OnInit, OnChanges, OnDestro
 
   private defaultMonthLabels(): string[] {
     return ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+  }
+
+  private visibleMonthsCount(): number {
+    const now = new Date();
+    const isCurrentYear = this.year === now.getFullYear();
+    const isBeforeJuly = now.getMonth() < 6;
+
+    return isCurrentYear && isBeforeJuly ? 6 : 12;
   }
 
   private toPercentage(value: number, total: number): number {

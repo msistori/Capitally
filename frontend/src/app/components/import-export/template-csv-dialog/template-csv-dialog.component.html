@@ -12,8 +12,18 @@
     <button class="btn-secondary" type="button" (click)="close()" [disabled]="downloading">
       {{ 'BUTTON_CANCEL' | translate }}
     </button>
-    <button class="btn-primary" type="button" (click)="download()" [disabled]="downloading">
-      {{ (downloading ? 'SETTINGS.IMPORT_EXPORT.TEMPLATE.DOWNLOADING' : 'SETTINGS.IMPORT_EXPORT.TEMPLATE.DOWNLOAD') | translate }}
+    <button
+      class="btn-primary"
+      type="button"
+      *ngFor="let type of templateTypes"
+      (click)="download(type)"
+      [disabled]="downloading">
+      <mat-icon>{{ type === 'transactions' ? 'receipt_long' : (type === 'transfers' ? 'sync_alt' : 'account_balance') }}</mat-icon>
+      {{
+        downloading && downloadingType === type
+          ? ('SETTINGS.IMPORT_EXPORT.TEMPLATE.DOWNLOADING' | translate)
+          : (('SETTINGS.IMPORT_EXPORT.TEMPLATE.DOWNLOAD_' + type.toUpperCase()) | translate)
+      }}
     </button>
   </mat-dialog-actions>
 </div>

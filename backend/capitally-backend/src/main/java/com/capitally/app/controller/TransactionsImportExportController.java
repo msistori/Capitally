@@ -52,36 +52,8 @@ public class TransactionsImportExportController {
             @RequestParam("file") MultipartFile file,
             @AuthenticationPrincipal UserPrincipal user) {
 
-        if (file == null || file.isEmpty()) {
-            TransactionImportResponseDTO errorResponse = TransactionImportResponseDTO.builder()
-                    .result(TransactionImportResponseDTO.ImportResult.FAILED)
-                    .summary(TransactionImportResponseDTO.ImportSummary.builder()
-                            .totalRows(0)
-                            .importedTransactions(0)
-                            .newAccounts(new ArrayList<>())
-                            .newCategories(new HashMap<>())
-                            .build())
-                    .build();
-
-            errorResponse.addError("File empty or not valid");
-            return ResponseEntity.badRequest().body(errorResponse);
-        }
-
-        String filename = file.getOriginalFilename();
-        if (filename == null || !filename.toLowerCase().endsWith(".csv")) {
-            TransactionImportResponseDTO errorResponse = TransactionImportResponseDTO.builder()
-                    .result(TransactionImportResponseDTO.ImportResult.FAILED)
-                    .summary(TransactionImportResponseDTO.ImportSummary.builder()
-                            .totalRows(0)
-                            .importedTransactions(0)
-                            .newAccounts(new ArrayList<>())
-                            .newCategories(new HashMap<>())
-                            .build())
-                    .build();
-
-            errorResponse.addError("The file must be in CSV format");
-            return ResponseEntity.badRequest().body(errorResponse);
-        }
+        ResponseEntity<TransactionImportResponseDTO> invalidFile = validateCsvFile(file);
+        if (invalidFile != null) return invalidFile;
 
         TransactionImportResponseDTO response = transactionsImportExportService.importTransactions(file, user.getId());
 
@@ -90,6 +62,36 @@ public class TransactionsImportExportController {
         }
 
         return ResponseEntity.badRequest().body(response);
+    }
+
+    @PostMapping(value = "/import/transfers", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Importa giroconti da CSV")
+    public ResponseEntity<TransactionImportResponseDTO> importTransfers(
+            @RequestParam("file") MultipartFile file,
+            @AuthenticationPrincipal UserPrincipal user) {
+
+        ResponseEntity<TransactionImportResponseDTO> invalidFile = validateCsvFile(file);
+        if (invalidFile != null) return invalidFile;
+
+        TransactionImportResponseDTO response = transactionsImportExportService.importTransfers(file, user.getId());
+        return response.getResult() == TransactionImportResponseDTO.ImportResult.SUCCESS
+                ? ResponseEntity.ok(response)
+                : ResponseEntity.badRequest().body(response);
+    }
+
+    @PostMapping(value = "/import/accounts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Importa conti e saldi da CSV")
+    public ResponseEntity<TransactionImportResponseDTO> importAccounts(
+            @RequestParam("file") MultipartFile file,
+            @AuthenticationPrincipal UserPrincipal user) {
+
+        ResponseEntity<TransactionImportResponseDTO> invalidFile = validateCsvFile(file);
+        if (invalidFile != null) return invalidFile;
+
+        TransactionImportResponseDTO response = transactionsImportExportService.importAccounts(file, user.getId());
+        return response.getResult() == TransactionImportResponseDTO.ImportResult.SUCCESS
+                ? ResponseEntity.ok(response)
+                : ResponseEntity.badRequest().body(response);
     }
 
     @GetMapping(value = "/export", produces = "text/csv")
@@ -144,6 +146,55 @@ public class TransactionsImportExportController {
                 .body(body);
     }
 
+    @GetMapping(value = "/export/transfers", produces = "text/csv")
+    @Operation(summary = "Esporta giroconti in CSV")
+    public ResponseEntity<StreamingResponseBody> exportTransfers(
+            @AuthenticationPrincipal UserPrincipal user,
+            @RequestParam(required = false) String account,
+            @RequestParam(required = false) BigDecimal minAmount,
+            @RequestParam(required = false) BigDecimal maxAmount,
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) String currency
+    ) {
+        validateRanges(minAmount, maxAmount, startDate, endDate);
+
+        TransactionExportFilter filter = TransactionExportFilter.builder()
+                .account(account)
+                .minAmount(minAmount)
+                .maxAmount(maxAmount)
+                .description(description)
+                .startDate(startDate)
+                .endDate(endDate)
+                .currency(currency)
+                .build();
+
+        StreamingResponseBody body = outputStream ->
+                transactionsImportExportService.exportTransfersCsv(outputStream, user.getId(), filter);
+
+        String fileName = "transfers_" + LocalDate.now().format(DateTimeFormatter.ISO_DATE) + ".csv";
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                .contentType(MediaType.parseMediaType("text/csv"))
+                .body(body);
+    }
+
+    @GetMapping(value = "/export/accounts", produces = "text/csv")
+    @Operation(summary = "Esporta conti e saldi in CSV")
+    public ResponseEntity<StreamingResponseBody> exportAccounts(@AuthenticationPrincipal UserPrincipal user) {
+        StreamingResponseBody body = outputStream ->
+                transactionsImportExportService.exportAccountsCsv(outputStream, user.getId());
+
+        String fileName = "accounts_" + LocalDate.now().format(DateTimeFormatter.ISO_DATE) + ".csv";
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                .contentType(MediaType.parseMediaType("text/csv"))
+                .body(body);
+    }
+
     @GetMapping(value = "/template", produces = "text/csv")
     @Operation(summary = "Scarica il template per importare le transazioni in CSV")
     public ResponseEntity<StreamingResponseBody> templateTransactions() {
@@ -156,5 +207,82 @@ public class TransactionsImportExportController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
                 .contentType(MediaType.parseMediaType("text/csv"))
                 .body(body);
+    }
+
+    @GetMapping(value = "/template/transfers", produces = "text/csv")
+    @Operation(summary = "Scarica il template per importare i giroconti in CSV")
+    public ResponseEntity<StreamingResponseBody> templateTransfers() {
+        StreamingResponseBody body = outputStream ->
+                transactionsImportExportService.downloadTransfersTemplateCsv(outputStream);
+
+        String fileName = "template_transfers_" + LocalDate.now().format(DateTimeFormatter.ISO_DATE) + ".csv";
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                .contentType(MediaType.parseMediaType("text/csv"))
+                .body(body);
+    }
+
+    @GetMapping(value = "/template/accounts", produces = "text/csv")
+    @Operation(summary = "Scarica il template per importare conti e saldi in CSV")
+    public ResponseEntity<StreamingResponseBody> templateAccounts() {
+        StreamingResponseBody body = outputStream ->
+                transactionsImportExportService.downloadAccountsTemplateCsv(outputStream);
+
+        String fileName = "template_accounts_" + LocalDate.now().format(DateTimeFormatter.ISO_DATE) + ".csv";
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                .contentType(MediaType.parseMediaType("text/csv"))
+                .body(body);
+    }
+
+    private void validateRanges(BigDecimal minAmount,
+                                BigDecimal maxAmount,
+                                LocalDate startDate,
+                                LocalDate endDate) {
+        if (minAmount != null && maxAmount != null && minAmount.compareTo(maxAmount) > 0) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "minAmount must be <= maxAmount"
+            );
+        }
+        if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "startDate must be <= endDate"
+            );
+        }
+    }
+
+    private ResponseEntity<TransactionImportResponseDTO> validateCsvFile(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            TransactionImportResponseDTO errorResponse = emptyImportResponse();
+            errorResponse.addError("Il file CSV e vuoto o non valido");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+
+        String filename = file.getOriginalFilename();
+        if (filename == null || !filename.toLowerCase().endsWith(".csv")) {
+            TransactionImportResponseDTO errorResponse = emptyImportResponse();
+            errorResponse.addError("Il file deve essere in formato CSV");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+
+        return null;
+    }
+
+    private TransactionImportResponseDTO emptyImportResponse() {
+        return TransactionImportResponseDTO.builder()
+                .result(TransactionImportResponseDTO.ImportResult.FAILED)
+                .summary(TransactionImportResponseDTO.ImportSummary.builder()
+                        .totalRows(0)
+                        .importedTransactions(0)
+                        .importedTransfers(0)
+                        .importedAccounts(0)
+                        .newAccounts(new ArrayList<>())
+                        .newCategories(new HashMap<>())
+                        .build())
+                .build();
     }
 }

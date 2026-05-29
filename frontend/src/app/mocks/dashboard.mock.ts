@@ -36,6 +36,13 @@ export const dashboardOverviewMock = {
     EUR: 8534.05,
     USD: 1125.00
   },
+  accountBalances: [
+    { accountId: 2, accountName: 'FINECO', iconName: 'account_balance_wallet', currency: 'EUR', balance: 1939.05 },
+    { accountId: 3, accountName: 'ISP', iconName: 'credit_card', currency: 'EUR', balance: 4815.00 },
+    { accountId: 5, accountName: 'ISYBANK', iconName: 'trending_up', currency: 'EUR', balance: 1730.00 },
+    { accountId: 5, accountName: 'ISYBANK', iconName: 'trending_up', currency: 'USD', balance: 1125.00 },
+    { accountId: 6, accountName: 'PAYPAL', iconName: 'payment', currency: 'EUR', balance: 50.00 }
+  ],
   totalIncomeThisMonth: {
     EUR: 3800.00,
     USD: 150.00

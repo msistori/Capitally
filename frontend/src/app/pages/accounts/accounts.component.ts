@@ -553,6 +553,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
       balancesByAccount.set(transaction.accountId, balances);
     }
 
+    const lastUsageByAccountId = this.getLastUsageByAccountId();
+
     this.accountSummaries = this.accounts.map(account => {
       const balances = balancesByAccount.get(account.id) ?? {};
 
@@ -562,7 +564,53 @@ export class AccountsComponent implements OnInit, OnDestroy {
         balanceItems: this.toBalanceItems(balances),
         convertedBalance: this.convertRecordToDefaultCurrency(balances)
       };
-    });
+    }).sort((a, b) => this.compareAccountSummaries(a, b, lastUsageByAccountId));
+  }
+
+  private compareAccountSummaries(
+    first: AccountSummary,
+    second: AccountSummary,
+    lastUsageByAccountId: Map<number, number>
+  ): number {
+    const balanceDifference = this.roundCurrencyAmount(second.convertedBalance)
+      - this.roundCurrencyAmount(first.convertedBalance);
+
+    if (balanceDifference !== 0) {
+      return balanceDifference;
+    }
+
+    const firstLastUsage = lastUsageByAccountId.get(first.account.id) ?? 0;
+    const secondLastUsage = lastUsageByAccountId.get(second.account.id) ?? 0;
+
+    if (secondLastUsage !== firstLastUsage) {
+      return secondLastUsage - firstLastUsage;
+    }
+
+    return first.account.name.localeCompare(second.account.name);
+  }
+
+  private getLastUsageByAccountId(): Map<number, number> {
+    const lastUsageByAccountId = new Map<number, number>();
+
+    for (const transaction of this.transactions) {
+      const usageOrder = Number(transaction.id ?? 0);
+      this.setAccountLastUsage(lastUsageByAccountId, transaction.accountId, usageOrder);
+      this.setAccountLastUsage(lastUsageByAccountId, transaction.transferCounterpartyAccountId, usageOrder);
+    }
+
+    return lastUsageByAccountId;
+  }
+
+  private setAccountLastUsage(
+    lastUsageByAccountId: Map<number, number>,
+    accountId: number | undefined,
+    usageOrder: number
+  ): void {
+    if (!accountId) {
+      return;
+    }
+
+    lastUsageByAccountId.set(accountId, Math.max(lastUsageByAccountId.get(accountId) ?? 0, usageOrder));
   }
 
   private toBalanceItems(record: Record<string, number>): AccountBalanceItem[] {

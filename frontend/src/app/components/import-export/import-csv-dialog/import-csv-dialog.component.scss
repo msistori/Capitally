@@ -20,6 +20,31 @@ mat-dialog-content {
   padding: 0;
 }
 
+.type-switch {
+  display: grid;
+  gap: 0.45rem;
+  grid-template-columns: 1fr;
+  margin-bottom: 0.75rem;
+
+  button {
+    background: #fff;
+    border: 1px solid rgba(0, 95, 115, 0.34);
+    border-radius: 0.55rem;
+    color: $primary;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+    min-height: 2.5rem;
+    padding: 0.55rem 0.7rem;
+
+    &.active {
+      background: $primary;
+      border-color: $primary;
+      color: #fff;
+    }
+  }
+}
+
 .upload-area {
   align-items: center;
   border: 2px dashed rgba(0, 95, 115, 0.34);
@@ -118,6 +143,10 @@ mat-dialog-content {
 }
 
 @media (min-width: 640px) {
+  .type-switch {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
   .actions {
     grid-template-columns: 1fr 1fr;
   }

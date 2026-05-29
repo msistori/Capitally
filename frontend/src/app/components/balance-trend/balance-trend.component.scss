@@ -97,3 +97,13 @@ $bg: #caf0f8;
         }
     }
 }
+
+@media (max-width: 1023px) {
+    :host {
+        height: 320px;
+    }
+
+    .balance-trend {
+        height: 100%;
+    }
+}
