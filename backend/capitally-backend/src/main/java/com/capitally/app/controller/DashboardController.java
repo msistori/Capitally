@@ -1,6 +1,7 @@
 package com.capitally.app.controller;
 
 import com.capitally.app.core.enums.TransactionTypeEnum;
+import com.capitally.app.core.security.UserPrincipal;
 import com.capitally.app.model.response.*;
 import com.capitally.app.service.DashboardService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,11 +36,11 @@ public class DashboardController {
     })
     @GetMapping("/transactions-summary")
     public TransactionsSummaryResponseDTO getTransactionsSummary(
-            @RequestParam BigInteger userId,
+            @AuthenticationPrincipal UserPrincipal user,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     ) {
-        return dashboardService.getTransactionsSummary(userId, startDate, endDate);
+        return dashboardService.getTransactionsSummary(user.getId(), startDate, endDate);
     }
 
     @Operation(summary = "Returns the current balance for each currency, based on all income and expenses.")
@@ -48,8 +50,8 @@ public class DashboardController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/current-balance")
-    public List<CurrentBalanceResponseDTO> getCurrentBalance(@RequestParam BigInteger userId) {
-        return dashboardService.getCurrentBalancePerCurrency(userId);
+    public List<CurrentBalanceResponseDTO> getCurrentBalance(@AuthenticationPrincipal UserPrincipal user) {
+        return dashboardService.getCurrentBalancePerCurrency(user.getId());
     }
 
 
@@ -61,10 +63,10 @@ public class DashboardController {
     })
     @GetMapping("/balance-trend")
     public List<BalanceTrendPerCurrencyResponseDTO> getBalanceTrend(
-            @RequestParam BigInteger userId,
+            @AuthenticationPrincipal UserPrincipal user,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        return dashboardService.getBalanceTrendPerCurrency(userId, startDate, endDate);
+        return dashboardService.getBalanceTrendPerCurrency(user.getId(), startDate, endDate);
     }
 
     @Operation(summary = "Returns total expenses grouped by macro-category and currency for the specified period.")
@@ -75,11 +77,11 @@ public class DashboardController {
     })
     @GetMapping("/income-expense-breakdown")
     public List<IncomeExpenseBreakdownResponseDTO> getIncomeExpenseBreakdown(
-            @RequestParam BigInteger userId,
+            @AuthenticationPrincipal UserPrincipal user,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             @RequestParam(required = false) TransactionTypeEnum transactionType) {
-        return dashboardService.getIncomeExpenseBreakdown(userId, startDate, endDate, transactionType);
+        return dashboardService.getIncomeExpenseBreakdown(user.getId(), startDate, endDate, transactionType);
     }
 
     @Operation(summary = "Returns monthly income and expense totals by currency for the specified period.")
@@ -90,10 +92,10 @@ public class DashboardController {
     })
     @GetMapping("/annual-income-expense")
     public List<AnnualIncomeExpenseResponseDTO> getAnnualIncomeExpense(
-            @RequestParam BigInteger userId,
+            @AuthenticationPrincipal UserPrincipal user,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        return dashboardService.getAnnualIncomeExpense(userId, startDate, endDate);
+        return dashboardService.getAnnualIncomeExpense(user.getId(), startDate, endDate);
     }
 
 
@@ -105,9 +107,9 @@ public class DashboardController {
     })
     @GetMapping("/upcoming-recurring")
     public List<UpcomingRecurringTransactionResponseDTO> getUpcomingRecurringTransactions(
-            @RequestParam BigInteger userId,
+            @AuthenticationPrincipal UserPrincipal user,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate untilDate) {
-        return dashboardService.getUpcomingRecurringTransactions(userId, untilDate);
+        return dashboardService.getUpcomingRecurringTransactions(user.getId(), untilDate);
     }
 
     @Operation(summary = "Returns a dashboard overview including balance, income/expense for the current month and upcoming recurring transactions.")
@@ -117,7 +119,7 @@ public class DashboardController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/overview")
-    public DashboardOverviewResponseDTO getDashboardOverview(@RequestParam BigInteger userId) {
-        return dashboardService.getDashboardOverview(userId);
+    public DashboardOverviewResponseDTO getDashboardOverview(@AuthenticationPrincipal UserPrincipal user) {
+        return dashboardService.getDashboardOverview(user.getId());
     }
 }

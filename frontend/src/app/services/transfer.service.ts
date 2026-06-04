@@ -10,8 +10,8 @@ export class TransferService {
 
   constructor(private http: HttpClient) {}
 
-  getTransfers(userId: string, startDate?: string, endDate?: string): Observable<TransferModel[]> {
-    let params = new HttpParams().set('userId', userId);
+  getTransfers(startDate?: string, endDate?: string): Observable<TransferModel[]> {
+    let params = new HttpParams();
 
     if (startDate) {
       params = params.set('startDate', startDate);
@@ -25,10 +25,16 @@ export class TransferService {
   }
 
   postTransfer(transfer: TransferRequestModel): Observable<TransferModel> {
-    return this.http.post<TransferModel>(`${this.apiUrl}`, transfer);
+    const { userId, ...payload } = transfer;
+    return this.http.post<TransferModel>(`${this.apiUrl}`, payload);
   }
 
   putTransfer(transferGroupId: string, transfer: TransferRequestModel): Observable<TransferModel> {
-    return this.http.put<TransferModel>(`${this.apiUrl}/${encodeURIComponent(transferGroupId)}`, transfer);
+    const { userId, ...payload } = transfer;
+    return this.http.put<TransferModel>(`${this.apiUrl}/${encodeURIComponent(transferGroupId)}`, payload);
+  }
+
+  deleteTransfer(transferGroupId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${encodeURIComponent(transferGroupId)}`);
   }
 }

@@ -1,0 +1,225 @@
+<main class="welcome-page">
+  <section class="hero-section">
+    <div class="hero-media" aria-hidden="true"></div>
+
+    <div class="hero-shell">
+      <div class="hero-brand hero-brand-mobile reveal-on-scroll" aria-label="Capitally">
+        <img src="/assets/logo.svg" alt="Capitally logo" />
+        <span>Capitally</span>
+      </div>
+
+      <div class="hero-content reveal-on-scroll">
+        <p class="eyebrow">{{ 'WELCOME_PAGE.HERO.EYEBROW' | translate }}</p>
+        <h1>{{ heroQuestions[activeHeroQuestionIndex] | translate }}</h1>
+        <p class="hero-copy">{{ 'WELCOME_PAGE.HERO.SUBTITLE' | translate }}</p>
+
+        <div class="hero-actions" aria-label="Welcome actions">
+          <button mat-raised-button class="primary-action" type="button" (click)="continueAsGuest()" [disabled]="loading">
+            <mat-icon>play_arrow</mat-icon>
+            {{ 'WELCOME_PAGE.ACTIONS.GUEST' | translate }}
+          </button>
+          <a mat-stroked-button class="secondary-action" routerLink="/login" [queryParams]="{ mode: 'register' }">
+            <mat-icon>person_add</mat-icon>
+            {{ 'WELCOME_PAGE.ACTIONS.CREATE_ACCOUNT' | translate }}
+          </a>
+          <a mat-button class="text-action" routerLink="/login">
+            <mat-icon>login</mat-icon>
+            {{ 'WELCOME_PAGE.ACTIONS.LOGIN' | translate }}
+          </a>
+        </div>
+
+        <p class="guest-hint">{{ 'WELCOME_PAGE.HERO.GUEST_HINT' | translate }}</p>
+        <p class="error" *ngIf="error">{{ error }}</p>
+      </div>
+
+      <aside class="hero-visual reveal-on-scroll" *ngIf="heroSlides[activeHeroSlideIndex] as slide">
+        <div class="hero-brand hero-brand-desktop" aria-label="Capitally">
+          <img src="/assets/logo.svg" alt="Capitally logo" />
+          <span>Capitally</span>
+        </div>
+
+        <div class="showcase-card" [ngClass]="'mode-' + slide.mode">
+          <div class="showcase-topbar">
+            <span class="screen-icon"><mat-icon>{{ slide.icon }}</mat-icon></span>
+            <div>
+              <strong>{{ slide.title | translate }}</strong>
+              <small>{{ slide.subtitle | translate }}</small>
+            </div>
+          </div>
+
+          <div class="showcase-body">
+            <div class="showcase-main">
+              <img
+                *ngIf="slide.mode === 'dashboard'"
+                src="/assets/frontend_example.png"
+                alt="Capitally dashboard preview"
+              />
+              <div class="account-mock" *ngIf="slide.mode === 'accounts'">
+                <div class="account-card primary-account">
+                  <span>{{ 'WELCOME_PAGE.HERO.ACCOUNT_MOCK.MAIN' | translate }}</span>
+                  <strong>€ 8.420</strong>
+                </div>
+                <div class="account-card">
+                  <span>{{ 'WELCOME_PAGE.HERO.ACCOUNT_MOCK.SAVINGS' | translate }}</span>
+                  <strong>€ 4.330</strong>
+                </div>
+                <div class="transfer-line">
+                  <span>{{ 'WELCOME_PAGE.HERO.ACCOUNT_MOCK.TRANSFER_FROM' | translate }}</span>
+                  <mat-icon>arrow_forward</mat-icon>
+                  <span>{{ 'WELCOME_PAGE.HERO.ACCOUNT_MOCK.TRANSFER_TO' | translate }}</span>
+                </div>
+                <div class="currency-row">
+                  <div class="half-currency-row">
+                    <span>€</span>
+                    <strong>12.750</strong>
+                  </div>
+                  <div class="half-currency-row">
+                    <span>$</span>
+                    <strong>1.180</strong>
+                  </div>
+                </div>
+              </div>
+              <div class="mock-chart" *ngIf="slide.mode === 'summary'">
+                <span class="mock-bar mock-bar-1"></span>
+                <span class="mock-bar mock-bar-2"></span>
+                <span class="mock-bar mock-bar-3"></span>
+                <span class="mock-bar mock-bar-4"></span>
+                <span class="mock-bar mock-bar-5"></span>
+              </div>
+            </div>
+
+            <div class="showcase-side">
+              <div class="metric-card">
+                <span>{{ slide.trendLabel | translate }}</span>
+                <strong>{{ slide.metric }}</strong>
+                <em>{{ slide.trendValue }}</em>
+              </div>
+
+              <div class="transaction-stack">
+                <div
+                  class="transaction-row"
+                  *ngFor="let transaction of slide.transactions"
+                  [class.positive]="transaction.positive"
+                >
+                  <span>{{ transaction.label | translate }}</span>
+                  <strong>{{ transaction.amount }}</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-slide-controls" aria-label="Welcome preview screens">
+          <button
+            type="button"
+            *ngFor="let slideItem of heroSlides; let index = index"
+            [class.active]="index === activeHeroSlideIndex"
+            [attr.aria-label]="slideItem.title | translate"
+            [attr.aria-current]="index === activeHeroSlideIndex ? 'true' : null"
+            (click)="setHeroSlide(index)"
+          ></button>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="product-section" aria-labelledby="welcome-product-title">
+    <div class="section-heading reveal-on-scroll">
+      <p class="eyebrow">{{ 'WELCOME_PAGE.PRODUCT.EYEBROW' | translate }}</p>
+      <h2 id="welcome-product-title">{{ 'WELCOME_PAGE.PRODUCT.TITLE' | translate }}</h2>
+      <p>{{ 'WELCOME_PAGE.PRODUCT.TEXT' | translate }}</p>
+    </div>
+
+    <div class="capability-workspace reveal-on-scroll">
+      <div class="capability-board" aria-label="Capitally planning tools preview">
+        <div class="board-header">
+          <div>
+            <span>{{ 'WELCOME_PAGE.PRODUCT.WORKSPACE.LABEL' | translate }}</span>
+            <strong>{{ 'WELCOME_PAGE.PRODUCT.WORKSPACE.TITLE' | translate }}</strong>
+          </div>
+          <mat-icon>auto_graph</mat-icon>
+        </div>
+
+        <div class="board-grid">
+          <article class="board-card recurring-card reveal-on-scroll">
+            <mat-icon>event_repeat</mat-icon>
+            <h3>{{ 'WELCOME_PAGE.PRODUCT.CARDS.RECURRING.TITLE' | translate }}</h3>
+            <p>{{ 'WELCOME_PAGE.PRODUCT.CARDS.RECURRING.TEXT' | translate }}</p>
+            <div class="upcoming-list">
+              <span>{{ 'WELCOME_PAGE.PRODUCT.MOCK.RENT' | translate }}</span>
+              <strong>-1.220</strong>
+              <span>{{ 'WELCOME_PAGE.PRODUCT.MOCK.SUBSCRIPTION' | translate }}</span>
+              <strong>-9,99</strong>
+            </div>
+          </article>
+
+          <article class="board-card budget-card reveal-on-scroll">
+            <mat-icon>pie_chart</mat-icon>
+            <h3>{{ 'WELCOME_PAGE.PRODUCT.CARDS.BUDGET.TITLE' | translate }}</h3>
+            <p>{{ 'WELCOME_PAGE.PRODUCT.CARDS.BUDGET.TEXT' | translate }}</p>
+            <div class="budget-ring" aria-hidden="true">
+              <span>82%</span>
+            </div>
+          </article>
+
+          <article class="board-card import-card reveal-on-scroll">
+            <mat-icon>upload_file</mat-icon>
+            <h3>{{ 'WELCOME_PAGE.PRODUCT.CARDS.IMPORT.TITLE' | translate }}</h3>
+            <p>{{ 'WELCOME_PAGE.PRODUCT.CARDS.IMPORT.TEXT' | translate }}</p>
+            <div class="file-row">
+              <span>CSV</span>
+              <strong>{{ 'WELCOME_PAGE.PRODUCT.MOCK.READY' | translate }}</strong>
+            </div>
+          </article>
+
+          <article class="board-card transfer-card reveal-on-scroll">
+            <mat-icon>sync_alt</mat-icon>
+            <h3>{{ 'WELCOME_PAGE.PRODUCT.CARDS.TRANSFERS.TITLE' | translate }}</h3>
+            <p>{{ 'WELCOME_PAGE.PRODUCT.CARDS.TRANSFERS.TEXT' | translate }}</p>
+            <div class="transfer-preview">
+              <span>{{ 'WELCOME_PAGE.PRODUCT.MOCK.CARD' | translate }}</span>
+              <mat-icon>arrow_forward</mat-icon>
+              <span>{{ 'WELCOME_PAGE.PRODUCT.MOCK.SAVINGS' | translate }}</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="feature-section" aria-labelledby="welcome-features-title">
+    <div class="section-heading reveal-on-scroll">
+      <p class="eyebrow">{{ 'WELCOME_PAGE.FEATURES.EYEBROW' | translate }}</p>
+      <h2 id="welcome-features-title">{{ 'WELCOME_PAGE.FEATURES.TITLE' | translate }}</h2>
+      <p>{{ 'WELCOME_PAGE.FEATURES.SUBTITLE' | translate }}</p>
+    </div>
+
+    <div class="feature-grid">
+      <article class="feature-card reveal-on-scroll" *ngFor="let feature of features">
+        <mat-icon>{{ feature.icon }}</mat-icon>
+        <h3>{{ feature.title | translate }}</h3>
+        <p>{{ feature.text | translate }}</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="flow-section" aria-labelledby="welcome-flow-title">
+    <div class="flow-copy reveal-on-scroll">
+      <p class="eyebrow">{{ 'WELCOME_PAGE.FLOW.EYEBROW' | translate }}</p>
+      <h2 id="welcome-flow-title">{{ 'WELCOME_PAGE.FLOW.TITLE' | translate }}</h2>
+      <p>{{ 'WELCOME_PAGE.FLOW.TEXT' | translate }}</p>
+      <button mat-raised-button class="primary-action" type="button" (click)="continueAsGuest()" [disabled]="loading">
+        <mat-icon>rocket_launch</mat-icon>
+        {{ 'WELCOME_PAGE.ACTIONS.TRY_GUEST' | translate }}
+      </button>
+    </div>
+
+    <div class="flow-steps">
+      <article class="flow-step reveal-on-scroll" *ngFor="let step of steps; let index = index">
+        <span>{{ index + 1 }}</span>
+        <h3>{{ step.title | translate }}</h3>
+        <p>{{ step.text | translate }}</p>
+      </article>
+    </div>
+  </section>
+</main>

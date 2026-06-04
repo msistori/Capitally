@@ -317,7 +317,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
     const accountId = this.editingAccountId;
 
-    this.transactionService.getTransactions(this.userId.toString(), accountId).subscribe({
+    this.transactionService.getTransactions(accountId).subscribe({
       next: transactions => {
         if (transactions.length) {
           this.openAccountTransactionsWarning();
@@ -385,8 +385,24 @@ export class AccountsComponent implements OnInit, OnDestroy {
     });
   }
 
+  deleteSelectedTransfer(): void {
+    if (!this.editingTransferGroupId) {
+      return;
+    }
+
+    this.transferService.deleteTransfer(this.editingTransferGroupId).subscribe({
+      next: () => {
+        this.loadAccountsData();
+        this.loadTransfers();
+        this.refreshService.triggerRefresh();
+        this.setView('history');
+      },
+      error: err => console.error('Error deleting transfer', err)
+    });
+  }
+
   loadTransfers(): void {
-    this.transferService.getTransfers(this.userId.toString()).subscribe({
+    this.transferService.getTransfers().subscribe({
       next: transfers => {
         this.allTransfers = transfers;
         this.applyTransferFilters();
@@ -486,8 +502,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   private loadAccountsData(): void {
     forkJoin({
-      accounts: this.accountService.getAccounts(this.userId.toString()),
-      transactions: this.transactionService.getTransactions(this.userId.toString())
+      accounts: this.accountService.getAccounts(),
+      transactions: this.transactionService.getTransactions()
     }).subscribe({
       next: ({ accounts, transactions }) => {
         this.accounts = accounts

@@ -137,6 +137,25 @@ public class TransferService {
         return toResponse(debit, credit);
     }
 
+    @Transactional
+    public void deleteTransfer(BigInteger userId, String transferGroupId) {
+        if (userId == null) {
+            throw new IllegalArgumentException("User is required");
+        }
+
+        if (transferGroupId == null || transferGroupId.isBlank()) {
+            throw new IllegalArgumentException("Transfer is required");
+        }
+
+        List<TransactionEntity> transactions = transactionRepository.findByUser_IdAndTransferGroupId(userId, transferGroupId);
+
+        if (transactions.isEmpty()) {
+            throw new IllegalArgumentException("Transfer not found");
+        }
+
+        transactionRepository.deleteAllInBatch(transactions);
+    }
+
     private void validate(TransferRequestDTO input) {
         if (input.getUserId() == null) {
             throw new IllegalArgumentException("User is required");

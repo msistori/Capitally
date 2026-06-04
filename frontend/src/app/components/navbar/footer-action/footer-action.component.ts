@@ -13,6 +13,7 @@ export class FooterActionComponent {
   @Output() action = new EventEmitter<void>();
 
   onClick(): void {
+    if (this.disabled) return;
     this.action.emit();
   }
 }

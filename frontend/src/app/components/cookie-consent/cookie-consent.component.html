@@ -1,0 +1,11 @@
+<section *ngIf="show$ | async" class="cookie-consent" aria-label="Consenso analytics">
+  <div class="cookie-copy">
+    <strong>Cookie e analytics</strong>
+    <span>Usiamo statistiche anonime solo con il tuo consenso per misurare l'uso dell'app. Non inviamo importi, descrizioni o dati finanziari.</span>
+  </div>
+
+  <div class="cookie-actions">
+    <button type="button" class="secondary" (click)="reject()">Rifiuta</button>
+    <button type="button" class="primary" (click)="accept()">Accetta</button>
+  </div>
+</section>

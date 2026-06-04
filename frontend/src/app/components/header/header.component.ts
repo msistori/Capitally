@@ -3,6 +3,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from 'src/app/services/auth.service';
+import { LegalNavigationService } from 'src/app/services/legal-navigation.service';
 
 @Component({
   selector: 'app-header',
@@ -19,7 +20,8 @@ export class HeaderComponent {
 
   constructor(
     private translate: TranslateService,
-    private authService: AuthService
+    private authService: AuthService,
+    private legalNavigation: LegalNavigationService
   ) {
     this.translate.addLangs(this.availableLanguages);
     const saved = localStorage.getItem('lang');
@@ -39,12 +41,15 @@ export class HeaderComponent {
         }
       });
 
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        const url = event.urlAfterRedirects || event.url;
-        this.hideLogout = url === '/' || url === '' || url.startsWith('/login');
-      }
-    })
+    this.setHeaderState(this.router.url || '/');
+
+    this.router.events
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(event => {
+        if (event instanceof NavigationEnd) {
+          this.setHeaderState(event.urlAfterRedirects || event.url);
+        }
+      });
   }
 
   changeLanguage(lang: string): void {
@@ -58,5 +63,9 @@ export class HeaderComponent {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  private setHeaderState(url: string): void {
+    this.hideLogout = this.legalNavigation.usesPublicChrome(url);
   }
 }

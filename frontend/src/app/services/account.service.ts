@@ -11,17 +11,18 @@ export class AccountService {
 
   constructor(private http: HttpClient) {}
 
-  getAccounts(userId: string): Observable<AccountModel[]> {
-    const params = new HttpParams().set('userId', userId);
-    return this.http.get<AccountModel[]>(`${this.apiUrl}`, { params });
+  getAccounts(): Observable<AccountModel[]> {
+    return this.http.get<AccountModel[]>(`${this.apiUrl}`);
   }
 
   postAccount(account: Partial<AccountModel>): Observable<AccountModel> {
-    return this.http.post<AccountModel>(`${this.apiUrl}`, account);
+    const { userId, ...payload } = account;
+    return this.http.post<AccountModel>(`${this.apiUrl}`, payload);
   }
 
   putAccount(accountId: number, account: Partial<AccountModel>): Observable<AccountModel> {
-    return this.http.put<AccountModel>(`${this.apiUrl}/${accountId}`, account);
+    const { userId, ...payload } = account;
+    return this.http.put<AccountModel>(`${this.apiUrl}/${accountId}`, payload);
   }
 
   deleteAccounts() {

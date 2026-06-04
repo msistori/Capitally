@@ -20,7 +20,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.capitally.app.utils.CapitallyUtils.addIfNotNull;
 import static com.capitally.app.utils.CapitallyUtils.buildLikePredicate;
@@ -33,8 +32,6 @@ public class AccountService {
     private final TransactionRepository transactionRepository;
     private final AccountMapper accountMapper;
 
-    private final String DEFAULT_ACCOUNT = "BANK";
-
     public AccountResponseDTO postAccount(AccountRequestDTO input) {
         AccountEntity entity = accountMapper.mapAccountDTOToEntity(input);
         entity.setCurrencyInitialBalance(buildInitialBalanceCurrency(input.getCurrencyInitialBalanceCode()));
@@ -44,24 +41,14 @@ public class AccountService {
     }
 
     public List<AccountResponseDTO> getAccounts(BigInteger userId, String name, BigDecimal minBalance, BigDecimal maxBalance) {
-        Specification<AccountEntity> spec = buildSpecification(userId, name, minBalance, maxBalance, false);
-        List<AccountResponseDTO> accounts = accountRepository.findAll(spec).stream()
+        Specification<AccountEntity> spec = buildSpecification(userId, name, minBalance, maxBalance);
+        return accountRepository.findAll(spec).stream()
                 .map(accountMapper::mapAccountEntityToDTO)
                 .toList();
-
-        if (!CollectionUtils.isEmpty(accounts)
-                && accounts.stream()
-                .map(AccountResponseDTO::getName).collect(Collectors.toSet())
-                .contains(DEFAULT_ACCOUNT)
-                && accounts.size() > 1) {
-            accounts = accounts.stream().filter(a -> !a.getName().equalsIgnoreCase(DEFAULT_ACCOUNT)).toList();
-        }
-
-        return accounts;
     }
 
-    public AccountResponseDTO putAccount(BigInteger id, AccountRequestDTO dto) {
-        AccountEntity existing = accountRepository.findById(id)
+    public AccountResponseDTO putAccount(BigInteger userId, BigInteger id, AccountRequestDTO dto) {
+        AccountEntity existing = accountRepository.findByIdAndUser_Id(id, userId)
                 .orElseThrow(() -> new IllegalArgumentException("Account not found"));
 
         existing.setName(dto.getName());
@@ -86,8 +73,7 @@ public class AccountService {
             Specification<AccountEntity> spec = buildSpecification(
                     userId,
                     name,
-                    initialBalance, initialBalance,
-                    true);
+                    initialBalance, initialBalance);
             List<AccountEntity> accountsToDelete = accountRepository.findAll(spec);
 
             if(!CollectionUtils.isEmpty(accountsToDelete)) {
@@ -101,13 +87,9 @@ public class AccountService {
     }
 
     private Specification<AccountEntity> buildSpecification(BigInteger userId, String name,
-                                                            BigDecimal minBalance, BigDecimal maxBalance, boolean isDeleting) {
+                                                            BigDecimal minBalance, BigDecimal maxBalance) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
-
-            if(isDeleting) {
-                predicates.add(cb.notEqual(root.get("name"), DEFAULT_ACCOUNT));
-            }
 
             addIfNotNull(predicates, userId, () -> cb.equal(root.get("user").get("id"), userId));
             addIfNotNull(predicates, name, () -> buildLikePredicate(cb, root.get("name"), name));

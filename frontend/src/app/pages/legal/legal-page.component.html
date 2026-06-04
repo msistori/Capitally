@@ -1,0 +1,60 @@
+<main class="legal-page">
+  <section class="legal-hero">
+    <button mat-button type="button" class="back-link" (click)="returnToOrigin()">
+      <mat-icon>arrow_back</mat-icon>
+      {{ backLabel }}
+    </button>
+
+    <p class="eyebrow">{{ copy.eyebrow }}</p>
+    <h1>{{ document.title }}</h1>
+    <p class="updated">{{ copy.updatedAtLabel }}: {{ document.updatedAt }}</p>
+
+    <nav class="document-tabs" [attr.aria-label]="copy.documentTabsAriaLabel">
+      <a
+        *ngFor="let key of documentKeys"
+        [class.active]="currentKey === key"
+        [routerLink]="['/legal', key]"
+        [queryParams]="returnQueryParams"
+      >
+        {{ copy.tabs[key] }}
+      </a>
+    </nav>
+  </section>
+
+  <article class="legal-content">
+    <p *ngFor="let paragraph of document.intro" class="lead">{{ paragraph }}</p>
+
+    <section
+      *ngFor="let section of document.sections"
+      class="legal-section"
+      [class.needs-review]="section.review"
+    >
+      <h2>{{ section.title }}</h2>
+
+      <p *ngFor="let paragraph of section.paragraphs">{{ paragraph }}</p>
+
+      <ul *ngIf="section.items?.length">
+        <li *ngFor="let item of section.items">{{ item }}</li>
+      </ul>
+
+      <div class="table-wrap" *ngIf="section.table">
+        <table>
+          <thead>
+            <tr>
+              <th *ngFor="let header of section.table.headers">{{ header }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of section.table.rows">
+              <td *ngFor="let cell of row">{{ cell }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p *ngIf="section.review" class="review-note">
+        {{ copy.reviewNote }}
+      </p>
+    </section>
+  </article>
+</main>

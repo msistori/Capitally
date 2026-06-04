@@ -10,6 +10,11 @@
     "secure": false,
     "changeOrigin": true
   },
+  "/analytics": {
+    "target": "http://localhost:8080",
+    "secure": false,
+    "changeOrigin": true
+  },
   "/dashboard": {
     "target": "http://localhost:8080",
     "secure": false,
@@ -41,6 +46,11 @@
     "changeOrigin": true
   },
   "/currency": {
+    "target": "http://localhost:8080",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/users": {
     "target": "http://localhost:8080",
     "secure": false,
     "changeOrigin": true

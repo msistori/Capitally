@@ -43,8 +43,8 @@ public class CategoryService {
                 .toList();
     }
 
-    public CategoryResponseDTO putCategory(BigInteger id, CategoryRequestDTO dto) {
-        CategoryEntity existing = categoryRepository.findById(id)
+    public CategoryResponseDTO putCategory(BigInteger userId, BigInteger id, CategoryRequestDTO dto) {
+        CategoryEntity existing = categoryRepository.findByIdAndUser_Id(id, userId)
                 .orElseThrow(() -> new IllegalArgumentException("Category not found"));
 
         existing.setMacroCategory(dto.getMacroCategory());

@@ -18,58 +18,49 @@ export class DashboardService {
 
   constructor(private http: HttpClient) {}
 
-  getDashboardOverview(userId: string): Observable<DashboardOverviewResponseDTO> {
-    const params = new HttpParams().set('userId', userId);
-    return this.http.get<DashboardOverviewResponseDTO>(`${this.apiUrl}/overview`, { params });
+  getDashboardOverview(): Observable<DashboardOverviewResponseDTO> {
+    return this.http.get<DashboardOverviewResponseDTO>(`${this.apiUrl}/overview`);
   }
 
-  getCurrentBalance(userId: string): Observable<CurrentBalanceResponseDTO[]> {
-    const params = new HttpParams().set('userId', userId);
-    return this.http.get<CurrentBalanceResponseDTO[]>(`${this.apiUrl}/current-balance`, { params });
+  getCurrentBalance(): Observable<CurrentBalanceResponseDTO[]> {
+    return this.http.get<CurrentBalanceResponseDTO[]>(`${this.apiUrl}/current-balance`);
   }
 
-  getTransactionsSummary(userId: string, start: string, end: string): Observable<TransactionsSummaryResponseDTO> {
+  getTransactionsSummary(start: string, end: string): Observable<TransactionsSummaryResponseDTO> {
     const params = new HttpParams()
-      .set('userId', userId)
       .set('startDate', start)
       .set('endDate', end);
     return this.http.get<TransactionsSummaryResponseDTO>(`${this.apiUrl}/transactions-summary`, { params });
   }
 
-  getBalanceTrend(userId: string, start: string, end: string): Observable<BalanceTrendPerCurrencyResponseDTO[]> {
+  getBalanceTrend(start: string, end: string): Observable<BalanceTrendPerCurrencyResponseDTO[]> {
     const params = new HttpParams()
-      .set('userId', userId)
       .set('startDate', start)
       .set('endDate', end);
     return this.http.get<BalanceTrendPerCurrencyResponseDTO[]>(`${this.apiUrl}/balance-trend`, { params });
   }
 
-  getIncomeExpenseBreakdown(userId: string, start: string, end: string): Observable<IncomeExpenseBreakdownResponseDTO[]> {
+  getIncomeExpenseBreakdown(start: string, end: string): Observable<IncomeExpenseBreakdownResponseDTO[]> {
     const params = new HttpParams()
-      .set('userId', userId)
       .set('startDate', start)
       .set('endDate', end);
     return this.http.get<IncomeExpenseBreakdownResponseDTO[]>(`${this.apiUrl}/income-expense-breakdown`, { params });
   }
 
-  getAnnualIncomeExpense(userId: string, start: string, end: string): Observable<AnnualIncomeExpenseResponseDTO[]> {
+  getAnnualIncomeExpense(start: string, end: string): Observable<AnnualIncomeExpenseResponseDTO[]> {
     const params = new HttpParams()
-      .set('userId', userId)
       .set('startDate', start)
       .set('endDate', end);
     return this.http.get<AnnualIncomeExpenseResponseDTO[]>(`${this.apiUrl}/annual-income-expense`, { params });
   }
 
-  getUpcomingRecurringTransactions(userId: string, untilDate: string): Observable<UpcomingRecurringTransactionModel[]> {
-    const params = new HttpParams()
-      .set('userId', userId)
-      .set('untilDate', untilDate);
+  getUpcomingRecurringTransactions(untilDate: string): Observable<UpcomingRecurringTransactionModel[]> {
+    const params = new HttpParams().set('untilDate', untilDate);
     return this.http.get<UpcomingRecurringTransactionModel[]>(`${this.apiUrl}/upcoming-recurring`, { params });
   }
 
-  getYearlyBalanceTrend(userId: string, startDate: string, endDate: string): Observable<BalanceTrendResponseDTO[]> {
+  getYearlyBalanceTrend(startDate: string, endDate: string): Observable<BalanceTrendResponseDTO[]> {
     const params = new HttpParams()
-      .set('userId', userId)
       .set('startDate', startDate)
       .set('endDate', endDate);
     return this.http.get<BalanceTrendResponseDTO[]>(`${this.apiUrl}/balance-trend`, { params });

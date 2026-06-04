@@ -19,7 +19,7 @@ VALUES
   ('GBP', 'British Pound')
 ON CONFLICT (code) DO NOTHING;
 
-SELECT setval('public.accounts_id_seq', (COALESCE((SELECT MAX(id) FROM t_account), 0) + 1)::bigint, false);
+SELECT setval('public.account_seq', (COALESCE((SELECT MAX(id) FROM t_account), 0) + 1)::bigint, false);
 SELECT setval('public.categories_id_seq', (COALESCE((SELECT MAX(id) FROM t_category), 0) + 1)::bigint, false);
 SELECT setval('public.transaction_seq', (COALESCE((SELECT MAX(id) FROM t_transaction), 0) + 1)::bigint, false);
 

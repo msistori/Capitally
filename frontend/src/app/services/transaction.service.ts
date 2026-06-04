@@ -11,8 +11,8 @@ export class TransactionService {
 
   constructor(private http: HttpClient) {}
 
-  getTransactions(userId: string, accountId?: number): Observable<TransactionModel[]> {
-    let params = new HttpParams().set('userId', userId);
+  getTransactions(accountId?: number): Observable<TransactionModel[]> {
+    let params = new HttpParams();
 
     if (accountId !== undefined) {
       params = params.set('accountId', accountId);
@@ -22,11 +22,13 @@ export class TransactionService {
   }
 
   postTransaction(transaction: TransactionModel): Observable<TransactionModel> {
-    return this.http.post<TransactionModel>(`${this.apiUrl}`, transaction);
+    const { userId, ...payload } = transaction;
+    return this.http.post<TransactionModel>(`${this.apiUrl}`, payload);
   }
 
   putTransaction(transactionId: number, transaction: TransactionModel): Observable<TransactionModel> {
-    return this.http.put<TransactionModel>(`${this.apiUrl}/${transactionId}`, transaction);
+    const { userId, ...payload } = transaction;
+    return this.http.put<TransactionModel>(`${this.apiUrl}/${transactionId}`, payload);
   }
 
   deleteTransaction(transactionId?: number) {

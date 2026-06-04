@@ -255,6 +255,11 @@
           {{ (editingTransferGroupId ? 'ACCOUNTS.TRANSFER.SAVE' : 'ACCOUNTS.TRANSFER.CONFIRM') | translate }}
         </button>
       </div>
+
+      <button *ngIf="editingTransferGroupId" class="danger-action" type="button" (click)="deleteSelectedTransfer()">
+        <mat-icon>delete</mat-icon>
+        <span>{{ 'ACCOUNTS.TRANSFER.DELETE' | translate }}</span>
+      </button>
     </form>
 
     <section *ngSwitchCase="'history'" class="history-view">

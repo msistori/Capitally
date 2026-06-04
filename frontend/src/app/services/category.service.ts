@@ -11,17 +11,18 @@ export class CategoryService {
 
   constructor(private http: HttpClient) {}
 
-  getCategories(userId: string): Observable<CategoryModel[]> {
-    const params = new HttpParams().set('userId', userId);
-    return this.http.get<CategoryModel[]>(`${this.apiUrl}`, { params });
+  getCategories(): Observable<CategoryModel[]> {
+    return this.http.get<CategoryModel[]>(`${this.apiUrl}`);
   }
 
   postCategory(category: CategoryModel): Observable<CategoryModel> {
-    return this.http.post<CategoryModel>(`${this.apiUrl}`, category);
+    const { userId, ...payload } = category;
+    return this.http.post<CategoryModel>(`${this.apiUrl}`, payload);
   }
 
   putCategory(category: CategoryModel, id: number): Observable<CategoryModel> {
-    return this.http.put<CategoryModel>(`${this.apiUrl}/${id}`, category);
+    const { userId, ...payload } = category;
+    return this.http.put<CategoryModel>(`${this.apiUrl}/${id}`, payload);
   }
 
   deleteCategory(category: CategoryModel) {

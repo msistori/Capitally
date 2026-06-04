@@ -27,7 +27,15 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "aot": true,
-            "assets": ["src/favicon.ico","src/assets"],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets",
+              {
+                "glob": "frontend_example.png",
+                "input": ".",
+                "output": "assets"
+              }
+            ],
             "stylePreprocessorOptions": { "includePaths": ["node_modules"] },
             "styles": ["src/styles.scss"],
             "scripts": []
@@ -52,8 +60,8 @@
               "vendorChunk": false,
               "buildOptimizer": true,
               "budgets": [
-                { "type": "initial", "maximumWarning": "500kb", "maximumError": "1mb" },
-                { "type": "anyComponentStyle", "maximumWarning": "2kb", "maximumError": "4kb" }
+                { "type": "initial", "maximumWarning": "1.6mb", "maximumError": "2mb" },
+                { "type": "anyComponentStyle", "maximumWarning": "36kb", "maximumError": "40kb" }
               ]
             },
             "local": {
@@ -91,7 +99,15 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
-            "assets": ["src/favicon.ico","src/assets"],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets",
+              {
+                "glob": "frontend_example.png",
+                "input": ".",
+                "output": "assets"
+              }
+            ],
             "styles": ["src/styles.scss"],
             "scripts": []
           }

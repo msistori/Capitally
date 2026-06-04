@@ -1,4 +1,12 @@
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
 .balance-summary {
+  box-sizing: border-box;
   padding: 1.5rem;
   border-radius: 1rem;
   text-align: center;
@@ -15,9 +23,11 @@
 
   .balance-total {
     font-size: 2.5rem;
+    line-height: 1;
     font-weight: 800;
     color: #005f73;
     margin: 0 0 .75rem 0;
+    overflow-wrap: anywhere;
   }
 
   .per-currency {
@@ -28,14 +38,24 @@
     gap: .25rem;
 
     li {
-      display: flex;
-      justify-content: center;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) max-content;
+      align-items: center;
+      gap: 1.5rem;
+      width: min(100%, 12rem);
+      margin: 0 auto;
       font-weight: 600;
       color: #005f73;
-      gap: 2rem;
+    }
 
-      .code { opacity: .8; }
-      .amt { white-space: nowrap; }
+    .code {
+      opacity: .8;
+      text-align: left;
+    }
+
+    .amt {
+      white-space: nowrap;
+      text-align: right;
     }
   }
 
@@ -54,27 +74,25 @@
     ul {
       list-style: none;
       padding: 0;
-      margin: 0;
+      margin: 0 auto;
       display: grid;
       gap: .4rem;
-    }
-
-    li,
-    .account-name {
-      display: flex;
-      align-items: center;
+      width: min(100%, 30rem);
     }
 
     li {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(7.5rem, max-content);
-      gap: .85rem;
+      grid-template-columns: minmax(0, 1fr) max-content;
+      align-items: center;
+      gap: 1.5rem;
       color: #005f73;
       font-size: .85rem;
       font-weight: 700;
     }
 
     .account-name {
+      display: flex;
+      align-items: center;
       min-width: 0;
       gap: .4rem;
 
@@ -93,22 +111,14 @@
     }
 
     .account-balance {
-      display: grid;
-      grid-template-columns: 2.6rem max-content;
+      display: flex;
       align-items: baseline;
-      justify-self: start;
-      gap: .45rem;
+      justify-content: flex-end;
       white-space: nowrap;
 
       &.negative {
         color: #ae2012;
       }
-    }
-
-    .account-currency {
-      opacity: .72;
-      font-size: .75rem;
-      text-align: end;
     }
 
     .account-amount {
@@ -117,7 +127,49 @@
   }
 
   @media (min-width: 1024px) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: min(100%, 42rem);
+    height: 100%;
+    padding: clamp(1.4rem, 3vh, 2.5rem) clamp(1.5rem, 3vw, 3rem);
     background-color: rgba(255, 255, 255, 0.42);
-    transform: scale(2);
+
+    h2 {
+      font-size: clamp(3rem, 1.2vw, 1.35rem);
+    }
+
+    .balance-total {
+      font-size: clamp(5rem, 4.5vw, 5rem);
+    }
+
+    .per-currency {
+      li {
+        width: min(100%, 35rem);
+        font-size: clamp(2rem, 1.1vw, 1.2rem);
+      }
+    }
+
+    .accounts-breakdown {
+      h3 {
+        font-size: clamp(1.5rem, 1vw, 1.05rem);
+      }
+
+      ul {
+        width: min(100%, 35rem);
+      }
+
+      li {
+        font-size: clamp(2rem, .95vw, 1rem);
+      }
+
+      .account-name {
+        mat-icon {
+          width: 1.5rem;
+          height: 1.5rem;
+          font-size: 1.5rem;
+        }
+      }
+    }
   }
 }

@@ -1,5 +1,5 @@
 import { Component, DestroyRef, TemplateRef, ViewChild, inject } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -15,6 +15,8 @@ import { RefreshService } from 'src/app/services/refresh.service';
 import { TransactionService } from 'src/app/services/transaction.service';
 import { CurrencyService } from 'src/app/services/currency.service';
 import { AccountModel } from 'src/app/models/account.model';
+import { AnalyticsEvent } from 'src/app/analytics/analytics.events';
+import { AnalyticsService } from 'src/app/analytics/analytics.service';
 
 type Currency = { code: string; name?: string };
 
@@ -31,6 +33,7 @@ export class SettingsModalComponent {
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
   private storage = inject(StorageService);
+  private analytics = inject(AnalyticsService);
 
   ClearTarget = ClearTarget;
   TransactionDeleteScope = TransactionDeleteScope;
@@ -41,6 +44,15 @@ export class SettingsModalComponent {
     scope: new FormControl<TransactionDeleteScope>(TransactionDeleteScope.ACCOUNT, { nonNullable: true }),
     accountId: new FormControl<number | null>(null)
   });
+  passwordForm = new FormGroup({
+    currentPassword: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    newPassword: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.minLength(6)] }),
+    confirmPassword: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] })
+  }, { validators: passwordMatchValidator });
+  showPasswordForm = false;
+  passwordSaving = false;
+  passwordMessage: string | null = null;
+  passwordError: string | null = null;
 
   currencies: Currency[] = [];
   filteredCurrencies: Currency[] = [];
@@ -87,7 +99,7 @@ export class SettingsModalComponent {
       this.filteredCurrencies = data;
     });
 
-    this.accountService.getAccounts(this.userId.toString()).subscribe(data => {
+    this.accountService.getAccounts().subscribe(data => {
       this.accounts = data.sort((a, b) => a.name.localeCompare(b.name));
     });
 
@@ -122,7 +134,7 @@ export class SettingsModalComponent {
     const config = configMap[target];
 
     if (target === ClearTarget.ACCOUNTS) {
-      this.transactionService.getTransactions(this.userId.toString()).subscribe({
+      this.transactionService.getTransactions().subscribe({
         next: transactions => {
           const accountIds = new Set(this.accounts.map(account => account.id));
           const hasAccountTransactions = transactions.some(transaction => accountIds.has(transaction.accountId));
@@ -145,6 +157,52 @@ export class SettingsModalComponent {
   canConfirmTransactionDeletion(): boolean {
     return this.transactionDeleteForm.controls.scope.value === TransactionDeleteScope.ALL
       || this.transactionDeleteForm.controls.accountId.value !== null;
+  }
+
+  openPasswordForm(): void {
+    this.showPasswordForm = true;
+    this.passwordMessage = null;
+    this.passwordError = null;
+  }
+
+  cancelPasswordChange(): void {
+    this.resetPasswordForm();
+    this.showPasswordForm = false;
+  }
+
+  changePassword(): void {
+    this.passwordMessage = null;
+    this.passwordError = null;
+
+    if (this.passwordForm.invalid) {
+      this.passwordForm.markAllAsTouched();
+      this.passwordError = this.passwordForm.hasError('passwordMismatch')
+        ? this.translateService.instant('SETTINGS.PASSWORD.ERROR_MISMATCH') as string
+        : this.translateService.instant('SETTINGS.PASSWORD.ERROR_REQUIRED') as string;
+      return;
+    }
+
+    const value = this.passwordForm.getRawValue();
+    this.passwordSaving = true;
+
+    this.authService.changePassword({
+      currentPassword: value.currentPassword,
+      newPassword: value.newPassword
+    }).subscribe({
+      next: () => {
+        this.passwordSaving = false;
+        this.resetPasswordForm();
+        this.showPasswordForm = false;
+        this.passwordMessage = this.translateService.instant('SETTINGS.PASSWORD.SUCCESS') as string;
+      },
+      error: err => {
+        this.passwordSaving = false;
+        const message = err?.error?.message || err?.error?.detail;
+        this.passwordError = message === 'invalid_current_password'
+          ? this.translateService.instant('SETTINGS.PASSWORD.ERROR_CURRENT') as string
+          : this.translateService.instant('SETTINGS.PASSWORD.ERROR_GENERIC') as string;
+      }
+    });
   }
 
   setTransactionDeleteScope(scope: TransactionDeleteScope): void {
@@ -177,6 +235,12 @@ export class SettingsModalComponent {
           error: err => console.error(err)
         });
       });
+  }
+
+  private resetPasswordForm(): void {
+    this.passwordForm.reset();
+    this.passwordForm.markAsPristine();
+    this.passwordForm.markAsUntouched();
   }
 
   private openConfirmDeleteDialog(config: { title: string; message: string; action: () => Observable<any> }): void {
@@ -229,6 +293,9 @@ export class SettingsModalComponent {
   onCurrencyChange(code: string): void {
     this.selectedCurrencyCode = code;
     this.storageService.setDefaultCurrency(code);
+    this.analytics.track(AnalyticsEvent.SETTINGS_DEFAULT_CURRENCY_CHANGED, {
+      currency_code: code
+    });
   }
 
   filterCurrencies(searchTerm: string): void {
@@ -268,8 +335,12 @@ export class SettingsModalComponent {
       this.translateService.use(lang);
       this.currentLang = lang;
       localStorage.setItem('lang', lang);
+      this.analytics.track(AnalyticsEvent.SETTINGS_LANGUAGE_CHANGED, {
+        language: lang
+      });
     }
   }
+
 }
 
 enum ClearTarget {
@@ -281,4 +352,15 @@ enum ClearTarget {
 enum TransactionDeleteScope {
   ACCOUNT = 'ACCOUNT',
   ALL = 'ALL'
+}
+
+function passwordMatchValidator(control: AbstractControl) {
+  const newPassword = control.get('newPassword')?.value;
+  const confirmPassword = control.get('confirmPassword')?.value;
+
+  if (!newPassword || !confirmPassword || newPassword === confirmPassword) {
+    return null;
+  }
+
+  return { passwordMismatch: true };
 }

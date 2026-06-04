@@ -2,13 +2,15 @@
   <h2>{{ 'BALANCE.BALANCE_TITLE' | translate }}</h2>
 
   <!-- Combined total in default currency -->
-  <p class="balance-total">{{ convertedTotal() | currency: defaultCurrencySig():'symbol' }}</p>
+  <p class="balance-total">{{ convertedTotal() | currency:defaultCurrencySig():'symbol':'1.2-2' }}</p>
 
   <!-- Per-currency breakdown -->
-  <ul class="per-currency" *ngIf="showBreakdown()">
+   <ul class="per-currency" *ngIf="showBreakdown()">
     <li *ngFor="let e of currencyEntries()">
       <span class="code">{{ e.code }}</span>
-      <span class="amt">{{ e.amount | currency: e.code:'symbol-narrow' }}</span>
+      <span class="amt">
+        {{ e.amount | currency:e.code:'symbol-narrow':'1.2-2' }}
+      </span>
     </li>
   </ul>
 
@@ -21,9 +23,11 @@
           <mat-icon aria-hidden="true">{{ account.iconName }}</mat-icon>
           <span>{{ account.accountName }}</span>
         </span>
+
         <span class="account-balance" [class.negative]="account.balance < 0">
-          <span class="account-currency">{{ account.currency }}</span>
-          <span class="account-amount">{{ account.balance | number:'1.2-2' }}</span>
+          <span class="account-amount">
+            {{ account.balance | currency:account.currency:'symbol-narrow':'1.2-2' }}
+          </span>
         </span>
       </li>
     </ul>

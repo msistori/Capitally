@@ -1,5 +1,6 @@
 package com.capitally.app.controller;
 
+import com.capitally.app.model.request.ForgotPasswordRequestDTO;
 import com.capitally.app.model.request.LoginRequestDTO;
 import com.capitally.app.model.request.RegisterRequestDTO;
 import com.capitally.app.model.response.AuthResponseDTO;
@@ -27,6 +28,13 @@ public class AuthController {
     @Transactional
     public ResponseEntity<AuthResponseDTO> register(@RequestBody RegisterRequestDTO req) {
         return ResponseEntity.ok(authService.register(req));
+    }
+
+    @PostMapping("/forgot-password")
+    @Transactional
+    public ResponseEntity<Void> forgotPassword(@RequestBody ForgotPasswordRequestDTO req) {
+        authService.forgotPassword(req);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/me")

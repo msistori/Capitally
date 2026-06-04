@@ -22,6 +22,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 /* Components */
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { BalanceSummaryComponent } from './components/balance-summary/balance-summary.component';
 import { RecentTransactionsComponent } from './components/recent-transactions/recent-transactions.component';
@@ -40,13 +41,15 @@ import localeEn from '@angular/common/locales/en';
 import { LoadingInterceptor } from './loader/loading.interceptor';
 import { LoadingOverlayComponent } from './loader/loading-overlay/loading-overlay.component';
 import { IncomeExpenseBreakdownComponent } from './components/income-expense-breakdown/income-expense-breakdown.component';
-import { FooterActionComponent } from './components/footer/footer-action/footer-action.component';
+import { FooterActionComponent } from './components/navbar/footer-action/footer-action.component';
 import { SettingsModule } from './pages/settings/settings.module';
 import { GuestInterceptor } from './interceptors/guest.interceptor';
 import { MockApiInterceptor } from './mocks/mock-api.interceptor';
 import { GuestRestrictionDialogComponent } from './components/guest-restriction-dialog/guest-restriction-dialog.component';
 import { AccountsModule } from './pages/accounts/accounts.module';
 import { SummaryModule } from './pages/summary/summary.module';
+import { AnalyticsConsentInterceptor } from './analytics/analytics-consent.interceptor';
+import { CookieConsentComponent } from './components/cookie-consent/cookie-consent.component';
 
 registerLocaleData(localeIt);
 registerLocaleData(localeEn);
@@ -65,9 +68,11 @@ const globalRippleConfig: RippleGlobalOptions = { disabled: true };
     DuplicateCategoryAlertComponent,
     BalanceTrendComponent,
     IncomeExpenseBreakdownComponent,
+    NavbarComponent,
     FooterComponent,
     FooterActionComponent,
-    GuestRestrictionDialogComponent
+    GuestRestrictionDialogComponent,
+    CookieConsentComponent
   ],
   imports: [
     BrowserModule,
@@ -101,6 +106,7 @@ const globalRippleConfig: RippleGlobalOptions = { disabled: true };
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: AnalyticsConsentInterceptor, multi: true },
     { provide: MAT_RIPPLE_GLOBAL_OPTIONS, useValue: globalRippleConfig },
     { provide: LOCALE_ID, useValue: 'it-IT' },
     { provide: HTTP_INTERCEPTORS, useClass: GuestInterceptor, multi: true },

@@ -6,6 +6,7 @@ import com.capitally.app.core.enums.UserRoleEnum;
 import com.capitally.app.core.repository.CategoryRepository;
 import com.capitally.app.core.repository.UserRepository;
 import com.capitally.app.core.security.JwtTokenProvider;
+import com.capitally.app.model.request.ForgotPasswordRequestDTO;
 import com.capitally.app.model.request.LoginRequestDTO;
 import com.capitally.app.model.request.RegisterRequestDTO;
 import com.capitally.app.model.response.AuthResponseDTO;
@@ -18,8 +19,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.SecureRandom;
 import java.util.stream.Collectors;
 
 import static com.capitally.app.utils.CapitallyErrors.AUTH_EMAIL_TAKEN_ERROR;
@@ -29,11 +33,17 @@ import static org.springframework.http.HttpStatus.CONFLICT;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+    private static final String PASSWORD_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%";
+    private static final int TEMPORARY_PASSWORD_LENGTH = 14;
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+
     private final AuthenticationManager am;
     private final JwtTokenProvider jwt;
     private final PasswordEncoder pe;
     private final UserRepository repo;
     private final CategoryRepository categoryRepository;
+    private final ResendEmailService resendEmailService;
+    private final ForgotPasswordEmailQuotaService forgotPasswordEmailQuotaService;
 
     public AuthResponseDTO register(RegisterRequestDTO req) {
         if (repo.findByUsername(req.username()).isPresent()) throw new ResponseStatusException(CONFLICT, AUTH_USER_TAKEN_ERROR);
@@ -70,10 +80,36 @@ public class AuthService {
         return new AuthResponseDTO(token, "Bearer", u.getUsername(), u.getEmail(), u.getRoles().stream().map(Enum::name).collect(Collectors.toSet()));
     }
 
+    @Transactional
+    public void forgotPassword(ForgotPasswordRequestDTO req) {
+        String usernameOrEmail = req == null ? null : req.usernameOrEmail();
+        if (!StringUtils.hasText(usernameOrEmail)) {
+            return;
+        }
+
+        repo.findByUsernameIgnoreCaseOrEmailIgnoreCase(usernameOrEmail.trim(), usernameOrEmail.trim())
+                .ifPresent(user -> {
+                    resendEmailService.validateConfigured();
+                    forgotPasswordEmailQuotaService.reserve(user);
+                    String temporaryPassword = generateTemporaryPassword();
+                    user.setPassword(pe.encode(temporaryPassword));
+                    repo.save(user);
+                    resendEmailService.sendTemporaryPassword(user.getEmail(), temporaryPassword, req.lang());
+                });
+    }
+
     public MeResponseDTO me(String token) {
         Claims c = jwt.parse(token);
         String username = c.getSubject();
         UserEntity u = repo.findByUsername(username).orElseThrow();
         return new MeResponseDTO(u.getId(), u.getUsername(), u.getEmail(), u.getRoles().stream().map(Enum::name).collect(Collectors.toSet()));
+    }
+
+    private String generateTemporaryPassword() {
+        StringBuilder password = new StringBuilder(TEMPORARY_PASSWORD_LENGTH);
+        for (int i = 0; i < TEMPORARY_PASSWORD_LENGTH; i++) {
+            password.append(PASSWORD_CHARS.charAt(SECURE_RANDOM.nextInt(PASSWORD_CHARS.length())));
+        }
+        return password.toString();
     }
 }

@@ -3,7 +3,8 @@ $secondary: #caf0f8;
 
 :host {
   display: block;
-  min-height: 100dvh;
+  height: 100%;
+  min-height: 0;
 }
 
 .auth-container {
@@ -11,18 +12,24 @@ $secondary: #caf0f8;
   --maxw: min(1280px, 94vw);
   --colw: calc((var(--maxw) - var(--gap)) / 2);
   --right-col-left: calc(var(--colw) + var(--gap));
-  min-height: calc(100vh - (var(--footer-h)));
-  background: radial-gradient(60% 60% at 0% 0%, rgba($primary, .25) 0%, rgba($primary, 0) 60%), radial-gradient(60% 60% at 100% 100%, rgba($primary, .25) 0%, rgba($primary, 0) 60%), linear-gradient(180deg, #ffffff 0%, #f5fbfd 100%);
+  box-sizing: border-box;
+  min-height: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
+  position: relative;
 }
 
 .pane-grid {
   position: relative;
   height: 100%;
+  min-height: 0;
   max-width: var(--maxw);
   width: 100%;
+  display: flex;
+  flex-direction: column-reverse;
 }
 
 .visual {
@@ -92,48 +99,73 @@ $secondary: #caf0f8;
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, .4);
   box-shadow: 0 10px 30px rgba(0, 0, 0, .1);
-
+  
   h1 {
     margin: 0 0 1rem;
     text-align: center;
     font-size: clamp(1.6rem, 2.2vw, 2.2rem);
   }
-
+  
   form {
     display: grid;
     gap: 1rem;
   }
-
+  
   .w-100 {
     width: 100%;
   }
-
+  
   .primary-btn.mat-mdc-raised-button {
     background-color: $primary !important;
     color: #fff !important;
     transition: background-color .25s ease, color .25s ease;
   }
-
+  
   .primary-btn.mat-mdc-raised-button:not(.mdc-button--disabled):hover {
     background-color: $secondary !important;
     color: $primary !important;
   }
-
+  
   .alt {
     display: grid;
     gap: .5rem;
     margin-top: .5rem;
   }
 
+  .forgot-link {
+    justify-self: center;
+    background: none;
+    border: none;
+    color: $primary;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+    padding: 0;
+    text-decoration: underline;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: .55;
+    }
+  }
+
+  .forgot-form {
+    border-top: 1px solid rgba($primary, .18);
+    display: grid;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+  }
+  
   .guest {
     color: $primary;
     font-weight: 600;
   }
-
+  
   .switch {
     text-align: center;
     margin-top: 1rem;
-
+    
     .switch-btn {
       background: none;
       border: none;
@@ -141,20 +173,53 @@ $secondary: #caf0f8;
       font-weight: 500;
       cursor: pointer;
       font-size: 1rem;
-
+      
       .link {
         text-decoration: underline;
       }
-
+      
       &:hover {
         opacity: .8;
       }
     }
   }
-
+  
   .error {
     color: #b00020;
     text-align: center;
+  }
+
+  .success {
+    color: #157347;
+    font-weight: 700;
+    margin: 0;
+    text-align: center;
+  }
+}
+
+.legal-consent {
+  color: $primary;
+  font-size: .88rem;
+  line-height: 1.35;
+  
+  a {
+    color: $primary;
+    font-weight: 700;
+  }
+}
+
+.legal-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: .5rem .9rem;
+  margin-bottom: .85rem;
+  font-size: .84rem;
+  
+  a {
+    color: $primary;
+    font-weight: 700;
+    text-decoration: underline;
   }
 }
 
@@ -166,18 +231,20 @@ $secondary: #caf0f8;
     --colw: 100%;
     --right-col-left: 0px;
     position: relative;
-    min-height: 100dvh;
+    min-height: 100%;
+    height: 100%;
     overflow: hidden;
     /* lock scrolling inside the login component on mobile */
     overscroll-behavior: contain;
   }
-
+  
   .pane-grid {
     position: relative;
-    height: 100dvh;
+    height: 100%;
+    min-height: 0;
     width: 100%;
   }
-
+  
   .visual {
     position: absolute;
     inset: 0;
@@ -187,28 +254,30 @@ $secondary: #caf0f8;
     place-items: center;
     z-index: 1;
   }
-
+  
   .visual .glass {
-    width: min(92vw, 680px);
-    height: clamp(260px, 42vh, 420px);
+    width: 100%;
+    height: 100%;
   }
-
+  
   #login-bg-img {
-    width: 100vw;
-    height: 100lvh;
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
     background-image: url('/assets/login_bg.jpg');
     background-size: cover;
-    background-size: 400%;
     background-position: 46% 50%;
     border-radius: 0;
     box-shadow: 0 18px 42px rgba(0, 0, 0, .18);
     overflow: hidden;
   }
-
+  
   /* Form come overlay sopra, non a tutta pagina */
   .form-area {
     position: absolute;
     inset: 0;
+    box-sizing: border-box;
+    padding-bottom: var(--legal-footer-h);
     transform: none;
     display: grid;
     place-items: center;
@@ -218,21 +287,23 @@ $secondary: #caf0f8;
     z-index: 2;
     /* sopra la visual */
   }
-
+  
   .form-area.active {
     opacity: 1;
     pointer-events: auto;
   }
-
+  
   .form-login,
   .form-register {
     left: 0;
     justify-content: center;
   }
-
+  
   .form-card {
-    width: min(70vw, 460px);
-    max-height: 88dvh;
+    box-sizing: border-box;
+    width: min(88vw, 460px);
+    max-height: calc(100% - 2rem);
+    overflow-y: auto;
     padding: clamp(18px, 4.2vh, 34px);
     border-radius: 20px;
     background: rgba(255, 255, 255, .34);
@@ -241,19 +312,19 @@ $secondary: #caf0f8;
     border: 1px solid rgba(255, 255, 255, .5);
     box-shadow: 0 14px 44px rgba(0, 0, 0, .2);
   }
-
+  
   /* piccolo offset per dare l’idea di “card sopra la card immagine” */
   .form-area.active .form-card {
     transform: translateY(-4%);
     transition: transform .35s ease;
   }
-
+  
   /* Material compact */
   :host ::ng-deep .mat-mdc-form-field-infix {
     padding-block: 14px;
     min-height: 48px;
   }
-
+  
   .auth-container.is-register .visual {
     transform: none;
   }

@@ -447,11 +447,10 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
   private loadData(): void {
     forkJoin({
-      accounts: this.accountService.getAccounts(this.userId),
-      categories: this.categoryService.getCategories(this.userId),
-      transactions: this.transactionService.getTransactions(this.userId),
+      accounts: this.accountService.getAccounts(),
+      categories: this.categoryService.getCategories(),
+      transactions: this.transactionService.getTransactions(),
       upcomingRecurring: this.dashboardService.getUpcomingRecurringTransactions(
-        this.userId,
         this.upcomingRecurringUntilDate()
       ).pipe(catchError(() => of([] as UpcomingRecurringTransactionModel[])))
     }).subscribe({
@@ -604,6 +603,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
       hasBackdrop: true,
       disableClose: false,
       closeOnNavigation: true,
+      autoFocus: false,
+      restoreFocus: false,
       panelClass: 'add-transaction-modal-panel',
       data: transaction ? { transaction } : undefined
     });

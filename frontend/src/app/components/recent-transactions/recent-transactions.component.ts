@@ -36,7 +36,7 @@ export class RecentTransactionsComponent implements OnInit, OnDestroy {
   }
 
   private loadTransactions(): void {
-    this.transactionService.getTransactions(this.userId).subscribe(res => {
+    this.transactionService.getTransactions().subscribe(res => {
       this.transactions = res
         .filter(transaction => !this.isTransferTransaction(transaction))
         .slice(0, 5);
@@ -60,6 +60,8 @@ export class RecentTransactionsComponent implements OnInit, OnDestroy {
       hasBackdrop: true,
       disableClose: false,
       closeOnNavigation: true,
+      autoFocus: false,
+      restoreFocus: false,
       panelClass: 'add-transaction-modal-panel',
       data: transaction ? { transaction } : undefined
     });

@@ -52,8 +52,18 @@ export class MockApiInterceptor implements HttpInterceptor {
       return this.json(this.login(req.body));
     }
 
+    if (req.method === 'POST' && path === '/auth/forgot-password' && this.isEndpointEnabled(config, 'authLogin')) {
+      return this.json(null);
+    }
+
     if (req.method === 'GET' && path === '/auth/me' && this.isEndpointEnabled(config, 'authMe')) {
       return this.json(this.me());
+    }
+
+    if (req.method === 'PUT'
+      && (path === '/users/me/password' || path === '/api/users/me/password')
+      && this.isEndpointEnabled(config, 'authMe')) {
+      return this.json(null);
     }
 
     if (req.method === 'GET' && path === '/dashboard/overview' && this.isEndpointEnabled(config, 'dashboardOverview')) {
@@ -268,6 +278,17 @@ export class MockApiInterceptor implements HttpInterceptor {
       }
 
       return this.json(updated);
+    }
+
+    if (req.method === 'DELETE') {
+      const transferGroupId = decodeURIComponent(path.split('/').pop() ?? '');
+      const index = transfersMock.findIndex(transfer => transfer.transferGroupId === transferGroupId);
+
+      if (index >= 0) {
+        transfersMock.splice(index, 1);
+      }
+
+      return this.json(null);
     }
 
     return null;

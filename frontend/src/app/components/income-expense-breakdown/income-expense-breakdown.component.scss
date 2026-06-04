@@ -24,6 +24,7 @@ $expense: #bf1f23;
   }
   .table {
     overflow: visible; /* page will scroll */
+    max-width: 100%;
   }
 }
 
@@ -323,20 +324,35 @@ $expense: #bf1f23;
 
   .col {
     padding: .55rem .5rem;
+    min-width: 0;
 
     .col-header {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
+
+      .total {
+        min-width: 0;
+        overflow-wrap: anywhere;
+        white-space: normal;
+      }
     }
 
     .row {
-      grid-template-columns: minmax(0, 1fr) max-content;
+      grid-template-columns: minmax(0, 1fr);
       gap: .4rem;
       padding: .4rem .5rem;
 
+      .cat {
+        white-space: normal;
+      }
+
       .val {
-        justify-self: end;
+        justify-content: flex-start;
+        justify-self: stretch;
         gap: .35rem;
+        min-width: 0;
+        overflow-wrap: anywhere;
+        white-space: normal;
       }
     }
   }

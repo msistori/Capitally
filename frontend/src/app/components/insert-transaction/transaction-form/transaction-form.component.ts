@@ -92,9 +92,9 @@ export class TransactionFormComponent implements OnInit, OnChanges {
     ).subscribe(suggestions => this.filteredDescriptionSuggestions = suggestions);
 
     forkJoin({
-      categories: this.categoryService.getCategories(this.userId.toString()),
-      transactions: this.transactionService.getTransactions(this.userId.toString()),
-      accounts: this.accountService.getAccounts(this.userId.toString())
+      categories: this.categoryService.getCategories(),
+      transactions: this.transactionService.getTransactions(),
+      accounts: this.accountService.getAccounts()
     }).subscribe({
       next: ({ categories, transactions, accounts }) => {
         this.categories = categories;

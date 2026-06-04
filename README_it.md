@@ -1,85 +1,88 @@
-# Capitally 💰
+# Capitally
 
-## Lang [IT]: [en](https://github.com/msistori/Capitally/blob/main/README.md) | [it](https://github.com/msistori/Capitally/blob/main/README_it.md)
+Capitally e una web application per gestire finanze personali: conti, transazioni, trasferimenti, movimenti ricorrenti, andamento del saldo e riepiloghi dashboard multi-valuta.
 
-## 📌 Introduzione
+Lingue: [English](README.md) | [Italiano](README_it.md)
 
-Capitally è un'applicazione web pensata per gestire in modo semplice e intuitivo le tue spese personali e monitorare i tuoi investimenti, offrendo una panoramica completa e in tempo reale della tua salute finanziaria. Ideale sia per privati che vogliono tenere sotto controllo le proprie finanze, sia per piccole imprese che necessitano di strumenti efficienti per monitorare entrate e uscite.
+## Ambito attuale
 
-## 🎯 Obiettivi del progetto
+- Login, registrazione, profilo utente corrente e gestione password con JWT.
+- Gestione conti con saldo iniziale, valuta, icona e inclusione nel saldo totale.
+- Categorie di entrata e uscita associate al singolo utente.
+- Transazioni con tipo, categoria, ricorrenza e controlli di proprieta del conto.
+- Trasferimenti interni rappresentati da transazioni accoppiate tramite transfer group id.
+- Dashboard con saldi, trend, riepiloghi mensili, breakdown e prossimi movimenti ricorrenti.
+- Import/export CSV per transazioni, trasferimenti e saldi iniziali dei conti.
+- Supporto a dati demo/guest per uso locale.
+- Analytics opzionali con PostHog solo dopo consenso.
+- Recupero password opzionale tramite email Resend.
 
-* Fornire una gestione efficace e intuitiva delle spese e degli investimenti.
-* Aiutare utenti e piccole imprese a prendere decisioni finanziarie consapevoli.
+## Architettura
 
-## ✨ Funzionalità
+| Area | Stack |
+| --- | --- |
+| Frontend | Angular 17, Angular Material, ngx-translate, Chart.js |
+| Backend | Java 21, Spring Boot 3.3, Spring Security, Spring Data JPA |
+| Database | PostgreSQL |
+| Runtime | Docker Compose, frontend Nginx proxy, API Spring Boot |
+| Servizi esterni | PostHog, Resend |
 
-### Must-have ✅
+A runtime, il frontend e servito da Nginx e inoltra le chiamate API al backend Spring Boot. Il backend salva i dati in PostgreSQL e protegge le rotte non pubbliche con autenticazione JWT stateless.
 
-* **Categorizzazione delle spese**:
+## Documentazione
 
-  * Automatica (con possibile futura implementazione AI)
-  * Manuale (personalizzabile dall'utente)
-* **Budget Planner**:
+- [Panoramica tecnica](docs/technical-overview.md)
+- [Backend](docs/backend.md)
+- [Frontend](docs/frontend.md)
+- [Database](docs/database.md)
+- [Servizi esterni](docs/external-services.md)
+- [Sicurezza](docs/security.md)
 
-  * Definizione budget mensili/annuali
-  * Monitoraggio in tempo reale del budget disponibile
-* **Dashboard Investimenti**:
+## Prerequisiti
 
-  * Tracking automatico e aggiornamenti in tempo reale
-  * Panoramica intuitiva delle performance
+- Docker e Docker Compose per il setup locale consigliato.
+- Java 21 e Maven se si avvia il backend fuori da Docker.
+- Node.js LTS e npm se si avvia il frontend fuori da Docker.
+- PostgreSQL 16 o compatibile.
 
-### Nice-to-have 🌟
+## Avvio rapido con Docker
 
-* **Grafici interattivi**:
-
-  * Visualizzazione grafica di spese e investimenti
-* **Reportistica**:
-
-  * Generazione automatica report finanziari (PDF, Excel)
-* **Simulazioni e previsioni**:
-
-  * Simulazione scenari finanziari futuri
-
-### Opzioni Future 🚀
-
-* **Integrazione Open Banking**:
-
-  * Collegamento diretto al conto bancario per sincronizzazione automatica delle transazioni
-
-## 🛠️ Tecnologie Utilizzate
-
-| Componente | Tecnologie                         |
-| ---------- | ---------------------------------- |
-| Backend    | Java, Spring Boot, Spring Security |
-| Frontend   | Angular, HTML5, CSS3, Chart.js     |
-| Database   | PostgreSQL/MySQL                   |
-| Deployment | Docker, GitHub Actions             |
-
-## 🚧 Setup del Progetto
-
-### Prerequisiti
-
-* Java 17
-* Maven
-* Node.js (LTS)
-* Database PostgreSQL/MySQL
-
-### Installazione rapida
-
-1. Clona il repository
+1. Copia il file di esempio delle variabili ambiente.
 
 ```bash
-git clone https://github.com/tuousername/capitally.git
+cp .env.example .env
 ```
 
-2. Avvia il backend (Spring Boot)
+PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+2. Aggiorna i segreti in `.env`, in particolare `JWT_SECRET`, `POSTGRES_PASSWORD`, `DEMO_PASSWORD` e `ADMIN_PASSWORD`.
+
+3. Avvia lo stack.
 
 ```bash
-cd backend
-mvn spring-boot:run
+docker compose up --build
 ```
 
-3. Avvia il frontend (Angular)
+URL locali di default:
+
+- Frontend: `http://localhost:4200`
+- Backend: `http://localhost:8080`
+- OpenAPI/Swagger: `http://localhost:8080/index.html`
+
+## Sviluppo locale
+
+Backend:
+
+```bash
+cd backend/capitally-backend
+./mvnw spring-boot:run
+```
+
+Frontend:
 
 ```bash
 cd frontend
@@ -87,17 +90,34 @@ npm install
 npm start
 ```
 
-## 🎨 UI/UX
+L'ambiente frontend locale usa `apiBase: '/api'` e `proxy.conf.json` per inoltrare le API al backend.
 
-La UI è progettata per essere semplice, intuitiva e responsive, garantendo un'esperienza utente fluida su ogni dispositivo.
+## Script database
 
-## 📈 Target
+Gli script database si trovano in [database](database):
 
-* **Privati** interessati a gestire le proprie finanze in modo efficace.
-* **Piccole imprese e freelance** che desiderano monitorare entrate e uscite con precisione.
+- `schema_capitally.sql`: schema PostgreSQL pulito e corrente.
+- `trigger_capitally.sql`: helper per il trigger `updated_at`.
+- `view_schema_capitally.sql`: vista per il report mensile transazioni.
+- `align_core_schema_current.sql`: helper idempotente per vecchi schemi locali.
+- `seed_guest_demo_data.sql`: dataset demo per l'utente con id `1`.
 
-## 📅 Roadmap
+L'applicazione puo anche evolvere lo schema tramite Hibernate quando `SPRING_JPA_HIBERNATE_DDL_AUTO=update` e attivo, ma gli script SQL restano allineati al modello entity corrente.
 
-* Prima versione MVP (Must-have functionalities)
-* Versione successiva con funzionalità avanzate (grafici, reportistica)
-* Implementazione futura dell'Open Banking e possibili app mobile
+## Configurazione
+
+Le principali variabili ambiente sono documentate in [.env.example](.env.example). In produzione sono necessari:
+
+- `SPRING_DATASOURCE_URL`
+- `SPRING_DATASOURCE_USERNAME`
+- `SPRING_DATASOURCE_PASSWORD`
+- `JWT_SECRET`
+
+Integrazioni opzionali:
+
+- `POSTHOG_API_KEY`, `POSTHOG_HOST`, `POSTHOG_FRONTEND_ENABLED`, `POSTHOG_SERVER_ENABLED`, `POSTHOG_SESSION_REPLAY_ENABLED`
+- `RESEND_API_KEY`, `RESEND_FROM`, `RESEND_HOST`, `RESEND_FORGOT_PASSWORD_DAILY_LIMIT`, `RESEND_FORGOT_PASSWORD_MONTHLY_LIMIT`
+
+## Validazione
+
+Il repository contiene scaffolding di test, ma le istruzioni di progetto indicano di non lanciare comandi di test perche non sono implementati. Per modifiche al codice, usare build o compile check dove applicabile.

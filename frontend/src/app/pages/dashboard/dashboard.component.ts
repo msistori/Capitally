@@ -54,12 +54,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const yearStart = `${this.currentYear}-01-01`;
     const yearEnd = this.endOfRange(this.currentYear);
 
-    this.dashboardService.getDashboardOverview(this.userId).subscribe({
+    this.dashboardService.getDashboardOverview().subscribe({
       next: res => this.overviewData = res,
       error: err => console.error('Error loading dashboard', err)
     });
 
-    this.dashboardService.getYearlyBalanceTrend(this.userId, yearStart, yearEnd).subscribe({
+    this.dashboardService.getYearlyBalanceTrend(yearStart, yearEnd).subscribe({
       next: data => this.yearlyBalance = [...data].sort((a, b) => a.month.localeCompare(b.month)),
       error: err => console.error('Error loading yearly balance trend', err)
     });
@@ -67,7 +67,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.loadAnnualIncomeExpense(this.annualIncomeExpenseYear);
 
     const { startDate, endDate } = this.monthRange(this.selectedYear, this.selectedMonth);
-    this.dashboardService.getIncomeExpenseBreakdown(this.userId, startDate, endDate).subscribe({
+    this.dashboardService.getIncomeExpenseBreakdown(startDate, endDate).subscribe({
       next: res => this.incomeExpenseBreakdownData = res,
       error: err => console.error('Error loading income-expense breakdown', err)
     });
@@ -78,7 +78,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.selectedYear = d.getFullYear();
     this.selectedMonth = d.getMonth();
 
-    this.dashboardService.getIncomeExpenseBreakdown(this.userId, range.startDate, range.endDate).subscribe({
+    this.dashboardService.getIncomeExpenseBreakdown(range.startDate, range.endDate).subscribe({
       next: res => this.incomeExpenseBreakdownData = res,
       error: err => console.error('Error loading income-expense breakdown', err)
     });
@@ -90,7 +90,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private loadAnnualIncomeExpense(year: number): void {
-    this.dashboardService.getAnnualIncomeExpense(this.userId, `${year}-01-01`, `${year}-12-31`).subscribe({
+    this.dashboardService.getAnnualIncomeExpense(`${year}-01-01`, `${year}-12-31`).subscribe({
       next: data => this.annualIncomeExpense = [...data].sort((a, b) => a.month.localeCompare(b.month)),
       error: err => console.error('Error loading annual income-expense', err)
     });

@@ -35,4 +35,6 @@ public interface TransactionRepository extends JpaRepository<TransactionEntity, 
     boolean existsByUser_IdAndAccount_IdIn(BigInteger userId, Collection<BigInteger> accountIds);
 
     boolean existsByUser_IdAndTransferCounterpartyAccount_IdIn(BigInteger userId, Collection<BigInteger> accountIds);
+
+    void deleteByUser_Id(BigInteger userId);
 }

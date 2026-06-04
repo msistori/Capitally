@@ -3,6 +3,7 @@ $primary: #005f73;
 :host {
   display: block;
   min-height: 0;
+  min-width: 0;
   box-sizing: border-box;
   border-radius: 1rem;
 }
@@ -12,7 +13,10 @@ $primary: #005f73;
   flex-direction: column;
   gap: 0.75rem;
   height: 100%;
+  width: 100%;
+  max-width: 100%;
   min-height: 0;
+  min-width: 0;
   box-sizing: border-box;
   padding: 1.5rem;
   color: $primary;
@@ -32,6 +36,7 @@ $primary: #005f73;
 
   h3 {
     margin: 0;
+    min-width: 0;
     text-align: left;
   }
 
@@ -112,6 +117,14 @@ canvas {
     .header {
       grid-template-columns: 1fr auto;
       gap: 0.5rem;
+      align-items: center;
+      min-width: 0;
+    }
+
+    h3 {
+      font-size: 1rem;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
     }
 
     .currency {
