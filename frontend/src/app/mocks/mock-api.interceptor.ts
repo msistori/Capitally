@@ -52,6 +52,10 @@ export class MockApiInterceptor implements HttpInterceptor {
       return this.json(this.login(req.body));
     }
 
+    if (req.method === 'POST' && path === '/auth/guest-login' && this.isEndpointEnabled(config, 'authLogin')) {
+      return this.json(this.guestLogin());
+    }
+
     if (req.method === 'POST' && path === '/auth/forgot-password' && this.isEndpointEnabled(config, 'authLogin')) {
       return this.json(null);
     }
@@ -120,6 +124,11 @@ export class MockApiInterceptor implements HttpInterceptor {
 
     localStorage.setItem(MOCK_AUTH_STORAGE_KEY, profile);
     return profile === 'guest' ? guestLoginResponse : accountLoginResponse;
+  }
+
+  private guestLogin() {
+    localStorage.setItem(MOCK_AUTH_STORAGE_KEY, 'guest');
+    return guestLoginResponse;
   }
 
   private me() {

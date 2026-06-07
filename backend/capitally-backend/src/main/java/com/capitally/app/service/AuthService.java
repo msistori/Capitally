@@ -11,6 +11,7 @@ import com.capitally.app.model.response.AuthResponseDTO;
 import com.capitally.app.model.response.MeResponseDTO;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,6 +28,8 @@ import java.util.stream.Collectors;
 import static com.capitally.app.utils.CapitallyErrors.AUTH_EMAIL_TAKEN_ERROR;
 import static com.capitally.app.utils.CapitallyErrors.AUTH_USER_TAKEN_ERROR;
 import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +46,12 @@ public class AuthService {
     private final DemoDataRefreshService demoDataRefreshService;
     private final ResendEmailService resendEmailService;
     private final ForgotPasswordEmailQuotaService forgotPasswordEmailQuotaService;
+
+    @Value("${guest-login.enabled:true}")
+    private boolean guestLoginEnabled;
+
+    @Value("${guest-login.username:demo}")
+    private String guestLoginUsername;
 
     @Transactional
     public AuthResponseDTO register(RegisterRequestDTO req) {
@@ -64,10 +73,30 @@ public class AuthService {
     }
 
     public AuthResponseDTO login(LoginRequestDTO req) {
-        Authentication auth = am.authenticate(new UsernamePasswordAuthenticationToken(req.usernameOrEmail(), req.password()));
+        String usernameOrEmail = req.usernameOrEmail() == null ? "" : req.usernameOrEmail().trim();
+        Authentication auth = am.authenticate(new UsernamePasswordAuthenticationToken(usernameOrEmail, req.password()));
         SecurityContextHolder.getContext().setAuthentication(auth);
         String username = auth.getName();
         UserEntity u = repo.findByUsername(username).orElseThrow();
+        return issueToken(u);
+    }
+
+    public AuthResponseDTO guestLogin() {
+        if (!guestLoginEnabled) {
+            throw new ResponseStatusException(NOT_FOUND);
+        }
+
+        UserEntity u = repo.findByUsername(guestLoginUsername)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND));
+
+        if (!u.isEnabled() || u.getRoles() == null || !u.getRoles().contains(UserRoleEnum.DEMO)) {
+            throw new ResponseStatusException(FORBIDDEN);
+        }
+
+        return issueToken(u);
+    }
+
+    private AuthResponseDTO issueToken(UserEntity u) {
         if (u.getRoles() != null && u.getRoles().contains(UserRoleEnum.DEMO)) {
             demoDataRefreshService.refreshIfNeeded(u);
         }
