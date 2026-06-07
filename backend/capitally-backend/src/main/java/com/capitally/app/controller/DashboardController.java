@@ -1,0 +1,125 @@
+package com.capitally.app.controller;
+
+import com.capitally.app.core.enums.TransactionTypeEnum;
+import com.capitally.app.core.security.UserPrincipal;
+import com.capitally.app.model.response.*;
+import com.capitally.app.service.DashboardService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.math.BigInteger;
+import java.time.LocalDate;
+import java.util.List;
+
+@RestController
+@RequestMapping("/dashboard")
+@RequiredArgsConstructor
+@Tag(name = "Dashboard", description = "API di Dashboard")
+public class DashboardController {
+
+    private final DashboardService dashboardService;
+
+    @Operation(summary = "Returns total income and expenses grouped by month and category, based on transaction view.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved total income and expenses grouped by month and category"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/transactions-summary")
+    public TransactionsSummaryResponseDTO getTransactionsSummary(
+            @AuthenticationPrincipal UserPrincipal user,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+    ) {
+        return dashboardService.getTransactionsSummary(user.getId(), startDate, endDate);
+    }
+
+    @Operation(summary = "Returns the current balance for each currency, based on all income and expenses.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved the current balance for each currency"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/current-balance")
+    public List<CurrentBalanceResponseDTO> getCurrentBalance(@AuthenticationPrincipal UserPrincipal user) {
+        return dashboardService.getCurrentBalancePerCurrency(user.getId());
+    }
+
+
+    @Operation(summary = "Returns the cumulative monthly balance trend for each currency between the given dates.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved the cumulative monthly balance trend"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/balance-trend")
+    public List<BalanceTrendPerCurrencyResponseDTO> getBalanceTrend(
+            @AuthenticationPrincipal UserPrincipal user,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        return dashboardService.getBalanceTrendPerCurrency(user.getId(), startDate, endDate);
+    }
+
+    @Operation(summary = "Returns total expenses grouped by macro-category and currency for the specified period.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved total expenses grouped by macro-category and currency"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/income-expense-breakdown")
+    public List<IncomeExpenseBreakdownResponseDTO> getIncomeExpenseBreakdown(
+            @AuthenticationPrincipal UserPrincipal user,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) TransactionTypeEnum transactionType) {
+        return dashboardService.getIncomeExpenseBreakdown(user.getId(), startDate, endDate, transactionType);
+    }
+
+    @Operation(summary = "Returns monthly income and expense totals by currency for the specified period.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved monthly income and expense totals"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/annual-income-expense")
+    public List<AnnualIncomeExpenseResponseDTO> getAnnualIncomeExpense(
+            @AuthenticationPrincipal UserPrincipal user,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        return dashboardService.getAnnualIncomeExpense(user.getId(), startDate, endDate);
+    }
+
+
+    @Operation(summary = "Returns upcoming recurring transactions scheduled until the given date.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved upcoming recurring transactions"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/upcoming-recurring")
+    public List<UpcomingRecurringTransactionResponseDTO> getUpcomingRecurringTransactions(
+            @AuthenticationPrincipal UserPrincipal user,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate untilDate) {
+        return dashboardService.getUpcomingRecurringTransactions(user.getId(), untilDate);
+    }
+
+    @Operation(summary = "Returns a dashboard overview including balance, income/expense for the current month and upcoming recurring transactions.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved dashboard overview"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/overview")
+    public DashboardOverviewResponseDTO getDashboardOverview(@AuthenticationPrincipal UserPrincipal user) {
+        return dashboardService.getDashboardOverview(user.getId());
+    }
+}

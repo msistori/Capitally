@@ -1,0 +1,932 @@
+$primary: #005f73;
+$secondary: #caf0f8;
+$positive: #0f8f4e;
+$danger: #d51f2a;
+$border: rgba(0, 95, 115, 0.18);
+$glass: rgba(255, 255, 255, 0.66);
+$glass-strong: rgba(255, 255, 255, 0.78);
+
+:host {
+  display: block;
+  min-height: 100%;
+}
+
+.accounts-page {
+  box-sizing: border-box;
+  color: $primary;
+  min-height: 100%;
+  padding: 1.25rem 1rem 1.75rem;
+}
+
+.accounts-hero {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin: 0 auto 1.25rem;
+  max-width: 1180px;
+  text-align: center;
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin: 0;
+  }
+}
+
+.hero-icon {
+  align-items: center;
+  color: $primary;
+  display: inline-flex;
+  filter: drop-shadow(0 5px 12px rgba(0, 95, 115, 0.22));
+  justify-content: center;
+
+  mat-icon {
+    font-size: 3rem;
+    height: 3rem;
+    width: 3rem;
+  }
+}
+
+.hero-copy {
+  font-size: 1.05rem;
+  line-height: 1.45;
+  margin: 0;
+  max-width: 34rem;
+}
+
+.accounts-overview,
+.history-view,
+.glass-panel {
+  box-sizing: border-box;
+  margin: 0 auto;
+  max-width: 1180px;
+  min-width: 0;
+  width: 100%;
+}
+
+.accounts-overview {
+  display: flex;
+  flex-direction: column;
+}
+
+.total-block {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1.6rem;
+  text-align: center;
+
+  span {
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+
+  strong {
+    font-size: 2.65rem;
+    font-weight: 900;
+    line-height: 1;
+    text-shadow: 0 2px 14px rgba(255, 255, 255, 0.78);
+  }
+}
+
+.accounts-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.account-card,
+.transfer-card,
+.empty-state,
+.glass-panel {
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  background-color: $glass;
+  border: 1px solid rgba(209, 213, 219, 0.5);
+  border-radius: 1rem;
+  box-shadow: 0 12px 28px rgba(0, 95, 115, 0.1);
+}
+
+.account-card {
+  align-items: center;
+  cursor: pointer;
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  min-height: 5.9rem;
+  padding: 0.85rem;
+
+  &:focus-visible {
+    outline: 2px solid $primary;
+    outline-offset: 3px;
+  }
+}
+
+.account-icon {
+  align-items: center;
+  background: rgba(202, 240, 248, 0.68);
+  border-radius: 50%;
+  color: $primary;
+  display: inline-flex;
+  flex: 0 0 auto;
+  height: 4rem;
+  justify-content: center;
+  width: 4rem;
+
+  mat-icon {
+    font-size: 2.2rem;
+    height: 2.2rem;
+    width: 2.2rem;
+  }
+
+  &.small {
+    height: 3.1rem;
+    width: 3.1rem;
+
+    mat-icon {
+      font-size: 1.8rem;
+      height: 1.8rem;
+      width: 1.8rem;
+    }
+  }
+}
+
+.account-copy {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+
+  h2 {
+    font-size: 1.15rem;
+    font-weight: 800;
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+}
+
+.excluded-badge {
+  color: rgba(0, 95, 115, 0.72);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.account-balances {
+  display: grid;
+  gap: 0.15rem;
+  justify-items: end;
+}
+
+.account-balance {
+  color: $primary;
+  font-size: 1.02rem;
+  font-weight: 800;
+  text-shadow: 0 1px 10px rgba(255, 255, 255, 0.78);
+  white-space: nowrap;
+
+  &.negative {
+    color: $danger;
+  }
+}
+
+.overview-actions {
+  display: grid;
+  gap: 0.85rem;
+  margin: 0 auto 1.2rem;
+  max-width: 37rem;
+  order: 2;
+  width: 100%;
+}
+
+.accounts-list {
+  order: 3;
+}
+
+.secondary-actions,
+.form-actions,
+.history-filters {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.primary-action,
+.outline-action,
+.secondary-actions button {
+  align-items: center;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-weight: 800;
+  gap: 0.55rem;
+  justify-content: center;
+  min-height: 3.25rem;
+  padding: 0.8rem 1rem;
+}
+
+.primary-action {
+  background: linear-gradient(135deg, #006f86, $primary);
+  border: 1px solid rgba(0, 95, 115, 0.9);
+  color: #fff;
+
+  &.compact {
+    min-width: 9.5rem;
+  }
+}
+
+.outline-action,
+.secondary-actions button {
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid $primary;
+  color: $primary;
+}
+
+.glass-panel {
+  display: grid;
+  gap: 1.45rem;
+  padding: 1rem;
+}
+
+.account-form .form-fields {
+  order: 1;
+}
+
+.account-form .icon-picker {
+  order: 2;
+}
+
+.account-form .form-actions {
+  order: 3;
+}
+
+.icon-picker {
+  display: grid;
+  gap: 1rem;
+
+  h2 {
+    font-size: 1.25rem;
+    margin: 0;
+    text-align: center;
+  }
+}
+
+.icon-grid {
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.icon-option {
+  align-items: center;
+  aspect-ratio: 1;
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid $border;
+  border-radius: 0.5rem;
+  color: $primary;
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+
+  mat-icon {
+    font-size: 2.2rem;
+    height: 2.2rem;
+    width: 2.2rem;
+  }
+
+  &.active {
+    background: rgba(202, 240, 248, 0.78);
+    border-color: #45c7d5;
+    box-shadow: inset 0 0 0 1px #45c7d5;
+  }
+}
+
+.form-fields,
+.transfer-form {
+  display: grid;
+  gap: 1.15rem;
+}
+
+.field,
+.toggle-row {
+  display: grid;
+  gap: 0.45rem;
+
+  span {
+    color: $primary;
+    font-size: 0.95rem;
+    font-weight: 800;
+  }
+}
+
+.field-row {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr) minmax(8rem, 0.65fr);
+  min-width: 0;
+}
+
+.balance-editor {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.balance-editor-heading {
+  align-items: center;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+
+  h2 {
+    font-size: 1rem;
+    margin: 0;
+  }
+}
+
+.balance-row {
+  align-items: end;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: minmax(7rem, 0.6fr) minmax(0, 1fr) auto;
+}
+
+.small-action {
+  font-size: 0.9rem;
+  min-height: 2.65rem;
+  padding: 0.55rem 0.75rem;
+}
+
+.remove-balance {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(213, 31, 42, 0.35);
+  border-radius: 0.5rem;
+  color: $danger;
+  cursor: pointer;
+  display: inline-flex;
+  height: 3.35rem;
+  justify-content: center;
+  width: 3.35rem;
+}
+
+.danger-action {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(213, 31, 42, 0.5);
+  border-radius: 0.5rem;
+  color: $danger;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-weight: 800;
+  gap: 0.55rem;
+  justify-content: center;
+  min-height: 3.25rem;
+  padding: 0.8rem 1rem;
+}
+
+input,
+.select-control {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(0, 95, 115, 0.22);
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+  color: $primary;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  min-height: 3.35rem;
+  outline: none;
+  padding: 0.8rem 0.95rem;
+  width: 100%;
+
+  &::placeholder {
+    color: rgba(0, 95, 115, 0.45);
+  }
+
+  &:focus {
+    border-color: $primary;
+    box-shadow: 0 0 0 2px rgba(202, 240, 248, 0.9);
+  }
+}
+
+.toggle-row {
+  align-items: center;
+  grid-template-columns: minmax(0, 1fr) auto;
+  min-height: 3.2rem;
+
+  > span {
+    align-items: center;
+    display: inline-flex;
+    gap: 0.5rem;
+
+    mat-icon {
+      font-size: 1.25rem;
+      height: 1.25rem;
+      width: 1.25rem;
+    }
+  }
+}
+
+.form-actions {
+  grid-template-columns: 1fr 1fr;
+  margin-top: 0.35rem;
+}
+
+.stacked-mobile {
+  grid-template-columns: 1fr;
+}
+
+.form-error {
+  color: $danger;
+  font-weight: 800;
+  margin: 0;
+  text-align: center;
+}
+
+.transfer-calendar-card {
+  background: #fff;
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(0, 95, 115, 0.55);
+  color: $primary;
+  display: grid;
+  gap: 0.75rem;
+  margin: 0 auto;
+  max-width: 34rem;
+  min-width: 0;
+  padding: 1rem;
+  text-align: center;
+  width: 100%;
+}
+
+.transfer-calendar-label {
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-align: left;
+}
+
+.transfer-calendar-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+
+  button {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    color: $primary;
+    cursor: pointer;
+    display: inline-flex;
+    height: 2.25rem;
+    justify-content: center;
+    width: 2.25rem;
+  }
+
+  strong {
+    font-weight: 800;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.transfer-calendar-weekdays,
+.transfer-calendar-week {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  min-width: 0;
+}
+
+.transfer-calendar-weekdays span {
+  color: $primary;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.transfer-calendar-day {
+  align-items: center;
+  aspect-ratio: 1;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  color: $primary;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-weight: 800;
+  justify-content: center;
+  margin: 0 auto;
+  max-height: 2.25rem;
+  max-width: 2.25rem;
+  min-width: 0;
+  width: min(2.25rem, 100%);
+
+  &.outside {
+    opacity: 0.35;
+  }
+
+  &.selected {
+    background: $primary;
+    color: #fff;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $primary;
+    outline-offset: 2px;
+  }
+}
+
+.history-filters {
+  align-items: end;
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  background-color: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(209, 213, 219, 0.5);
+  border-radius: 1rem;
+  grid-template-columns: minmax(0, 1fr);
+  margin-bottom: 1rem;
+  padding: 0.85rem;
+  position: relative;
+  z-index: 35;
+}
+
+.filter-action {
+  min-width: 8.5rem;
+}
+
+.transfer-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.transfer-card {
+  color: inherit;
+  cursor: pointer;
+  display: grid;
+  gap: 0.7rem;
+  font: inherit;
+  padding: 0.85rem;
+  text-align: left;
+
+  &:focus-visible {
+    outline: 2px solid $primary;
+    outline-offset: 3px;
+  }
+}
+
+.transfer-route {
+  align-items: center;
+  display: grid;
+  gap: 0.55rem;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+}
+
+.transfer-account {
+  align-items: center;
+  display: flex;
+  gap: 0.65rem;
+  min-width: 0;
+
+  div {
+    display: grid;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+
+  strong,
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  strong {
+    font-size: 0.98rem;
+  }
+
+  span {
+    color: rgba(0, 95, 115, 0.72);
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+}
+
+.route-arrow {
+  color: $primary;
+}
+
+.transfer-footer {
+  align-items: center;
+  border-top: 1px solid rgba(0, 95, 115, 0.12);
+  display: flex;
+  gap: 0.7rem;
+  justify-content: space-between;
+  padding-top: 0.7rem;
+
+  span {
+    color: rgba(0, 95, 115, 0.72);
+    font-weight: 700;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  strong {
+    color: $positive;
+    font-size: 1.15rem;
+    white-space: nowrap;
+  }
+}
+
+.empty-state {
+  font-weight: 800;
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.history-actions {
+  margin-top: 1rem;
+}
+
+.account-warning-dialog {
+  color: $primary;
+  min-width: min(78vw, 360px);
+
+  h2 {
+    color: $primary;
+    font-size: 1.2rem;
+    font-weight: 800;
+    margin: 0;
+    padding: 0.35rem 0 0.75rem;
+    text-align: center;
+  }
+
+  mat-dialog-content {
+    color: $primary;
+    padding: 0;
+    text-align: center;
+
+    p {
+      margin: 0;
+    }
+  }
+}
+
+.dialog-actions {
+  display: grid;
+  margin-top: 1rem;
+  padding: 0;
+}
+
+.dialog-primary {
+  background: $primary;
+  border: 1px solid $primary;
+  border-radius: 0.65rem;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+  padding: 0.7rem 0.9rem;
+}
+
+::ng-deep .select-control {
+  .mat-mdc-select-trigger {
+    min-height: 1.55rem;
+  }
+
+  .mat-mdc-select-value,
+  .mat-mdc-select-arrow {
+    color: $primary;
+  }
+}
+
+::ng-deep .accounts-select-panel {
+  background: #fff !important;
+  border: 1px solid $border;
+  border-radius: 0.65rem !important;
+  box-shadow: 0 8px 22px rgba(0, 95, 115, 0.22) !important;
+  color: $primary !important;
+  overflow: hidden;
+  padding: 0 !important;
+
+  .mat-mdc-option {
+    color: $primary !important;
+    font-weight: 700;
+  }
+
+  .mat-mdc-option:hover,
+  .mat-mdc-option.mdc-list-item--selected {
+    background: $secondary !important;
+  }
+}
+
+::ng-deep .mat-mdc-slide-toggle.mat-mdc-slide-toggle-checked:not(.mat-disabled) .mdc-switch__shadow {
+  background: $primary;
+}
+
+::ng-deep .mat-mdc-slide-toggle.mat-mdc-slide-toggle-checked:not(.mat-disabled) .mdc-switch__track::after {
+  background: $secondary !important;
+}
+
+@media (max-width: 380px) {
+  .field-row,
+  .balance-row,
+  .history-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .remove-balance {
+    justify-self: end;
+  }
+
+  .account-card {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .account-balances {
+    grid-column: 2;
+    justify-self: start;
+    justify-items: start;
+  }
+}
+
+@media (max-width: 639px) {
+  .hero-copy {
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(0, 95, 115, 0.18);
+    border-radius: 0.75rem;
+    box-shadow: 0 8px 20px rgba(0, 95, 115, 0.1);
+    box-sizing: border-box;
+    padding: 0.75rem 0.9rem;
+    width: 100%;
+  }
+
+  .overview-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .field-row {
+    grid-template-columns: 1fr;
+  }
+
+  .balance-editor-heading,
+  .balance-row {
+    grid-template-columns: 1fr;
+  }
+
+  .balance-editor-heading {
+    align-items: stretch;
+    display: grid;
+  }
+
+  .remove-balance {
+    justify-self: end;
+  }
+
+  .overview-actions > .primary-action {
+    min-width: 0;
+  }
+
+  .secondary-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 640px) {
+  .accounts-page {
+    padding-inline: 1.6rem;
+  }
+
+  .icon-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .stacked-mobile {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 1024px) {
+  .accounts-page {
+    padding: 1.35rem 2.5rem;
+  }
+
+  .accounts-hero {
+    gap: 0.25rem;
+    margin-bottom: 0.8rem;
+
+    .hero-icon mat-icon {
+      font-size: 2.45rem;
+      height: 2.45rem;
+      width: 2.45rem;
+    }
+
+    h1 {
+      font-size: 2.05rem;
+    }
+  }
+
+  .total-block {
+    margin-bottom: 1.1rem;
+
+    strong {
+      font-size: 2.95rem;
+    }
+  }
+
+  .accounts-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    order: 3;
+  }
+
+  .overview-actions {
+    margin: 1rem auto;
+    order: 2;
+  }
+
+  .account-card {
+    align-content: center;
+    flex: 0 1 calc((100% - 2.55rem) / 4);
+    gap: 0.75rem;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    max-width: calc((100% - 2.55rem) / 4);
+    min-height: 9.8rem;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .account-balances {
+    justify-items: center;
+  }
+
+  .account-balance {
+    font-size: 1.22rem;
+  }
+
+  .secondary-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .glass-panel {
+    gap: 2rem;
+    grid-template-columns: minmax(20rem, 0.9fr) minmax(0, 1fr);
+    padding: 2.15rem;
+  }
+
+  .transfer-form {
+    grid-template-columns: 1fr;
+    max-width: 56rem;
+  }
+
+  .account-form .form-actions {
+    grid-column: 2;
+  }
+
+  .account-form .icon-picker,
+  .account-form .form-fields,
+  .account-form .form-actions {
+    order: initial;
+  }
+
+  .icon-picker {
+    align-content: start;
+    border-right: 1px solid $border;
+    padding-right: 2rem;
+  }
+
+  .form-fields {
+    align-content: start;
+    padding-left: 1rem;
+  }
+
+  .transfer-list {
+    gap: 0.9rem;
+  }
+
+  .transfer-card {
+    align-items: center;
+    gap: 1.5rem;
+    grid-template-columns: minmax(0, 1fr) minmax(12rem, auto);
+    padding: 0.9rem 1.4rem;
+  }
+
+  .transfer-footer {
+    border-top: 0;
+    justify-content: end;
+    padding-top: 0;
+
+    span {
+      display: none;
+    }
+  }
+}

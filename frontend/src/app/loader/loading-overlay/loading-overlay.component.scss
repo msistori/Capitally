@@ -1,0 +1,32 @@
+$primary: #005f73;
+$secondary: #caf0f8;
+
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.35);
+  backdrop-filter: blur(2px);
+  display: grid;
+  place-items: center;
+  z-index: 10000;
+  pointer-events: all;
+  cursor: progress;
+}
+
+.loader-card {
+  padding: 1rem 1.25rem;
+  border-radius: 1rem;
+  background: rgba(255,255,255,.95);
+  box-shadow: 0 12px 40px rgba(0,0,0,.25);
+  border: 1px solid rgba(0,0,0,.06);
+  display: grid;
+  place-items: center;
+}
+
+.logo-spinner {
+  width: 3rem;
+  height: 3rem;
+  animation: spin .9s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }

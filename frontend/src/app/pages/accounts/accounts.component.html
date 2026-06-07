@@ -1,0 +1,346 @@
+<main class="accounts-page">
+  <section class="accounts-hero">
+    <span class="hero-icon" aria-hidden="true">
+      <mat-icon>account_balance</mat-icon>
+    </span>
+    <h1>{{ titleKey | translate }}</h1>
+    <p *ngIf="view === 'new-transfer'" class="hero-copy">
+      {{ 'ACCOUNTS.TRANSFER.SUBTITLE' | translate }}
+    </p>
+  </section>
+
+  <ng-container [ngSwitch]="view">
+    <section *ngSwitchCase="'overview'" class="accounts-overview">
+      <div class="total-block">
+        <span>{{ 'ACCOUNTS.TOTAL_LABEL' | translate }}</span>
+        <strong>{{ totalIncludedBalance | currency: defaultCurrency:'symbol-narrow':'1.2-2' }}</strong>
+      </div>
+
+      <div class="overview-actions">
+        <button class="primary-action" type="button" (click)="setView('new-account')">
+          <mat-icon>add</mat-icon>
+          <span>{{ 'ACCOUNTS.NEW_ACCOUNT.ACTION' | translate }}</span>
+        </button>
+
+        <div class="secondary-actions">
+          <button class="transfer-action" type="button" (click)="setView('new-transfer')" [attr.aria-label]="'ACCOUNTS.TRANSFER.ACTION' | translate">
+            <mat-icon class="desktop-action-icon">swap_horiz</mat-icon>
+            <span>{{ 'ACCOUNTS.TRANSFER.ACTION' | translate }}</span>
+          </button>
+
+          <button type="button" (click)="setView('history')">
+            <mat-icon>schedule</mat-icon>
+            <span>{{ 'ACCOUNTS.HISTORY.ACTION' | translate }}</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="accounts-list" *ngIf="accountSummaries.length; else emptyAccounts">
+        <article
+          class="account-card"
+          *ngFor="let summary of accountSummaries; trackBy: trackByAccount"
+          role="button"
+          tabindex="0"
+          (click)="editAccount(summary)"
+          (keyup.enter)="editAccount(summary)">
+          <span class="account-icon" aria-hidden="true">
+            <mat-icon>{{ accountIcon(summary.account) }}</mat-icon>
+          </span>
+
+          <div class="account-copy">
+            <h2>{{ summary.account.name }}</h2>
+            <span *ngIf="summary.account.includeInTotalBalance === false" class="excluded-badge">
+              {{ 'ACCOUNTS.EXCLUDED_BADGE' | translate }}
+            </span>
+          </div>
+
+          <div class="account-balances">
+            <strong
+              class="account-balance"
+              *ngFor="let item of summary.balanceItems; trackBy: trackByBalance"
+              [class.negative]="item.amount < 0">
+              {{ item.amount | currency: item.currency:'symbol-narrow':'1.2-2' }}
+            </strong>
+          </div>
+        </article>
+      </div>
+
+      <ng-template #emptyAccounts>
+        <div class="empty-state">{{ 'ACCOUNTS.EMPTY' | translate }}</div>
+      </ng-template>
+    </section>
+
+    <form *ngSwitchCase="'new-account'" [formGroup]="accountForm" (ngSubmit)="submitAccount()" class="account-form glass-panel">
+      <section class="icon-picker">
+        <h2>{{ 'ACCOUNTS.NEW_ACCOUNT.ICON_LABEL' | translate }}</h2>
+
+        <div class="icon-grid">
+          <button
+            *ngFor="let icon of iconOptions; trackBy: trackByIcon"
+            type="button"
+            class="icon-option"
+            [class.active]="accountForm.controls.iconName.value === icon"
+            (click)="selectIcon(icon)">
+            <mat-icon>{{ icon }}</mat-icon>
+          </button>
+        </div>
+      </section>
+
+      <section class="form-fields">
+        <label class="field">
+          <span>{{ 'ACCOUNTS.NEW_ACCOUNT.NAME' | translate }}</span>
+          <input type="text" formControlName="name" [placeholder]="'ACCOUNTS.NEW_ACCOUNT.NAME_PLACEHOLDER' | translate" />
+        </label>
+
+        <div class="field-row" *ngIf="!editingAccountId; else balanceEditor">
+          <label class="field">
+            <span>{{ 'ACCOUNTS.NEW_ACCOUNT.INITIAL_BALANCE' | translate }}</span>
+            <input type="number" step="1" inputmode="decimal" formControlName="initialBalance" placeholder="0,00" (blur)="normalizeInitialBalanceInput()" />
+          </label>
+
+          <label class="field">
+            <span>{{ 'ACCOUNTS.NEW_ACCOUNT.CURRENCY' | translate }}</span>
+            <mat-select class="select-control" panelClass="accounts-select-panel" formControlName="currencyInitialBalanceCode">
+              <mat-option *ngFor="let currency of currencies; trackBy: trackByCurrency" [value]="currency.code">
+                {{ currency.code }}
+              </mat-option>
+            </mat-select>
+          </label>
+        </div>
+
+        <ng-template #balanceEditor>
+          <section class="balance-editor" formArrayName="balances">
+            <div class="balance-editor-heading">
+              <h2>{{ 'ACCOUNTS.EDIT_ACCOUNT.BALANCES_TITLE' | translate }}</h2>
+              <button class="outline-action small-action" type="button" (click)="addBalanceRow()">
+                <mat-icon>add</mat-icon>
+                <span>{{ 'ACCOUNTS.EDIT_ACCOUNT.ADD_CURRENCY' | translate }}</span>
+              </button>
+            </div>
+
+            <div
+              class="balance-row"
+              *ngFor="let row of balanceRows.controls; let i = index"
+              [formGroupName]="i">
+              <label class="field">
+                <span>{{ 'ACCOUNTS.EDIT_ACCOUNT.CURRENCY' | translate }}</span>
+                <mat-select class="select-control" panelClass="accounts-select-panel" formControlName="currencyCode">
+                  <mat-option *ngFor="let currency of currencies; trackBy: trackByCurrency" [value]="currency.code">
+                    {{ currency.code }}
+                  </mat-option>
+                </mat-select>
+              </label>
+
+              <label class="field">
+                <span>{{ 'ACCOUNTS.EDIT_ACCOUNT.TOTAL_BALANCE' | translate }}</span>
+                <input type="number" step="1" inputmode="decimal" formControlName="amount" placeholder="0,00" (blur)="normalizeBalanceRowAmount(i)" />
+              </label>
+
+              <button
+                class="remove-balance"
+                type="button"
+                [attr.aria-label]="'BUTTON_DELETE' | translate"
+                (click)="removeBalanceRow(i)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </section>
+        </ng-template>
+
+        <div class="toggle-row">
+          <span>
+            {{ 'ACCOUNTS.NEW_ACCOUNT.EXCLUDE_TOTAL' | translate }}
+          </span>
+          <mat-slide-toggle formControlName="excludeFromTotalBalance"></mat-slide-toggle>
+        </div>
+      </section>
+
+      <div class="form-actions">
+        <button class="outline-action" type="button" (click)="setView('overview')">
+          {{ 'BUTTON_CANCEL' | translate }}
+        </button>
+        <button class="primary-action compact" type="submit">
+          {{ (editingAccountId ? 'ACCOUNTS.EDIT_ACCOUNT.SAVE' : 'ACCOUNTS.NEW_ACCOUNT.SAVE') | translate }}
+        </button>
+      </div>
+
+      <button *ngIf="editingAccountId" class="danger-action" type="button" (click)="deleteSelectedAccount()">
+        <mat-icon>delete</mat-icon>
+        <span>{{ 'ACCOUNTS.EDIT_ACCOUNT.DELETE' | translate }}</span>
+      </button>
+    </form>
+
+    <form *ngSwitchCase="'new-transfer'" [formGroup]="transferForm" (ngSubmit)="submitTransfer()" class="transfer-form glass-panel">
+      <label class="field">
+        <span>{{ 'ACCOUNTS.TRANSFER.FROM' | translate }}</span>
+        <mat-select class="select-control" panelClass="accounts-select-panel" formControlName="sourceAccountId">
+          <mat-option *ngFor="let account of accounts" [value]="account.id">
+            {{ account.name }}
+          </mat-option>
+        </mat-select>
+      </label>
+
+      <label class="field">
+        <span>{{ 'ACCOUNTS.TRANSFER.TO' | translate }}</span>
+        <mat-select class="select-control" panelClass="accounts-select-panel" formControlName="destinationAccountId">
+          <mat-option
+            *ngFor="let account of accounts"
+            [value]="account.id"
+            [disabled]="account.id === transferForm.controls.sourceAccountId.value">
+            {{ account.name }}
+          </mat-option>
+        </mat-select>
+      </label>
+
+      <div class="field-row">
+        <label class="field">
+          <span>{{ 'ACCOUNTS.TRANSFER.AMOUNT' | translate }}</span>
+          <input type="number" step="1" inputmode="decimal" formControlName="amount" placeholder="0,00" />
+        </label>
+
+        <label class="field">
+          <span>{{ 'ACCOUNTS.TRANSFER.CURRENCY' | translate }}</span>
+          <mat-select class="select-control" panelClass="accounts-select-panel" formControlName="currencyCode">
+            <mat-option *ngFor="let currency of currencies; trackBy: trackByCurrency" [value]="currency.code">
+              {{ currency.code }}
+            </mat-option>
+          </mat-select>
+        </label>
+      </div>
+
+      <div class="transfer-calendar-card">
+        <span class="transfer-calendar-label">{{ 'ACCOUNTS.TRANSFER.DATE' | translate }}</span>
+
+        <div class="transfer-calendar-header">
+          <button type="button" (click)="previousTransferWeek()" [attr.aria-label]="'SUMMARY.CALENDAR.PREV_MONTH' | translate">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <strong>{{ transferCalendarMonthLabel() | titlecase }}</strong>
+          <button type="button" (click)="nextTransferWeek()" [attr.aria-label]="'SUMMARY.CALENDAR.NEXT_MONTH' | translate">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+
+        <div class="transfer-calendar-weekdays">
+          <span *ngFor="let day of transferWeekDays">{{ day }}</span>
+        </div>
+
+        <div class="transfer-calendar-week">
+          <button
+            type="button"
+            class="transfer-calendar-day"
+            *ngFor="let day of currentTransferWeek"
+            [class.outside]="isTransferDayOutsideMonth(day)"
+            [class.selected]="isTransferDaySelected(day)"
+            (click)="selectTransferDay(day)">
+            {{ day.getDate() }}
+          </button>
+        </div>
+      </div>
+
+      <label class="field">
+        <span>{{ 'ACCOUNTS.TRANSFER.DESCRIPTION' | translate }}</span>
+        <input type="text" formControlName="description" [placeholder]="'ACCOUNTS.TRANSFER.DESCRIPTION_PLACEHOLDER' | translate" />
+      </label>
+
+      <p *ngIf="transferForm.hasError('sameAccount')" class="form-error">
+        {{ 'ACCOUNTS.TRANSFER.SAME_ACCOUNT_ERROR' | translate }}
+      </p>
+
+      <div class="form-actions stacked-mobile">
+        <button class="outline-action" type="button" (click)="setView('overview')">
+          {{ 'BUTTON_CANCEL' | translate }}
+        </button>
+        <button class="primary-action compact" type="submit">
+          {{ (editingTransferGroupId ? 'ACCOUNTS.TRANSFER.SAVE' : 'ACCOUNTS.TRANSFER.CONFIRM') | translate }}
+        </button>
+      </div>
+
+      <button *ngIf="editingTransferGroupId" class="danger-action" type="button" (click)="deleteSelectedTransfer()">
+        <mat-icon>delete</mat-icon>
+        <span>{{ 'ACCOUNTS.TRANSFER.DELETE' | translate }}</span>
+      </button>
+    </form>
+
+    <section *ngSwitchCase="'history'" class="history-view">
+      <div class="history-filters">
+        <label class="field">
+          <span>{{ 'ACCOUNTS.HISTORY.PERIOD' | translate }}</span>
+          <mat-select class="select-control" panelClass="accounts-select-panel" [formControl]="historyPeriodControl">
+            <mat-option value="1m">{{ 'ACCOUNTS.HISTORY.PERIOD_1M' | translate }}</mat-option>
+            <mat-option value="3m">{{ 'ACCOUNTS.HISTORY.PERIOD_3M' | translate }}</mat-option>
+            <mat-option value="12m">{{ 'ACCOUNTS.HISTORY.PERIOD_12M' | translate }}</mat-option>
+            <mat-option value="all">{{ 'ACCOUNTS.HISTORY.PERIOD_ALL' | translate }}</mat-option>
+          </mat-select>
+        </label>
+
+      </div>
+
+      <div class="transfer-list" *ngIf="transfers.length; else emptyTransfers">
+        <button
+          class="transfer-card"
+          type="button"
+          *ngFor="let transfer of transfers; trackBy: trackByTransfer"
+          (click)="editTransfer(transfer)">
+          <div class="transfer-route">
+            <div class="transfer-account">
+              <span class="account-icon small" aria-hidden="true">
+                <mat-icon>{{ transferSourceIcon(transfer) }}</mat-icon>
+              </span>
+              <div>
+                <strong>{{ transfer.sourceAccountName }}</strong>
+                <span>{{ transfer.date | date:'dd/MM/yyyy' }}</span>
+              </div>
+            </div>
+
+            <mat-icon class="route-arrow">arrow_forward</mat-icon>
+
+            <div class="transfer-account">
+              <span class="account-icon small" aria-hidden="true">
+                <mat-icon>{{ transferDestinationIcon(transfer) }}</mat-icon>
+              </span>
+              <div>
+                <strong>{{ transfer.destinationAccountName }}</strong>
+                <span>{{ transfer.date | date:'dd/MM/yyyy' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="transfer-footer">
+            <span>{{ transfer.description }}</span>
+            <strong>{{ transfer.amount | currency: transfer.currencyCode:'symbol-narrow':'1.2-2' }}</strong>
+          </div>
+        </button>
+      </div>
+
+      <ng-template #emptyTransfers>
+        <div class="empty-state">{{ 'ACCOUNTS.HISTORY.EMPTY' | translate }}</div>
+      </ng-template>
+
+      <div class="form-actions history-actions">
+        <button class="outline-action" type="button" (click)="setView('overview')">
+          {{ 'ACCOUNTS.BACK' | translate }}
+        </button>
+        <button class="primary-action compact" type="button" (click)="setView('new-transfer')">
+          {{ 'ACCOUNTS.TRANSFER.ACTION' | translate }}
+        </button>
+      </div>
+    </section>
+  </ng-container>
+</main>
+
+<ng-template #accountTransactionsWarningTemplate>
+  <div class="account-warning-dialog">
+    <h2 mat-dialog-title>{{ 'ACCOUNTS.DELETE_BLOCKED.TITLE' | translate }}</h2>
+
+    <mat-dialog-content>
+      <p>{{ 'ACCOUNTS.DELETE_BLOCKED.MESSAGE' | translate }}</p>
+    </mat-dialog-content>
+
+    <mat-dialog-actions class="dialog-actions">
+      <button class="dialog-primary" type="button" mat-dialog-close cdkFocusInitial>
+        {{ 'BUTTON_CLOSE' | translate }}
+      </button>
+    </mat-dialog-actions>
+  </div>
+</ng-template>

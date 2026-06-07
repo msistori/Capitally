@@ -1,0 +1,31 @@
+<section class="balance-trend">
+  <header class="header">
+    <h3 class="title">{{ 'YEARLY_BALANCE_TREND.TITLE' | translate }}</h3>
+
+    <div class="filters">
+      <button type="button"
+              class="chip"
+              [class.active]="selectedCurrency === 'ALL'"
+              (click)="selectCurrency('ALL')">{{ 'YEARLY_BALANCE_TREND.ALL_CURRENCIES' | translate }}</button>
+
+      <button type="button"
+              class="chip"
+              *ngFor="let c of currencies"
+              [class.active]="selectedCurrency === c"
+              (click)="selectCurrency(c)">{{ c }}</button>
+    </div>
+  </header>
+
+  <div class="chart-card">
+    <div class="overlay" *ngIf="loading()">Loading...</div>
+    <div class="error" *ngIf="error()">{{ error() }}</div>
+
+    <div class="chart-wrapper" *ngIf="!loading() && !error()">
+      <canvas baseChart
+              [type]="'line'"
+              [data]="{ labels: labels, datasets: datasets }"
+              [options]="lineOptions">
+      </canvas>
+    </div>
+  </div>
+</section>

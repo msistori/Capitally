@@ -1,0 +1,144 @@
+$primary: #005f73;
+
+:host {
+  display: block;
+  min-height: 0;
+  min-width: 0;
+  box-sizing: border-box;
+  border-radius: 1rem;
+}
+
+.annual-income-expense {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+  min-height: 0;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 1.5rem;
+  color: $primary;
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  background-color: rgba(255, 255, 255, 0.58);
+  border: 1px solid rgba(209, 213, 219, 0.5);
+  border-radius: 1rem;
+  overflow: hidden;
+
+  .header {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: baseline;
+    gap: 0.75rem;
+  }
+
+  h3 {
+    margin: 0;
+    min-width: 0;
+    text-align: left;
+  }
+
+  .year-nav {
+    display: grid;
+    grid-template-columns: 2rem auto 2rem;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .nav-btn {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+
+    img {
+      width: 20px;
+      height: 20px;
+    }
+
+    &.disabled,
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.35;
+    }
+  }
+
+  .year {
+    min-width: 3rem;
+    text-align: center;
+    font-weight: 800;
+  }
+
+  .currency {
+    font-size: 0.8rem;
+    font-weight: 700;
+    opacity: 0.8;
+  }
+}
+
+.chart-container {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.no-data {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  color: $primary;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 1023px) {
+  :host {
+    height: 320px;
+  }
+
+  .annual-income-expense {
+    padding: 1rem;
+
+    .header {
+      grid-template-columns: 1fr auto;
+      gap: 0.5rem;
+      align-items: center;
+      min-width: 0;
+    }
+
+    h3 {
+      font-size: 1rem;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+    }
+
+    .currency {
+      display: none;
+    }
+  }
+
+  .chart-container {
+    flex: 1 1 auto;
+  }
+}
+
+@media (min-width: 1024px) {
+  :host {
+    height: 100%;
+  }
+}

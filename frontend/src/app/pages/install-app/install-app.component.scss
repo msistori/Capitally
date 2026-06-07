@@ -1,0 +1,111 @@
+:host {
+  display: block;
+}
+
+.install-page {
+  min-height: 100%;
+  padding: 32px 18px 96px;
+  color: #f8feff;
+  background: transparent;
+}
+
+.install-hero,
+.install-grid {
+  width: min(100%, 980px);
+  margin: 0 auto;
+}
+
+.install-hero {
+  padding: 42px 0 28px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 auto;
+  color: #f8feff !important;
+  border-radius: 999px;
+
+  mat-icon,
+  ::ng-deep .mdc-button__label {
+    color: #f8feff !important;
+  }
+}
+
+.back-link:hover,
+.back-link:focus,
+.back-link:active {
+  color: #f8feff !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  color: #caf0f8;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h1 {
+  max-width: 720px;
+  margin: 0;
+  font-size: 2.4rem;
+  line-height: 0.95;
+}
+
+.install-hero p:not(.eyebrow) {
+  max-width: 640px;
+  margin: 18px 0 0;
+  color: rgba(248, 254, 255, 0.82);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.install-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.install-card {
+  padding: 20px;
+  border: 1px solid rgba(202, 240, 248, 0.32);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 18px 40px rgba(0, 27, 35, 0.24);
+  backdrop-filter: blur(18px);
+}
+
+.install-card mat-icon {
+  width: 42px;
+  height: 42px;
+  color: #caf0f8;
+  font-size: 42px;
+}
+
+.install-card h2 {
+  margin: 16px 0 10px;
+  font-size: 1.2rem;
+}
+
+.install-card p {
+  margin: 0;
+  color: rgba(248, 254, 255, 0.78);
+  line-height: 1.6;
+}
+
+@media (min-width: 760px) {
+  .install-page {
+    padding: 48px 32px 120px;
+  }
+
+  .install-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  h1 {
+    font-size: 4rem;
+  }
+}

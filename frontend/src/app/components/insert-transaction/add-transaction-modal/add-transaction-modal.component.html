@@ -1,0 +1,10 @@
+<div class="form-insert-transaction">
+  <header class="modal-header">
+    <h2 class="title">{{ (isEditMode ? 'TRANSACTION.EDIT_TITLE' : 'TRANSACTION.TITLE') | translate }}</h2>
+    <button mat-icon-button (click)="close()" class="close-btn" aria-label="Chiudi" disableRipple>
+      <mat-icon>close</mat-icon>
+    </button>
+  </header>
+
+  <app-transaction-form *ngIf="isReady" [transaction]="data?.transaction || null" (submitted)="handleSubmit($event)"></app-transaction-form>
+</div>

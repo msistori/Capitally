@@ -1,0 +1,45 @@
+<div class="csv-dialog">
+  <h2 mat-dialog-title>{{ 'SETTINGS.IMPORT_EXPORT.IMPORT.DIALOG_TITLE' | translate }}</h2>
+
+  <mat-dialog-content>
+    <div class="type-switch" role="group" [attr.aria-label]="'SETTINGS.IMPORT_EXPORT.IMPORT.TYPE_LABEL' | translate">
+      <button
+        *ngFor="let type of importTypes"
+        type="button"
+        [class.active]="selectedType === type"
+        (click)="selectType(type)">
+        {{ ('SETTINGS.IMPORT_EXPORT.FILE_TYPES.' + type.toUpperCase()) | translate }}
+      </button>
+    </div>
+
+    <div class="upload-area"
+         (click)="fileInput.click()"
+         (dragover)="onDragOver($event)"
+         (drop)="onDrop($event)">
+      <mat-icon class="dialog-icon">cloud_upload</mat-icon>
+      <p *ngIf="!selectedFile">{{ ('SETTINGS.IMPORT_EXPORT.IMPORT.UPLOAD_FILE_' + selectedType.toUpperCase()) | translate }}</p>
+      <p *ngIf="selectedFile" class="file-name">
+        <mat-icon>description</mat-icon>
+        {{ selectedFile.name }}
+      </p>
+    </div>
+
+    <input #fileInput
+           type="file"
+           accept=".csv"
+           (change)="onFileSelected($event)"
+           style="display: none">
+
+    <div *ngIf="error" class="error-message">
+      <mat-icon>error</mat-icon>
+      {{ error }}
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="actions">
+    <button class="btn-secondary" type="button" (click)="onCancel()">{{ 'BUTTON_CANCEL' | translate }}</button>
+    <button class="btn-primary" type="button" [disabled]="!selectedFile" (click)="onConfirm()">
+      {{ 'SETTINGS.IMPORT_EXPORT.IMPORT.IMPORT' | translate }}
+    </button>
+  </mat-dialog-actions>
+</div>

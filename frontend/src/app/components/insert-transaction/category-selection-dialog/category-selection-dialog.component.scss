@@ -1,0 +1,523 @@
+@use '@angular/material' as mat;
+
+$primary: #005f73;
+$secondary: #caf0f8;
+
+:host {
+  display: block;
+  color: $primary;
+}
+
+.category-selection-header {
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  z-index: 1;
+
+  .header {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: flex-end;
+    position: relative;
+    padding: .8rem;
+    height: 3rem;
+
+    .title {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      translate: -50% -50%;
+      margin: 0;
+      font-size: 1.8rem;
+      font-weight: 600;
+      text-align: center;
+      width: max-content;
+      color: $primary;
+    }
+
+    .close-btn {
+      padding: 1rem;
+      height: 48px;
+      width: 48px;
+    }
+  }
+
+  .toolbar {
+    display: flex;
+    gap: 2%;
+    align-items: center;
+    padding: .8rem;
+
+    .search {
+      flex: 1 1 auto;
+      padding: .6rem .8rem;
+      border: 1px solid $primary;
+      border-radius: .6rem;
+      background: #fff;
+      color: $primary;
+      width: 2rem;
+
+      &::placeholder {
+        color: $primary;
+        opacity: 1;
+      }
+
+      &:hover,
+      &:focus,
+      &:active {
+        outline: none;
+        border-color: $primary;
+      }
+    }
+
+    .new-btn,
+    .edit-btn,
+    .delete-btn {
+      flex: 0 0 auto;
+      padding: .6rem .9rem;
+      border-radius: .7rem;
+      border: 1px solid $primary;
+      background: #fff;
+      color: $primary;
+      cursor: pointer;
+    }
+
+    .delete-btn {
+      &.active {
+        color: #fff;
+        background: $primary;
+      }
+    }
+  }
+}
+
+.create-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 2%;
+
+  button {
+    padding: .6rem .9rem;
+    border-radius: .7rem;
+    cursor: pointer;
+  }
+
+  .secondary {
+    border: 1px solid $primary;
+    background: #fff;
+    color: $primary;
+  }
+
+  button[type="submit"] {
+    border: 1px solid $primary;
+    background: $primary;
+    color: #fff;
+  }
+}
+
+.create-actions-save {
+  position: sticky;
+  bottom: -.1rem;
+  padding: .5rem;
+  background-color: #ffff;
+}
+
+.delete-actions {
+  position: sticky;
+  bottom: -.1rem;
+  padding: .5rem;
+  background-color: #ffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2%;
+  border-top: 2px solid $primary;
+
+  .label {
+    font-weight: bold;
+  }
+
+  .delete-buttons {
+    display: flex;
+    gap: 1rem;
+  }
+
+  button {
+    padding: .6rem .9rem;
+    border-radius: .7rem;
+    cursor: pointer;
+  }
+
+  .secondary {
+    border: 1px solid $primary;
+    background: #fff;
+    color: $primary;
+  }
+
+  button[type="submit"] {
+    border: 1px solid $primary;
+    background: $primary;
+    color: #fff;
+  }
+}
+
+.create-box {
+
+  .picker {
+    display: grid;
+    gap: .25rem;
+    margin-bottom: .75rem;
+    padding: .5rem;
+
+    .picker-field {
+      width: 100%;
+    }
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: .5rem;
+
+    label {
+      display: grid;
+      gap: .25rem;
+
+      input {
+        flex: 1 1 auto;
+        padding: .6rem .8rem;
+        border: 1px solid $primary;
+        border-radius: .6rem;
+        background: #fff;
+        color: $primary;
+        font-family: 'Inter', sans-serif;
+        font-size: 15px;
+
+        &::placeholder {
+          color: $primary;
+          opacity: 1;
+        }
+
+        &:hover,
+        &:focus,
+        &:active {
+          outline: none;
+          border-color: $primary;
+        }
+      }
+
+      .search-like {
+        padding: .6rem .8rem;
+        border: 1px solid $primary;
+        border-radius: .6rem;
+        background: #fff;
+        color: $primary;
+
+        &::placeholder {
+          color: $primary;
+          opacity: 1;
+        }
+
+        &:hover,
+        &:focus,
+        &:active {
+          outline: none;
+          border-color: $primary;
+        }
+      }
+    }
+  }
+}
+
+.edit-target {
+  border: 1px solid;
+  padding: .6rem .8rem;
+  max-width: -webkit-fill-available;
+  border-radius: .6rem;
+  font-size: 15px;
+}
+
+::ng-deep .edit-target-optgroup {
+  border-bottom: 2px solid $primary;
+  border-radius: .5rem;
+}
+
+.edit-target-option {
+  border-top: 1px solid $primary;
+  border-radius: .5rem;
+  text-align: center;
+}
+
+.edit-target-icon {
+  width: 18px;
+  height: 18px;
+  margin-right: .5rem;
+}
+
+.icons {
+  margin-top: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: .7rem;
+  padding: .5rem;
+
+  button {
+    display: grid;
+    place-items: center;
+    gap: .25rem;
+    padding: .5rem;
+    border: 1px solid $primary;
+    border-radius: .75rem;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  button.active {
+    border-color: $primary;
+    background: $secondary;
+    font-weight: 600;
+  }
+
+  img {
+    width: 28px;
+    height: 28px;
+  }
+
+  span {
+    font-size: .75rem;
+    text-align: center;
+  }
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: .8rem;
+}
+
+.macro-group {
+  padding: 0;
+  border: 0;
+
+  &:has(.chip) {
+    padding: .5rem;
+    border-bottom: 1px solid $primary;
+  }
+
+  .macro-title {
+    margin: 0 0 .25rem 0;
+    font-size: 1rem;
+    color: $primary;
+  }
+
+  .chips {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: .4rem;
+  }
+
+  .chip {
+    display: grid;
+    grid-template-rows: auto auto;
+    place-items: center;
+    gap: .25rem;
+    padding: .5rem;
+    border-radius: 1rem;
+    border: 0.5px solid $primary;
+    background: #fff;
+    width: 100%;
+    text-align: center;
+    cursor: pointer;
+
+    img {
+      width: 28px;
+      height: 28px;
+    }
+
+    .label {
+      font-size: .85rem;
+      color: $primary;
+    }
+  }
+
+  .chip.active {
+    border: 1px solid $primary;
+    background: $secondary;
+    font-weight: 600;
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: .75rem;
+}
+
+.template-icon {
+  align-self: center;
+  color: $primary;
+  transform: scale(2);
+  padding: 1rem;
+}
+
+.template-title {
+  padding: .5rem;
+  text-align: center;
+  text-box: auto;
+  color: $primary;
+  font-weight: bold;
+}
+
+.template-text {
+  padding: 0;
+  color: $primary;
+
+  >p {
+    text-align: center;
+    margin: 0;
+  }
+}
+
+.template-info {
+  padding: 0;
+  color: $primary;
+
+  >p {
+    text-align: center;
+    margin: 0;
+    font-size: small;
+  }
+}
+
+.template-actions {
+  align-self: center;
+  gap: 1rem;
+  margin-top: 1rem;
+
+  .template-cancel-button {
+    color: $primary;
+    background-color: #ffff;
+    border: 1px solid $primary;
+    margin: 0;
+
+    &:hover {
+      background-color: $primary;
+      color: #ffff;
+    }
+  }
+
+  .template-confirm-button {
+    color: #ffff;
+    background-color: $primary;
+    border: 1px solid $primary;
+    margin: 0;
+
+    &:hover {
+      background-color: $secondary;
+      color: $primary;
+    }
+  }
+}
+
+:host ::ng-deep .cap-autocomplete.mat-mdc-autocomplete-panel {
+  border: 1px solid $primary;
+  border-radius: .8rem;
+  box-shadow: 0 6px 18px $primary;
+  padding: .25rem 0;
+}
+
+:host ::ng-deep .cap-autocomplete .mat-mdc-option {
+  padding: .5rem .75rem;
+}
+
+:host ::ng-deep .cap-autocomplete .mat-mdc-option.mdc-list-item--selected,
+:host ::ng-deep .cap-autocomplete .mat-mdc-option:hover {
+  background: $secondary;
+  color: $primary;
+}
+
+::ng-deep .cdk-overlay-pane:has(.cap-autocomplete) {
+  position: absolute;
+  box-shadow: 0px 2px 8px $primary;
+  background-color: #ffffff;
+  color: $primary;
+  font-weight: bold;
+  border-radius: .5rem;
+
+  .cap-autocomplete {
+    padding: 0;
+
+    .cap-autocomplete-option {
+      border-top: 1px solid $primary;
+      border-radius: .5rem;
+      text-align: center;
+    }
+  }
+}
+
+::ng-deep .cdk-overlay-pane:has(.edit-target-panel-class) {
+  position: absolute;
+  box-shadow: 0px 2px 8px $primary;
+  background-color: #ffffff;
+  color: $primary;
+  font-weight: bold;
+  margin-top: .7rem;
+  margin-left: -.7rem;
+  border-radius: .5rem;
+
+  .edit-target-panel-class {
+    padding: 0;
+  }
+}
+
+::ng-deep .edit-target-panel-class .mat-mdc-select-panel {
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
+}
+
+::ng-deep .edit-target-panel-class .mat-mdc-optgroup-label {
+  background: $primary;
+  color: #fff;
+  margin: 0;
+  border-radius: .5rem .5rem 0 0;
+  font-weight: 600;
+}
+
+::ng-deep .edit-target-panel-class .mat-mdc-option {
+  background: #fff;
+  color: $primary;
+  border-radius: .5rem;
+}
+
+::ng-deep .edit-target-panel-class .mat-mdc-optgroup .mat-mdc-option:first-of-type {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+::ng-deep .edit-target-panel-class .mat-mdc-optgroup:last-child .mat-mdc-option:last-of-type {
+  border-bottom-left-radius: .5rem;
+  border-bottom-right-radius: .5rem;
+}
+
+@media (min-width: 768px) {
+  .chips {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .icons {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .chips {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .icons {
+    grid-template-columns: repeat(8, 1fr);
+  }
+}

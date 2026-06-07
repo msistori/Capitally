@@ -1,0 +1,69 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+  padding: var(--safe-top) 1rem 0;
+  background-color: #005f73;
+  flex: 0 0 var(--header-h);
+  height: var(--header-h);
+  position: relative;
+  z-index: 1001;
+
+  .logo-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    text-decoration: none;
+
+    .logo {
+      width: 28px;
+      height: 28px;
+    }
+
+    .title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #ffffff;
+    }
+  }
+
+  .user-icon {
+    font-size: 1.5rem;
+    color: #0e2431;
+  }
+
+  .header-options {
+    display: flex;
+    gap: 0.5rem;
+
+    button {
+      background: none;
+      border: 1px solid currentColor;
+      border-radius: 4px;
+      padding: 0.25rem 0.75rem;
+      cursor: pointer;
+      font: inherit;
+      color: #ffffff;
+
+      &.active {
+        font-weight: 600;
+        text-decoration: underline;
+      }
+    }
+
+    .logout-btn {
+      background-color: #005f73;
+      color: #ffff;
+      border: 0;
+      cursor: pointer;
+      display: flex;
+    }
+  }
+}
+
+.login-header {
+  padding-left: 10%;
+  padding-right: 10%;
+}

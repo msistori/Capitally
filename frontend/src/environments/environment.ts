@@ -1,0 +1,27 @@
+export const environment = {
+  production: false,
+  siteUrl: '',
+  apiBase: '/api',
+  mockApi: {
+    enabled: false,
+    endpoints: {
+      authLogin: true,
+      authMe: true,
+      dashboardOverview: true,
+      dashboardBalanceTrend: true,
+      dashboardIncomeExpenseBreakdown: true,
+      dashboardAnnualIncomeExpense: true,
+      dashboardUpcomingRecurring: true,
+      transactions: true,
+      categories: true,
+      accounts: true,
+      currencies: true,
+      importExport: true,
+      transfers: true
+    }
+  },
+  demoUser: {
+    usernameOrEmail: 'demo',
+    password: ''
+  }
+};

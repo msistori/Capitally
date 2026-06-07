@@ -1,0 +1,2 @@
+account_name,amount,currency,date,description,macrocategory,category,transaction_type,is_recurring,recurrence_period,recurrence_end_date
+ISP,5.50,EUR,2025-12-02,Birreria,Cibo,Locale,EXPENSE,false,,

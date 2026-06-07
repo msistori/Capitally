@@ -1,0 +1,23 @@
+<main class="dashboard-container">
+  <!-- balance-summary -->
+  <app-balance-summary
+    [totalBalance]="overviewData.totalBalancePerCurrency ? overviewData.totalBalancePerCurrency : {}"
+    [accountBalances]="overviewData.accountBalances ? overviewData.accountBalances : []">
+  </app-balance-summary>
+
+  <!-- annual income-expense -->
+  <app-annual-income-expense
+    [items]="annualIncomeExpense"
+    [year]="annualIncomeExpenseYear"
+    (yearChange)="onAnnualIncomeExpenseYearChange($event)">
+  </app-annual-income-expense>
+
+  <!-- recent-transactions -->
+  <app-recent-transactions></app-recent-transactions>
+
+  <!-- balance trend -->
+  <app-balance-trend [items]="yearlyBalance"></app-balance-trend>
+
+  <!-- income - expense breakdown -->
+   <app-income-expense-breakdown [items]="incomeExpenseBreakdownData" (monthChange)="onMonthChange($event)"></app-income-expense-breakdown>
+</main>

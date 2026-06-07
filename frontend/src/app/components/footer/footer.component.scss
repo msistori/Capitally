@@ -1,0 +1,69 @@
+$primary: #005f73;
+$secondary: #caf0f8;
+
+:host {
+  display: block;
+}
+
+.legal-footer {
+  box-sizing: border-box;
+  padding: .55rem .55rem;
+}
+
+:host-context(.welcome-content) .legal-footer {
+  background: transparent;
+}
+
+:host-context(.install-content) .legal-footer {
+  background: transparent;
+}
+
+:host-context(.login-content) .legal-footer {
+  background: transparent;
+}
+
+.legal-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: .5rem .9rem;
+  margin: 0;
+  font-size: .84rem;
+
+  a,
+  button {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    color: $primary;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+    padding: .2rem .35rem;
+    border-radius: 6px;
+    text-decoration: underline;
+    text-shadow: var(--text-glow);
+  }
+
+  p {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    color: $primary;
+    font: inherit;
+    font-weight: 700;
+    padding: .2rem .35rem;
+    border-radius: 6px;
+    text-shadow: var(--text-glow);
+    margin: 0;
+  }
+}
+
+:host-context(.install-content) .legal-links {
+  a,
+  button,
+  p {
+    color: #caf0f8;
+    text-shadow: 0 1px 10px rgba(0, 27, 35, 0.48);
+  }
+}

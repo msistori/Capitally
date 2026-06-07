@@ -1,0 +1,123 @@
+<div class="category-selection-header">
+  <header class="header">
+    <h2 class="title">{{ 'CATEGORY_SELECTION.TITLE' | translate }}</h2>
+    <button mat-icon-button (click)="cancel()" class="close-btn" aria-label="Close" disableRipple>
+      <mat-icon>close</mat-icon>
+    </button>
+  </header>
+
+  <div class="toolbar" [class.create-actions]="creating">
+    <input type="search" *ngIf="!creating" [(ngModel)]="search"
+      placeholder="{{ 'SEARCH' | translate }}" class="search" />
+
+    <button type="button" class="edit-btn" (click)="toggleEdit()" *ngIf="!editing && !creating">
+      {{ 'BUTTON_MODIFY' | translate }}
+    </button>
+
+    <button type="button" class="new-btn" (click)="toggleCreate()" *ngIf="!editing && !creating">
+      {{ 'BUTTON_NEW' | translate }}
+    </button>
+
+    <button type="button" class="delete-btn" [class.active]="deleting" *ngIf="deleting || (!creating && !editing) " (click)="toggleDelete()">
+      {{ 'BUTTON_DELETE' | translate }}
+    </button>
+  </div>
+</div>
+
+<section *ngIf="creating" class="create-box">
+  <form [formGroup]="createForm" (ngSubmit)="submitForm()" id="formCreateCategory">
+
+    <ng-container *ngIf="mode === 'edit'">
+      <label class="picker">
+        <mat-select [formControl]="editTargetCtrl" (selectionChange)="onEditTargetChange($event.value)"
+          placeholder="{{ 'CATEGORY_SELECTION.SELECT_CATEGORY_TO_MODIFY' | translate }}" class="edit-target"
+          panelClass="edit-target-panel-class">
+          <mat-optgroup *ngFor="let m of macros" [label]="m" class="edit-target-optgroup">
+            <mat-option *ngFor="let c of grouped[m]" [value]="c.id" class="edit-target-option">
+              <img [src]="utils.getIcon(c.iconName)" alt="" class="edit-target-icon" />
+              {{ c.category }}
+            </mat-option>
+          </mat-optgroup>
+        </mat-select>
+      </label>
+    </ng-container>
+
+    <div class="grid">
+      <label>
+        <input type="text" formControlName="macroCategory" [matAutocomplete]="macroAuto" class="search-like"
+          placeholder="{{ 'FORM.MACROCATEGORY' | translate }}" />
+        <mat-autocomplete #macroAuto="matAutocomplete" class="cap-autocomplete">
+          <mat-option *ngFor="let m of filteredMacros" [value]="m" class="cap-autocomplete-option">
+            {{ m }}
+          </mat-option>
+        </mat-autocomplete>
+      </label>
+
+      <label>
+        <input formControlName="category" placeholder="{{ 'FORM.CATEGORY' | translate }}" />
+      </label>
+    </div>
+
+    <div class="icons">
+      <button type="button" *ngFor="let name of iconNames" (click)="pickIcon(name)"
+        [class.active]="pickedIcon === name">
+        <img [src]="utils.getIcon(name)" [alt]="name" />
+      </button>
+    </div>
+
+    <div class="create-actions create-actions-save">
+      <button type="button" class="secondary" (click)="resetFlag()">{{ 'BUTTON_CANCEL' | translate }}</button>
+      <button type="submit" [disabled]="createForm.invalid">
+        {{ mode === 'edit' ? ('BUTTON_SAVE' | translate) : ('BUTTON_CREATE' | translate) }}
+      </button>
+    </div>
+  </form>
+</section>
+
+<main class="list" *ngIf="!creating">
+  <ng-container *ngFor="let macro of macros">
+    <ng-container *ngIf="getFilteredByMacro(macro) as list">
+      <div class="macro-group" *ngIf="list.length > 0">
+        <h3 class="macro-title">{{ macro }}</h3>
+        <div class="chips">
+          <button class="chip" *ngFor="let c of list; trackBy: trackById" [class.active]="c.id === selectedCategoryId"
+            (click)="!deleting ? selectExisting(c) : considerToDeleteCategory(c)">
+            <img [src]="utils.getIcon(c.iconName)" [alt]="c.category" />
+            <span class="label">{{ c.category }}</span>
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+</main>
+
+<div class="delete-actions" *ngIf="deleting">
+  <span class="label">
+    {{ selectedCategoryId === undefined 
+      ? ('CATEGORY_SELECTION.SELECT_CATEGORY_TO_DELETE' | translate) 
+      : ('CATEGORY_SELECTION.CONFIRM_CATEGORY_TO_DELETE' | translate)
+    }}
+  </span>
+
+  <div class="delete-buttons">
+    <button type="submit" class="secondary" *ngIf="selectedCategoryId" (click)="deleteCategory()">{{ 'BUTTON_DELETE' | translate }}</button>
+    <button type="button" class="secondary" (click)="resetFlag()">{{ 'BUTTON_CANCEL' | translate }}</button>
+  </div>
+</div>
+
+<ng-template #deleteDialogTemplate>
+  <mat-icon class="template-icon">error_outline</mat-icon>
+  <h2 mat-dialog-title class="template-title">{{ 'FORM.DELETE_CATEGORY.TITLE' | translate }}</h2>
+  <mat-dialog-content class="template-text">
+    <p>{{ 'FORM.DELETE_CATEGORY.TEXT' | translate }}</p>
+  </mat-dialog-content>
+  <mat-dialog-actions class="template-actions">
+    <button mat-button [mat-dialog-close]="false" class="template-cancel-button">{{ 'BUTTON_CANCEL' | translate }}</button>
+    <button mat-raised-button color="warn" [mat-dialog-close]="true" cdkFocusInitial class="template-confirm-button">
+      {{ 'BUTTON_DELETE' | translate }}
+    </button>
+  </mat-dialog-actions>
+  <mat-dialog-content class="template-info">
+    <p>{{ 'UNDONE_OPERATION' | translate }}</p>
+  </mat-dialog-content>
+</ng-template>

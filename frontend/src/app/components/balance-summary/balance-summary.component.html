@@ -1,0 +1,35 @@
+<section class="balance-summary">
+  <h2>{{ 'BALANCE.BALANCE_TITLE' | translate }}</h2>
+
+  <!-- Combined total in default currency -->
+  <p class="balance-total">{{ convertedTotal() | currency:defaultCurrencySig():'symbol':'1.2-2' }}</p>
+
+  <!-- Per-currency breakdown -->
+   <ul class="per-currency" *ngIf="showBreakdown()">
+    <li *ngFor="let e of currencyEntries()">
+      <span class="code">{{ e.code }}</span>
+      <span class="amt">
+        {{ e.amount | currency:e.code:'symbol-narrow':'1.2-2' }}
+      </span>
+    </li>
+  </ul>
+
+  <section class="accounts-breakdown" *ngIf="accountEntries().length">
+    <h3>{{ 'BALANCE.ACCOUNTS_TITLE' | translate }}</h3>
+
+    <ul>
+      <li *ngFor="let account of accountEntries(); trackBy: trackByAccountBalance">
+        <span class="account-name">
+          <mat-icon aria-hidden="true">{{ account.iconName }}</mat-icon>
+          <span>{{ account.accountName }}</span>
+        </span>
+
+        <span class="account-balance" [class.negative]="account.balance < 0">
+          <span class="account-amount">
+            {{ account.balance | currency:account.currency:'symbol-narrow':'1.2-2' }}
+          </span>
+        </span>
+      </li>
+    </ul>
+  </section>
+</section>

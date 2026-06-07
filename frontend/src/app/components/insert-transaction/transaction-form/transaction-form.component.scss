@@ -1,0 +1,472 @@
+@use '@angular/material' as mat;
+@use 'src/styles' as styles;
+
+$form-primary: #005f73;
+$form-secondary: #caf0f8;
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.7rem;
+  padding: 0.8rem;
+
+  .amount-currency {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 1rem;
+
+    .amount-field {
+      max-width: calc(50% - 1rem);
+      font-size: 2.5rem;
+      font-weight: 600;
+      text-align: end;
+      color: $form-primary;
+      border: 0;
+      outline: none;
+
+      &::placeholder {
+        color: $form-primary;
+      }
+    }
+
+    .currency-panel {
+      width: fit-content;
+      max-width: calc(50% - 1rem);
+      font-size: 1.5rem;
+      font-weight: 600;
+      text-align: center;
+      align-self: center;
+      padding-right: 3rem;
+
+      .currency-item {
+        padding: 1rem;
+      }
+    }
+  }
+
+  .account-field,
+  .recurring-period-field {
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-align: center;
+    border: 1px solid;
+    padding: .7rem;
+    max-width: -webkit-fill-available;
+    border-radius: .5rem;
+  }
+
+  .account-field {
+    position: relative;
+    z-index: 100;
+    display: block;
+    pointer-events: auto;
+  }
+
+  .account-field .mat-mdc-select-trigger {
+    position: relative;
+    z-index: 101;
+    pointer-events: auto;
+  }
+
+  .calendar-card {
+    background: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0px 2px 8px $form-primary;
+    padding: 1rem;
+    max-width: 80%;
+    width: 80%;
+    margin: 1rem auto;
+    text-align: center;
+
+    .recurring-end-date-label {
+      font-weight: bold;
+      font-size: 1.5rem;
+      margin: .5rem;
+    }
+
+    .cal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+
+      button {
+        background: none;
+        border: none;
+        cursor: pointer;
+
+        img {
+          width: 1.2rem;
+          height: 1.2rem;
+        }
+      }
+
+      .month-label {
+        font-weight: bold;
+      }
+    }
+
+    .weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-size: 0.8rem;
+      color: $form-primary;
+      margin-bottom: 0.25rem;
+    }
+
+    .week {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+
+      .day {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        margin: 0.25rem auto;
+        cursor: pointer;
+
+        &.empty {
+          visibility: hidden;
+        }
+
+        &.selected {
+          background: $form-primary;
+          color: #fff;
+          border-radius: 50%;
+        }
+
+        &.outside {
+          opacity: .35;
+        }
+      }
+    }
+  }
+}
+
+.type-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  box-shadow: none !important;
+
+  .mat-button-toggle {
+    flex: 1;
+    text-align: center;
+    padding: .9rem;
+    border-radius: .5rem;
+    border: 0.5px solid currentColor;
+
+    &.mat-button-toggle-checked {
+      font-weight: bold;
+      border: 2px solid currentColor;
+      background-color: $form-secondary;
+    }
+  }
+}
+
+.category-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  align-items: stretch;
+
+  .category-item-macro {
+    font-weight: bold;
+  }
+
+  .category-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #ffff;
+    border: 0.5px solid $form-primary;
+    color: $form-primary;
+    border-radius: 0.75rem;
+    margin-bottom: 0.25rem;
+    padding: 0.3rem 0.1rem;
+    text-align: center;
+    cursor: pointer;
+    justify-content: center;
+    width: calc(25% - 0.25rem);
+    min-height: calc(50% - 0.25rem);
+    min-width: calc(25% - 0.25rem);
+    max-height: calc(50% - 0.25rem);
+    max-width: calc(25% - 0.25rem);
+    word-break: break-word;
+
+    img {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .category-more {
+    height: auto;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #ffff;
+    border: 0.5px solid $form-primary;
+    color: $form-primary;
+    border-radius: 0.75rem;
+    margin-bottom: 0.25rem;
+    padding: 0.3rem 0.1rem;
+    text-align: center;
+    cursor: pointer;
+    width: calc(25% - 0.25rem);
+    min-height: calc(50% - 0.25rem);
+    min-width: calc(25% - 0.25rem);
+    max-height: calc(50% - 0.25rem);
+    max-width: calc(25% - 0.25rem);
+    font-weight: bold;
+
+    img {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .active {
+    background-color: $form-secondary;
+    font-weight: bold;
+    border: 2px solid $form-primary;
+  }
+}
+
+.description-input {
+  color: $form-primary !important;
+  font-size: 1.7rem !important;
+}
+
+::ng-deep .description-autocomplete.mat-mdc-autocomplete-panel {
+  background: #fff;
+  border: 1px solid $form-primary;
+  border-radius: .5rem;
+  box-shadow: 0px 2px 8px $form-primary;
+  color: $form-primary;
+  font-weight: 600;
+  padding: 0;
+}
+
+::ng-deep .description-autocomplete .description-autocomplete-option {
+  border-top: 1px solid $form-primary;
+  border-radius: .5rem;
+  color: $form-primary;
+  text-align: center;
+}
+
+::ng-deep .description-autocomplete .description-autocomplete-option:first-child {
+  border-top: 0;
+}
+
+::ng-deep .description-autocomplete .mat-mdc-option.mdc-list-item--selected,
+::ng-deep .description-autocomplete .mat-mdc-option:hover {
+  background: $form-secondary;
+  color: $form-primary;
+}
+
+.remove-transaction {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(213, 31, 42, 0.35);
+  border-radius: 0.5rem;
+  color: #d51f2a;
+  cursor: pointer;
+  display: inline-flex;
+  height: 3.35rem;
+  justify-content: center;
+  width: 3.35rem;
+}
+
+.recurring-section {
+  .recurring-toggle {
+    width: 100%;
+    justify-content: space-between;
+    font-weight: 600;
+
+    --mdc-form-field-label-text-color: $form-primary;
+  }
+
+  .recurring-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+
+    .recurring-end-date-toggle {
+      width: 100%;
+      justify-content: space-between;
+      font-weight: 600;
+
+      --mdc-form-field-label-text-color: $form-primary;
+    }
+  }
+}
+
+.submit-button {
+  border: 2px solid $form-primary;
+  width: 50%;
+  padding: 1.5rem;
+  font-size: 1rem;
+  border-radius: 5rem;
+  left: 50%;
+  bottom: 0;
+  translate: -50% 0%;
+  color: $form-primary !important;
+  font-weight: bold;
+}
+
+.search {
+  position: sticky;
+  padding: .8rem .8rem;
+  border: 0;
+  border-top: 1px solid $form-primary;
+  border-radius: .5rem;
+  background: #fff;
+  color: $form-primary;
+  max-width: -webkit-fill-available;
+
+  &::placeholder {
+    color: $form-primary;
+    opacity: 1;
+  }
+
+  &:hover,
+  &:focus,
+  &:active {
+    outline: none;
+    border-color: $form-primary;
+  }
+}
+
+.current-hidden {
+  display: none !important;
+}
+
+.currency-item {
+  border-top: 1px solid $form-primary;
+  border-radius: .5rem;
+  text-align: center;
+
+  .currency-code {
+    font-weight: 600;
+    color: $form-primary;
+  }
+
+  .currency-name {
+    color: lighten($form-primary, 20%);
+    font-size: 0.9em;
+    margin-left: 4px;
+  }
+}
+
+.no-results {
+  color: lighten($form-primary, 40%);
+  font-style: italic;
+  text-align: center;
+  padding: 16px;
+}
+
+.account-option,
+.recurring-period-option {
+  border-top: 1px solid $form-primary;
+  border-radius: .5rem;
+  text-align: center;
+}
+
+::ng-deep .currency-panel-class {
+  .mat-mdc-option {
+    min-height: 0;
+    height: auto;
+    padding: .8rem .8rem;
+    line-height: 1.4;
+  }
+}
+
+::ng-deep .mat-mdc-form-field {
+  --mdc-filled-text-field-container-color: transparent;
+  --mdc-filled-text-field-disabled-container-color: transparent;
+
+  --mdc-filled-text-field-active-indicator-color: $form-primary;
+  --mdc-filled-text-field-focus-active-indicator-color: $form-primary;
+  --mdc-filled-text-field-hover-active-indicator-color: $form-primary;
+
+  --mdc-filled-text-field-label-text-color: $form-primary;
+  --mdc-filled-text-field-disabled-label-text-color: $form-primary;
+}
+
+::ng-deep .mat-mdc-form-field-required-marker {
+  display: none;
+}
+
+::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+::ng-deep .recurring-toggle.mat-mdc-slide-toggle.mat-mdc-slide-toggle-checked:not(.mat-disabled) .mdc-switch__shadow {
+  background-color: $form-primary;
+}
+
+::ng-deep .recurring-toggle.mat-mdc-slide-toggle.mat-mdc-slide-toggle-checked:not(.mat-disabled) .mdc-switch__track::after {
+  background-color: $form-secondary !important;
+}
+
+::ng-deep .recurring-toggle.mat-mdc-slide-toggle:not(.mat-mdc-slide-toggle-checked) .mdc-switch__shadow {
+  background-color: $form-primary;
+}
+
+::ng-deep .recurring-toggle.mat-mdc-slide-toggle:not(.mat-mdc-slide-toggle-checked) .mdc-switch__track::before {
+  background-color: rgba($form-primary, 0.3);
+}
+
+::ng-deep .recurring-end-date-toggle.mat-mdc-slide-toggle.mat-mdc-slide-toggle-checked:not(.mat-disabled) .mdc-switch__shadow {
+  background-color: $form-primary;
+}
+
+::ng-deep .recurring-end-date-toggle.mat-mdc-slide-toggle.mat-mdc-slide-toggle-checked:not(.mat-disabled) .mdc-switch__track::after {
+  background-color: $form-secondary !important;
+}
+
+::ng-deep .recurring-end-date-toggle.mat-mdc-slide-toggle:not(.mat-mdc-slide-toggle-checked) .mdc-switch__shadow {
+  background-color: $form-primary;
+}
+
+::ng-deep .recurring-end-date-toggle.mat-mdc-slide-toggle:not(.mat-mdc-slide-toggle-checked) .mdc-switch__track::before {
+  background-color: rgba($form-primary, 0.3);
+}
+
+::ng-deep .view-all-categories-modal-panel {
+  .mat-mdc-dialog-container {
+    .mdc-dialog__container {
+      .mat-mdc-dialog-surface {
+        border-radius: 2rem 2rem 0 0;
+      }
+    }
+  }
+
+  @media (max-width: 380px) {
+    .remove-transaction {
+      justify-self: end;
+    }
+  }
+
+  @media (max-width: 599px) {
+    max-width: 100% !important;
+    width: 100%;
+  }
+
+  @media (max-width: 639px) {
+    .remove-transaction {
+      justify-self: end;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    max-width: 40vw !important;
+  }
+}

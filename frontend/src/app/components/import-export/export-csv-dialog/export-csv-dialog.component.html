@@ -1,0 +1,123 @@
+<div class="csv-dialog">
+  <h2 mat-dialog-title>{{ 'SETTINGS.IMPORT_EXPORT.EXPORT.DIALOG_TITLE' | translate }}</h2>
+
+  <mat-dialog-content class="content" *ngIf="isConfirmationMode; else filterFormContent">
+    <div class="info-area confirmation-info">
+      <mat-icon class="dialog-icon">ios_share</mat-icon>
+      <p>
+        {{
+          (hasActiveFilters
+            ? 'SUMMARY.EXPORT.CONFIRM_FILTERED_OR_ALL'
+            : 'SUMMARY.EXPORT.CONFIRM_ALL') | translate
+        }}
+      </p>
+    </div>
+  </mat-dialog-content>
+
+  <ng-template #filterFormContent>
+  <mat-dialog-content class="content" [formGroup]="form">
+    <div class="info-area">
+      <mat-icon class="dialog-icon">ios_share</mat-icon>
+      <p>{{ 'SETTINGS.IMPORT_EXPORT.EXPORT.DESCRIPTION' | translate }}</p>
+    </div>
+
+    <div class="grid">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'SETTINGS.IMPORT_EXPORT.EXPORT.FORM.ACCOUNT' | translate }}</mat-label>
+        <input matInput formControlName="account" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'SETTINGS.IMPORT_EXPORT.EXPORT.FORM.CURRENCY' | translate }}</mat-label>
+        <input matInput formControlName="currency" placeholder="EUR" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'SETTINGS.IMPORT_EXPORT.EXPORT.FORM.TRANSACTION_TYPE' | translate }}</mat-label>
+        <mat-select formControlName="transactionType" panelClass="export-select-panel">
+          <mat-option [value]="null">{{ 'SETTINGS.IMPORT_EXPORT.EXPORT.FORM.ALL_TYPES' | translate }}</mat-option>
+          <mat-option *ngFor="let t of transactionTypes" [value]="t">
+            {{ ('FORM.TYPE.' + t) | translate }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'SETTINGS.IMPORT_EXPORT.EXPORT.FORM.DESCRIPTION' | translate }}</mat-label>
+        <input matInput formControlName="description" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'SETTINGS.IMPORT_EXPORT.EXPORT.FORM.MACROCATEGORY' | translate }}</mat-label>
+        <input matInput formControlName="macroCategory" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'SETTINGS.IMPORT_EXPORT.EXPORT.FORM.CATEGORY' | translate }}</mat-label>
+        <input matInput formControlName="category" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'SETTINGS.IMPORT_EXPORT.EXPORT.FORM.MIN_AMOUNT' | translate }}</mat-label>
+        <input matInput type="number" formControlName="minAmount" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'SETTINGS.IMPORT_EXPORT.EXPORT.FORM.MAX_AMOUNT' | translate }}</mat-label>
+        <input matInput type="number" formControlName="maxAmount" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'SETTINGS.IMPORT_EXPORT.EXPORT.FORM.START_DATE' | translate }}</mat-label>
+        <input matInput [matDatepicker]="startPicker" formControlName="startDate" />
+        <mat-datepicker-toggle matSuffix [for]="startPicker" class="export-datepicker-toggle"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker panelClass="export-datepicker-panel"></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'SETTINGS.IMPORT_EXPORT.EXPORT.FORM.END_DATE' | translate }}</mat-label>
+        <input matInput [matDatepicker]="endPicker" formControlName="endDate" />
+        <mat-datepicker-toggle matSuffix [for]="endPicker" class="export-datepicker-toggle"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker panelClass="export-datepicker-panel"></mat-datepicker>
+      </mat-form-field>
+    </div>
+
+    <div class="errors" *ngIf="form.touched && form.errors">
+      <p *ngIf="form.errors['amountRange']">{{ 'SETTINGS.IMPORT_EXPORT.EXPORT.FORM.ERROR.AMOUNT' | translate }}</p>
+      <p *ngIf="form.errors['dateRange']">{{ 'SETTINGS.IMPORT_EXPORT.EXPORT.FORM.ERROR.DATE' | translate }}</p>
+    </div>
+  </mat-dialog-content>
+  </ng-template>
+
+  <mat-dialog-actions class="actions" [class.confirm-actions]="isConfirmationMode && hasActiveFilters">
+    <button class="btn-secondary" type="button" (click)="close()" [disabled]="exporting">{{ 'BUTTON_CANCEL' | translate }}</button>
+
+    <ng-container *ngIf="isConfirmationMode; else formActions">
+      <button class="btn-secondary" type="button" *ngIf="hasActiveFilters" (click)="exportAll()" [disabled]="exporting">
+        {{ 'SUMMARY.EXPORT.ALL' | translate }}
+      </button>
+      <button class="btn-primary" type="button" (click)="exportConfirmedSelection()" [disabled]="exporting">
+        {{ exporting
+          ? ('SETTINGS.IMPORT_EXPORT.EXPORT.FORM.EXPORTING' | translate)
+          : ((hasActiveFilters ? 'SUMMARY.EXPORT.FILTERED' : 'SUMMARY.EXPORT.CONFIRM_EXPORT') | translate)
+        }}
+      </button>
+    </ng-container>
+
+    <ng-template #formActions>
+      <button
+        class="btn-primary"
+        type="button"
+        *ngFor="let type of exportTypes"
+        (click)="exportFile(type)"
+        [disabled]="exporting || form.invalid">
+        <mat-icon>{{ type === 'transactions' ? 'receipt_long' : (type === 'transfers' ? 'sync_alt' : 'account_balance') }}</mat-icon>
+        {{
+          exporting && exportingType === type
+            ? ('SETTINGS.IMPORT_EXPORT.EXPORT.FORM.EXPORTING' | translate)
+            : (('SETTINGS.IMPORT_EXPORT.EXPORT.FORM.EXPORT_' + type.toUpperCase()) | translate)
+        }}
+      </button>
+    </ng-template>
+  </mat-dialog-actions>
+</div>

@@ -1,0 +1,153 @@
+$primary: #005f73;
+$secondary: #caf0f8;
+$danger: #b42318;
+
+.csv-dialog {
+  color: $primary;
+  min-width: min(78vw, 360px);
+
+  h2 {
+    color: $primary;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0;
+    padding: 0.35rem 0 0.75rem;
+    text-align: center;
+  }
+}
+
+mat-dialog-content {
+  padding: 0;
+}
+
+.type-switch {
+  display: grid;
+  gap: 0.45rem;
+  grid-template-columns: 1fr;
+  margin-bottom: 0.75rem;
+
+  button {
+    background: #fff;
+    border: 1px solid rgba(0, 95, 115, 0.34);
+    border-radius: 0.55rem;
+    color: $primary;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+    min-height: 2.5rem;
+    padding: 0.55rem 0.7rem;
+
+    &.active {
+      background: $primary;
+      border-color: $primary;
+      color: #fff;
+    }
+  }
+}
+
+.upload-area {
+  align-items: center;
+  border: 2px dashed rgba(0, 95, 115, 0.34);
+  border-radius: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 1.35rem 1rem;
+  text-align: center;
+  transition: background-color 0.2s, border-color 0.2s;
+
+  &:hover {
+    background-color: rgba(202, 240, 248, 0.35);
+    border-color: $primary;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.dialog-icon {
+  align-items: center;
+  background: $secondary;
+  border-radius: 50%;
+  color: $primary !important;
+  display: inline-flex;
+  height: 3rem;
+  justify-content: center;
+  width: 3rem;
+
+  &.mat-icon {
+    color: $primary !important;
+  }
+}
+
+.file-name {
+  align-items: center;
+  color: $primary;
+  display: flex;
+  font-weight: 700;
+  gap: 0.5rem;
+  justify-content: center;
+  overflow-wrap: anywhere;
+
+  mat-icon {
+    color: $primary;
+  }
+}
+
+.error-message {
+  align-items: center;
+  background: rgba(180, 35, 24, 0.08);
+  border: 1px solid rgba(180, 35, 24, 0.22);
+  border-radius: 0.65rem;
+  color: $danger;
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.55rem;
+  margin-top: 1rem;
+  padding: 0;
+}
+
+.btn-secondary,
+.btn-primary {
+  border-radius: 0.65rem;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  padding: 0.7rem 0.9rem;
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.65;
+  }
+}
+
+.btn-secondary {
+  background: #fff;
+  border: 1px solid $primary;
+  color: $primary;
+}
+
+.btn-primary {
+  background: $primary;
+  border: 1px solid $primary;
+  color: #fff;
+}
+
+@media (min-width: 640px) {
+  .type-switch {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .actions {
+    grid-template-columns: 1fr 1fr;
+  }
+}

@@ -1,0 +1,367 @@
+package com.capitally.app.service;
+
+import com.capitally.app.core.entity.AccountEntity;
+import com.capitally.app.core.entity.TransactionEntity;
+import com.capitally.app.core.entity.view.MonthlyTransactionReportView;
+import com.capitally.app.core.enums.TransactionTypeEnum;
+import com.capitally.app.core.repository.AccountRepository;
+import com.capitally.app.core.repository.MonthlyTransactionReportViewRepository;
+import com.capitally.app.core.repository.TransactionRepository;
+import com.capitally.app.model.MonthlyTotalDTO;
+import com.capitally.app.model.response.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class DashboardService {
+
+    private final MonthlyTransactionReportViewRepository reportRepository;
+    private final AccountRepository accountRepository;
+    private final TransactionRepository transactionRepository;
+
+    public TransactionsSummaryResponseDTO getTransactionsSummary(BigInteger userId, LocalDate startDate, LocalDate endDate) {
+        String startMonth = startDate.format(DateTimeFormatter.ofPattern("yyyy-MM"));
+        String endMonth = endDate.format(DateTimeFormatter.ofPattern("yyyy-MM"));
+
+        List<MonthlyTransactionReportView> reports = reportRepository
+                .findByIdUserIdAndIdMonthBetween(userId, startMonth, endMonth);
+
+        List<MonthlyTotalDTO> income = reports.stream()
+                .filter(r -> "Income".equalsIgnoreCase(r.getId().getTransactionType()))
+                .map(r -> new MonthlyTotalDTO(r.getId().getMonth(), r.getTotal()))
+                .toList();
+
+        List<MonthlyTotalDTO> expenses = reports.stream()
+                .filter(r -> "Expense".equalsIgnoreCase(r.getId().getTransactionType()))
+                .map(r -> new MonthlyTotalDTO(r.getId().getMonth(), r.getTotal()))
+                .toList();
+
+        return new TransactionsSummaryResponseDTO(income, expenses);
+    }
+
+    public List<CurrentBalanceResponseDTO> getCurrentBalancePerCurrency(BigInteger userId) {
+        return toCurrentBalancePerCurrency(getIncludedAccountBalances(userId));
+    }
+
+    public List<AccountBalanceResponseDTO> getCurrentAccountBalances(BigInteger userId) {
+        return toCurrentAccountBalanceResponses(getIncludedAccountBalances(userId));
+    }
+
+    private List<CurrentBalanceResponseDTO> toCurrentBalancePerCurrency(List<AccountBalances> includedAccountBalances) {
+        Map<String, BigDecimal> balancePerCurrency = new HashMap<>();
+
+        for (AccountBalances accountBalances : includedAccountBalances) {
+            for (Map.Entry<String, BigDecimal> entry : accountBalances.balances().entrySet()) {
+                balancePerCurrency.merge(entry.getKey(), entry.getValue(), BigDecimal::add);
+            }
+        }
+
+        return balancePerCurrency.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .map(entry -> new CurrentBalanceResponseDTO(entry.getKey(), entry.getValue()))
+                .toList();
+    }
+
+    private List<AccountBalanceResponseDTO> toCurrentAccountBalanceResponses(List<AccountBalances> includedAccountBalances) {
+        return includedAccountBalances.stream()
+                .flatMap(accountBalances -> accountBalances.balances().entrySet().stream()
+                        .filter(entry -> entry.getValue().compareTo(BigDecimal.ZERO) != 0)
+                        .map(entry -> new AccountBalanceResponseDTO(
+                                accountBalances.account().getId(),
+                                accountBalances.account().getName(),
+                                accountBalances.account().getIconName(),
+                                entry.getKey(),
+                                entry.getValue()
+                        ))
+                )
+                .sorted(Comparator
+                        .comparing(AccountBalanceResponseDTO::getAccountName, String.CASE_INSENSITIVE_ORDER)
+                        .thenComparing(AccountBalanceResponseDTO::getCurrency))
+                .toList();
+    }
+
+    public List<BalanceTrendPerCurrencyResponseDTO> getBalanceTrendPerCurrency(BigInteger userId, LocalDate startDate, LocalDate endDate) {
+        List<AccountEntity> userAccounts = accountRepository.findByUserId(userId).stream()
+                .filter(this::isIncludedInTotalBalance)
+                .toList();
+
+        Map<String, Map<String, BigDecimal>> monthlyCurrencyMovements = new TreeMap<>();
+
+        for (AccountEntity account : userAccounts) {
+            BigDecimal initialBalance = Optional.ofNullable(account.getInitialBalance()).orElse(BigDecimal.ZERO);
+            LocalDate createdAt = Optional.ofNullable(account.getCreatedAt()).map(LocalDateTime::toLocalDate).orElse(startDate);
+            String creationMonth = YearMonth.from(createdAt).toString();
+
+            List<TransactionEntity> transactions = transactionRepository.findAllByAccountId(account.getId());
+
+            Optional.ofNullable(account.getCurrencyInitialBalance())
+                    .map(currency -> currency.getCode())
+                    .ifPresent(currency -> monthlyCurrencyMovements
+                            .computeIfAbsent(creationMonth, m -> new HashMap<>())
+                            .merge(currency, initialBalance, BigDecimal::add));
+
+            for (TransactionEntity t : transactions) {
+                LocalDate date = t.getDate();
+                if (date == null || date.isBefore(startDate) || date.isAfter(endDate)) continue;
+
+                String currency = t.getCurrency().getCode();
+                String month = YearMonth.from(date).toString();
+                BigDecimal signedAmount = TransactionTypeEnum.EXPENSE.equals(t.getTransactionType())
+                        ? t.getAmount().negate()
+                        : t.getAmount();
+
+                monthlyCurrencyMovements
+                        .computeIfAbsent(month, m -> new HashMap<>())
+                        .merge(currency, signedAmount, BigDecimal::add);
+            }
+        }
+
+        LocalDate today = LocalDate.now();
+        LocalDate maxEnd = endDate.isAfter(today) ? today : endDate;
+        List<String> allMonths = getAllMonthsBetween(startDate, maxEnd);
+
+        Set<String> allCurrencies = monthlyCurrencyMovements.values().stream()
+                .flatMap(m -> m.keySet().stream())
+                .collect(Collectors.toSet());
+
+        Map<String, BigDecimal> runningPerCurrency = new HashMap<>();
+        List<BalanceTrendPerCurrencyResponseDTO> result = new ArrayList<>();
+
+        for (String month : allMonths) {
+            Map<String, BigDecimal> currentMovements = monthlyCurrencyMovements.getOrDefault(month, Collections.emptyMap());
+
+            for (String currency : allCurrencies) {
+                BigDecimal movement = currentMovements.getOrDefault(currency, BigDecimal.ZERO);
+                BigDecimal updated = runningPerCurrency.getOrDefault(currency, BigDecimal.ZERO).add(movement);
+                runningPerCurrency.put(currency, updated);
+                result.add(new BalanceTrendPerCurrencyResponseDTO(month, currency, updated));
+            }
+        }
+
+        return result;
+    }
+
+    private List<String> getAllMonthsBetween(LocalDate start, LocalDate end) {
+        List<String> months = new ArrayList<>();
+        YearMonth current = YearMonth.from(start);
+        YearMonth endMonth = YearMonth.from(end);
+
+        while (!current.isAfter(endMonth)) {
+            months.add(current.toString());
+            current = current.plusMonths(1);
+        }
+
+        return months;
+    }
+
+    public List<IncomeExpenseBreakdownResponseDTO> getIncomeExpenseBreakdown(
+            BigInteger userId,
+            LocalDate startDate,
+            LocalDate endDate,
+            TransactionTypeEnum transactionType) {
+
+        List<TransactionEntity> txs = transactionRepository.findByUserIdAndDateBetween(userId, startDate, endDate);
+
+        Map<TransactionTypeEnum, Map<String, Map<String, BigDecimal>>> totals = new EnumMap<>(TransactionTypeEnum.class);
+
+        for (TransactionEntity t : txs) {
+            if (isTransfer(t)) continue;
+
+            TransactionTypeEnum type = t.getTransactionType();
+            if (transactionType != null && type != transactionType) continue;
+
+            String macro = t.getCategory().getMacroCategory();
+            String currency = t.getCurrency().getCode();
+            BigDecimal amount = t.getAmount() != null ? t.getAmount() : BigDecimal.ZERO;
+
+            totals
+                      .computeIfAbsent(type, k -> new HashMap<>())
+                    .computeIfAbsent(macro, k -> new HashMap<>())
+                    .merge(currency, amount, BigDecimal::add);
+        }
+
+        return totals.entrySet().stream()
+                .flatMap(typeEntry -> typeEntry.getValue().entrySet().stream()
+                        .flatMap(macroEntry -> macroEntry.getValue().entrySet().stream()
+                                .map(currEntry -> new IncomeExpenseBreakdownResponseDTO(
+                                        typeEntry.getKey(),
+                                        macroEntry.getKey(),
+                                        currEntry.getKey(),
+                                        currEntry.getValue()))
+                        )
+                )
+                .sorted(Comparator
+                        .comparing(IncomeExpenseBreakdownResponseDTO::getTransactionType)
+                        .thenComparing(IncomeExpenseBreakdownResponseDTO::getMacroCategory)
+                        .thenComparing(IncomeExpenseBreakdownResponseDTO::getCurrency))
+                .toList();
+    }
+
+    public List<AnnualIncomeExpenseResponseDTO> getAnnualIncomeExpense(
+            BigInteger userId,
+            LocalDate startDate,
+            LocalDate endDate) {
+
+        List<TransactionEntity> transactions = transactionRepository.findByUserIdAndDateBetween(userId, startDate, endDate);
+        Map<String, AnnualIncomeExpenseResponseDTO> totalsByMonthAndCurrency = new TreeMap<>();
+
+        for (TransactionEntity tx : transactions) {
+            if (isTransfer(tx) || tx.getDate() == null || tx.getCurrency() == null) continue;
+
+            String month = YearMonth.from(tx.getDate()).toString();
+            String currency = tx.getCurrency().getCode();
+            String key = month + "|" + currency;
+            BigDecimal amount = Optional.ofNullable(tx.getAmount()).orElse(BigDecimal.ZERO);
+
+            AnnualIncomeExpenseResponseDTO row = totalsByMonthAndCurrency.computeIfAbsent(
+                    key,
+                    ignored -> new AnnualIncomeExpenseResponseDTO(month, currency, BigDecimal.ZERO, BigDecimal.ZERO)
+            );
+
+            switch (tx.getTransactionType()) {
+                case INCOME -> row.setIncome(row.getIncome().add(amount));
+                case EXPENSE -> row.setExpense(row.getExpense().add(amount));
+            }
+        }
+
+        return totalsByMonthAndCurrency.values().stream()
+                .sorted(Comparator
+                        .comparing(AnnualIncomeExpenseResponseDTO::getMonth)
+                        .thenComparing(AnnualIncomeExpenseResponseDTO::getCurrency))
+                .toList();
+    }
+
+    public List<UpcomingRecurringTransactionResponseDTO> getUpcomingRecurringTransactions(
+            BigInteger userId, LocalDate untilDate) {
+
+        List<TransactionEntity> recurring = transactionRepository.findByUserIdAndIsRecurringTrue(userId);
+        LocalDate today = LocalDate.now();
+
+        return recurring.stream()
+                .filter(tx -> tx.getDate() != null && !tx.getDate().isAfter(untilDate))
+                .filter(tx -> tx.getRecurrencePeriod() != null)
+                .flatMap(tx -> {
+                    List<UpcomingRecurringTransactionResponseDTO> occurrences = new ArrayList<>();
+                    LocalDate next = tx.getDate();
+                    Period step = tx.getRecurrencePeriod().step();
+
+                    LocalDate end = Optional.ofNullable(tx.getRecurrenceEndDate())
+                            .filter(d -> d.isBefore(untilDate))
+                            .orElse(untilDate);
+
+                    while (!next.isAfter(end)) {
+                        if (!next.isBefore(today)) {
+                            occurrences.add(new UpcomingRecurringTransactionResponseDTO(
+                                    tx.getDescription(),
+                                    tx.getAmount(),
+                                    tx.getCurrency().getCode(),
+                                    next,
+                                    tx.getRecurrencePeriod(),
+                                    tx.getCategory() != null ? tx.getCategory().getCategory() : null,
+                                    tx.getAccount().getName(),
+                                    tx.getTransactionType()
+                            ));
+                        }
+                        next = next.plus(step);
+                    }
+
+                    return occurrences.stream();
+                })
+                .sorted(Comparator
+                        .comparing(UpcomingRecurringTransactionResponseDTO::getNextDate)
+                        .thenComparing(
+                                UpcomingRecurringTransactionResponseDTO::getDescription,
+                                Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)
+                        ))
+                .toList();
+    }
+
+    public DashboardOverviewResponseDTO getDashboardOverview(BigInteger userId) {
+        YearMonth currentMonth = YearMonth.now();
+        LocalDate startOfMonth = currentMonth.atDay(1);
+        LocalDate endOfMonth = currentMonth.atEndOfMonth();
+
+        List<AccountBalances> includedAccountBalances = getIncludedAccountBalances(userId);
+        List<CurrentBalanceResponseDTO> balances = toCurrentBalancePerCurrency(includedAccountBalances);
+        Map<String, BigDecimal> totalBalance = balances.stream()
+                .collect(Collectors.toMap(
+                        CurrentBalanceResponseDTO::getCurrency,
+                        CurrentBalanceResponseDTO::getTotalBalance,
+                        BigDecimal::add
+                ));
+
+        List<TransactionEntity> transactions = transactionRepository.findByUserIdAndDateBetween(userId, startOfMonth, endOfMonth);
+        Map<String, BigDecimal> totalIncome = new HashMap<>();
+        Map<String, BigDecimal> totalExpense = new HashMap<>();
+
+        for (TransactionEntity tx : transactions) {
+            if (isTransfer(tx)) continue;
+
+            Map<String, BigDecimal> target = switch (tx.getTransactionType()) {
+                case INCOME -> totalIncome;
+                case EXPENSE -> totalExpense;
+            };
+            target.merge(tx.getCurrency().getCode(), tx.getAmount(), BigDecimal::add);
+        }
+
+        int recurringCount = getUpcomingRecurringTransactions(userId, endOfMonth).size();
+
+        return new DashboardOverviewResponseDTO(
+                totalBalance,
+                toCurrentAccountBalanceResponses(includedAccountBalances),
+                totalIncome,
+                totalExpense,
+                recurringCount
+        );
+    }
+
+    private List<AccountBalances> getIncludedAccountBalances(BigInteger userId) {
+        return accountRepository.findByUserId(userId).stream()
+                .filter(this::isIncludedInTotalBalance)
+                .map(account -> new AccountBalances(account, calculateAccountBalances(account)))
+                .toList();
+    }
+
+    private Map<String, BigDecimal> calculateAccountBalances(AccountEntity account) {
+        Map<String, BigDecimal> balances = new HashMap<>();
+        BigDecimal initialBalance = Optional.ofNullable(account.getInitialBalance()).orElse(BigDecimal.ZERO);
+
+        Optional.ofNullable(account.getCurrencyInitialBalance())
+                .map(currency -> currency.getCode())
+                .ifPresent(currency -> balances.merge(currency, initialBalance, BigDecimal::add));
+
+        Map<String, BigDecimal> transactionSumsByCurrency = transactionRepository.findAllByAccountId(account.getId()).stream()
+                .collect(Collectors.groupingBy(
+                        t -> t.getCurrency().getCode(),
+                        Collectors.reducing(BigDecimal.ZERO, t -> {
+                            BigDecimal amount = Optional.ofNullable(t.getAmount()).orElse(BigDecimal.ZERO);
+                            return TransactionTypeEnum.EXPENSE.equals(t.getTransactionType()) ? amount.negate() : amount;
+                        }, BigDecimal::add)
+                ));
+
+        for (Map.Entry<String, BigDecimal> entry : transactionSumsByCurrency.entrySet()) {
+            balances.merge(entry.getKey(), entry.getValue(), BigDecimal::add);
+        }
+
+        return balances;
+    }
+
+    private boolean isIncludedInTotalBalance(AccountEntity account) {
+        return !Boolean.FALSE.equals(account.getIncludeInTotalBalance());
+    }
+
+    private boolean isTransfer(TransactionEntity transaction) {
+        return transaction.getTransferGroupId() != null && !transaction.getTransferGroupId().isBlank();
+    }
+
+    private record AccountBalances(AccountEntity account, Map<String, BigDecimal> balances) {}
+
+}

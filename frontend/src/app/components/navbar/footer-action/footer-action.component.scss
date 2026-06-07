@@ -1,0 +1,82 @@
+.footer-action {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  &.active .icon {
+    background: radial-gradient(circle at center, #0d3340 0%, #005f73 58%, rgba(79, 209, 197, 0.7) 100%);
+    box-shadow: 0 0 18px rgba(79, 209, 197, 0.72);
+    color: #ffffff;
+  }
+}
+
+/* Icona FAB */
+.icon {
+  width: 56px;
+  height: 56px;
+  background-color: #005f73;
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+
+  mat-icon {
+    font-size: 24px;
+  }
+}
+
+/* Label */
+.label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* ---------------- MOBILE ---------------- */
+@media (max-width: 1023px) {
+
+  .footer-action {
+    justify-content: center;
+  }
+
+  .label {
+    display: none;
+  }
+
+  .icon {
+    background-color: transparent;
+    //border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: none;
+  }
+
+  .footer-action.active .icon {
+    color: #ffffff;
+    text-shadow: 0 0 12px rgba(79, 209, 197, 0.9);
+  }
+}
+
+/* ---------------- DESKTOP ---------------- */
+@media (min-width: 1024px) {
+
+  .footer-action {
+    padding: 0.75rem 1rem 0.75rem 0.75rem;
+  }
+
+  .icon {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  .footer-action:hover .icon {
+    box-shadow: 0 0 18px rgba(79, 209, 197, 0.58);
+    color: #ffffff;
+  }
+
+  .label {
+    color: #ffffff;
+  }
+}

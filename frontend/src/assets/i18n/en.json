@@ -1,0 +1,677 @@
+{
+  "APP": {
+    "TITLE": "Capitally"
+  },
+  "PWA": {
+    "UPDATE_AVAILABLE": "A new version of Capitally is available. Reload now?"
+  },
+  "INSTALL_PAGE": {
+    "EYEBROW": "Installable app",
+    "TITLE": "Install Capitally on your device",
+    "SUBTITLE": "Capitally can be used as an installable app on desktop, Android and iOS. The experience stays the same as the web app, with faster access from your home screen or application menu.",
+    "ACTION": "Install app",
+    "BACK_HOME": "Back to home",
+    "BACK_PREVIOUS": "Back to previous page",
+    "ANDROID": {
+      "TITLE": "Android",
+      "TEXT": "Open Capitally in Chrome and use the install button when available, or choose Add to Home screen from the browser menu."
+    },
+    "IOS": {
+      "TITLE": "iPhone and iPad",
+      "TEXT": "Open Capitally in Safari, tap Share and choose Add to Home Screen. iOS does not always show an automatic prompt."
+    },
+    "DESKTOP": {
+      "TITLE": "Desktop",
+      "TEXT": "On compatible browsers you can install Capitally from the address bar or browser menu, then open it as a standalone window."
+    }
+  },
+  "NOT_FOUND": {
+    "EYEBROW": "404 error",
+    "TITLE": "Page not found",
+    "TEXT": "The requested page does not exist or is no longer available.",
+    "ACTION": "Back to home"
+  },
+  "NAV": {
+    "HOME": "Home",
+    "ACCOUNTS": "Accounts",
+    "ADD_TRANSACTION": "New Transaction",
+    "SUMMARY": "Summary",
+    "SETTINGS": "Settings"
+  },
+  "BUTTON_CLOSE": "Close",
+  "BUTTON_NEW": "New",
+  "BUTTON_MODIFY": "Modify",
+  "BUTTON_SAVE": "Save Changes",
+  "BUTTON_CREATE": "Create",
+  "BUTTON_DELETE": "Delete",
+  "BUTTON_CANCEL": "Cancel",
+  "SEARCH": "Search...",
+  "UNDONE_OPERATION": "This action cannot be undone.",
+  "GUEST_ALERT": {
+    "TITLE": "Limited access",
+    "MESSAGE": "This operation is not available for guest users.",
+    "LOGIN_HINT": "Sign in to unlock all features.",
+    "LOGIN": "Sign in"
+  },
+  "LOGIN_PAGE": {
+    "LOGIN": {
+      "TITLE": "Welcome back!",
+      "EMAIL_USERNAME": "Email or Username",
+      "SUBMIT": "Sign in",
+      "SIGN_UP": "Don't have an account? Sign up!",
+      "ERROR": "Login failed"
+    },
+    "FORGOT": {
+      "ACTION": "Forgot password?",
+      "USERNAME_EMAIL": "Email or Username",
+      "SUBMIT": "Send new password",
+      "REQUIRED": "Enter email or username",
+      "SUCCESS": "If the account exists, you will receive an email with a temporary password. After signing in, you can change it in Settings.",
+      "ERROR": "Unable to send the new password. Try again later.",
+      "DAILY_LIMIT_ERROR": "We have reached the daily email limit for password recovery. Try again tomorrow.",
+      "MONTHLY_LIMIT_ERROR": "We have reached the monthly email limit for password recovery. Try again later or contact support."
+    },
+    "REGISTER": {
+      "TITLE": "Welcome!",
+      "USERNAME": "Username",
+      "EMAIL": "Email",
+      "EMAIL_INVALID_ERROR": "Enter a valid email address",
+      "PASSWORD_MIN_ERROR": "Password must be at least 6 characters long",
+      "SUBMIT": "Sign up",
+      "SIGN_IN": "Already have an account? Sign in",
+      "ERROR": "Registration failed",
+      "USER_TAKEN_ERROR": "Username already used",
+      "EMAIL_TAKEN_ERROR": "Email already used",
+      "LEGAL_PREFIX": "I confirm that I have read and accept",
+      "LEGAL_AND": "and",
+      "LEGAL_REQUIRED_ERROR": "You must accept the Terms and Privacy Policy to sign up"
+    },
+    "LEGAL": {
+      "TERMS": "Terms and Conditions",
+      "PRIVACY": "Privacy Policy",
+      "COOKIES": "Cookie Policy",
+      "INSTALL_APP": "Install app",
+      "PRIVACY_PREFERENCES": "Privacy preferences"
+    },
+    "PASSWORD": "Password",
+    "GUEST": "Enter as Guest",
+    "GUEST_ERROR": "Guest login failed"
+  },
+  "WELCOME_PAGE": {
+    "HERO": {
+      "EYEBROW": "One simple question",
+      "TITLE": "Capitally",
+      "SUBTITLE": "Capitally turns your transactions into charts, statistics and insights that are simple to read.",
+      "GUEST_HINT": "Try guest mode right away: explore dashboards, accounts, transactions and summaries with demo data, without creating an account.",
+      "QUESTIONS": {
+        "MONTHLY_SPEND": "Do you really know how much you spend every month?",
+        "ACCOUNT_WEIGHT": "Which account weighs most on your balance?",
+        "SAVINGS": "How much are you actually saving?",
+        "EXPENSES_DESTINATION": "Where do your expenses go?"
+      },
+      "SLIDES": {
+        "DASHBOARD": {
+          "TITLE": "Complete dashboard",
+          "SUBTITLE": "Balance, trends and activity at a glance.",
+          "TREND": "Total balance"
+        },
+        "ACCOUNTS": {
+          "TITLE": "Accounts and transfers",
+          "SUBTITLE": "Organize balances, currencies and moves between accounts.",
+          "TREND": "connected accounts"
+        },
+        "TRANSACTIONS": {
+          "TITLE": "Live transactions",
+          "SUBTITLE": "Every expense immediately updates categories and stats.",
+          "TREND": "transactions this week"
+        },
+        "SUMMARY": {
+          "TITLE": "Clear insights",
+          "SUBTITLE": "See where you improve and where the budget slips.",
+          "TREND": "saving versus last month"
+        }
+      },
+      "TRANSACTIONS": {
+        "SALARY": "Salary",
+        "RENT": "Rent",
+        "GROCERIES": "Groceries",
+        "CURRENT_ACCOUNT": "Current account",
+        "SAVINGS_ACCOUNT": "Savings",
+        "CARD_ACCOUNT": "Card",
+        "RESTAURANT": "Restaurant",
+        "SUBSCRIPTION": "Subscription",
+        "TRANSFER": "Transfer",
+        "PHARMACY": "Pharmacy",
+        "FUEL": "Fuel",
+        "FREELANCE": "Freelance"
+      },
+      "ACCOUNT_MOCK": {
+        "MAIN": "Current account",
+        "SAVINGS": "Savings",
+        "TRANSFER_FROM": "Card",
+        "TRANSFER_TO": "Savings"
+      }
+    },
+    "ACTIONS": {
+      "GUEST": "Try as guest",
+      "TRY_GUEST": "Open guest mode",
+      "CREATE_ACCOUNT": "Create account",
+      "LOGIN": "Sign in"
+    },
+    "HIGHLIGHTS": {
+      "CONTROL": {
+        "VALUE": "1 view",
+        "LABEL": "for balance, activity and trends"
+      },
+      "TRENDS": {
+        "VALUE": "12 months",
+        "LABEL": "of income and expense trends"
+      },
+      "GUEST": {
+        "VALUE": "0 setup",
+        "LABEL": "to explore with demo data"
+      }
+    },
+    "PRODUCT": {
+      "EYEBROW": "Beyond the dashboard",
+      "TITLE": "Tools to decide earlier",
+      "TEXT": "Capitally does not only show what already happened: it helps you plan recurring activity, control budgets, move money between accounts and import data without losing structure.",
+      "WORKSPACE": {
+        "LABEL": "Workspace",
+        "TITLE": "Planning, control and data"
+      },
+      "CARDS": {
+        "RECURRING": {
+          "TITLE": "Recurring",
+          "TEXT": "See rent, subscriptions and repeated payments before they arrive."
+        },
+        "BUDGET": {
+          "TITLE": "Budget",
+          "TEXT": "Track monthly progress and understand when you are crossing limits."
+        },
+        "IMPORT": {
+          "TITLE": "CSV import",
+          "TEXT": "Bring in existing data and keep a consistent history without retyping everything."
+        },
+        "TRANSFERS": {
+          "TITLE": "Transfers",
+          "TEXT": "Move money between accounts without confusing income, expenses and real balance."
+        }
+      },
+      "MOCK": {
+        "RENT": "Rent",
+        "SUBSCRIPTION": "Subscription",
+        "READY": "Ready",
+        "CARD": "Card",
+        "SAVINGS": "Savings"
+      }
+    },
+    "DEMO": {
+      "MONTH": "Current month",
+      "SALARY": "Salary",
+      "RENT": "Rent",
+      "FOOD": "Groceries"
+    },
+    "FEATURES": {
+      "EYEBROW": "Features",
+      "TITLE": "Everything you need to track better",
+      "SUBTITLE": "From the first transaction to the yearly summary, Capitally keeps things organized without scattered spreadsheets or manual calculations.",
+      "ACCOUNTS": {
+        "TITLE": "Accounts and currencies",
+        "TEXT": "Manage different accounts, initial balances and currencies, including or excluding what should not affect your total balance."
+      },
+      "TRANSACTIONS": {
+        "TITLE": "Income and expenses",
+        "TEXT": "Record activity with category, account, date, description and amount so every financial choice can be understood later."
+      },
+      "TRANSFERS": {
+        "TITLE": "Transfers",
+        "TEXT": "Move money between accounts without distorting income and expenses, while keeping a clean transfer history."
+      },
+      "RECURRING": {
+        "TITLE": "Recurring activity",
+        "TEXT": "Set repeated payments and see what is coming next, from rent and subscriptions to installments and salary."
+      },
+      "INSIGHTS": {
+        "TITLE": "Summaries and trends",
+        "TEXT": "Filter periods, categories and accounts, then analyze balance, average expenses, top categories and income versus expenses."
+      },
+      "IMPORT_EXPORT": {
+        "TITLE": "CSV import and export",
+        "TEXT": "Import existing data or export transactions, transfers and accounts to keep an organized copy of your information."
+      }
+    },
+    "FLOW": {
+      "EYEBROW": "Try it now",
+      "TITLE": "From curiosity to clarity in minutes",
+      "TEXT": "Guest mode lets you explore the full experience with demo data. When you are ready, create your account and start building your real financial history.",
+      "STEP_1": {
+        "TITLE": "Enter as guest",
+        "TEXT": "Open Capitally with ready-made demo data, no registration and no initial setup."
+      },
+      "STEP_2": {
+        "TITLE": "Explore the visuals",
+        "TEXT": "Move through dashboards, charts, categories, accounts and summaries to see how your habits become easier to read."
+      },
+      "STEP_3": {
+        "TITLE": "Switch to your data",
+        "TEXT": "Create an account when you want to save real transactions, recurring activity, accounts and preferences."
+      }
+    }
+  },
+  "FORM": {
+    "AMOUNT": "Amount",
+    "CURRENCY": "Currency",
+    "ACCOUNT": "Account",
+    "TYPE": {
+      "INCOME": "Income",
+      "EXPENSE": "Expense"
+    },
+    "CATEGORY": "Category",
+    "MACROCATEGORY": "Macro Category",
+    "DATE": "Date",
+    "TODAY": "Today",
+    "YESTERDAY": "Yesterday",
+    "DESCRIPTION": "Description",
+    "NO_CURRENCIES_FOUND": "No currencies found",
+    "WEEK_DAYS": [
+      "Mo",
+      "Tu",
+      "We",
+      "Th",
+      "Fr",
+      "Sa",
+      "Su"
+    ],
+    "DELETE_CATEGORY": {
+      "TITLE": "Confirm deletion",
+      "TEXT": "Are you sure you want to delete this category?"
+    },
+    "RECURRING": {
+      "LABEL": "Recurring transaction",
+      "PERIOD": "Frequency",
+      "COUNT": "Frequency of periods",
+      "END_DATE": "Recurrence end",
+      "WEEKLY": "Weekly",
+      "MONTHLY": "Monthly",
+      "YEARLY": "Yearly",
+      "DAILY": "Daily",
+      "TWO_DAYS": "Every 2 days",
+      "TEN_DAYS": "Every 10 days",
+      "TWELVE_DAYS": "Every 12 days",
+      "FIFTEEN_DAYS": "Every 15 days",
+      "THIRTY_DAYS": "Every 30 days",
+      "THIRTY_ONE_DAYS": "Every 31 days",
+      "TWO_WEEKS": "Every 2 weeks",
+      "FOUR_WEEKS": "Every 4 weeks",
+      "TWO_MONTHS": "Every 2 months",
+      "THREE_MONTHS": "Every 3 months",
+      "FOUR_MONTHS": "Every 4 months",
+      "SIX_MONTHS": "Every 6 months",
+      "TWO_YEARS": "Every 2 years"
+    },
+    "SUBMIT": "Save"
+  },
+  "CATEGORY": {
+    "SHOPPING": "Shopping",
+    "FOOD": "Restaurant",
+    "TRANSPORT": "Fuel",
+    "SUBSCRIPTIONS": "Spotify",
+    "SALARY": "Salary",
+    "TRAVEL": "Flights",
+    "HEALTH": "Pharmacy",
+    "OTHER": "Other"
+  },
+  "CATEGORY_MACRO": {
+    "SHOPPING": "Shopping",
+    "FOOD": "Food",
+    "TRANSPORT": "Transport",
+    "SUBSCRIPTIONS": "Subscriptions",
+    "SALARY": "Work",
+    "TRAVEL": "Travel",
+    "HEALTH": "Health"
+  },
+  "CATEGORY_SELECTION": {
+    "TITLE": "Select Category",
+    "SEARCH": "Search...",
+    "SELECT_CATEGORY_TO_MODIFY": "Select category to modify",
+    "SELECT_CATEGORY_TO_DELETE": "Select category to delete",
+    "CONFIRM_CATEGORY_TO_DELETE": "Are you sure to delete this category?",
+    "DUPLICATE_ALERT": {
+      "TITLE": "Existing Category!",
+      "MESSAGE": "There is already a category: ",
+      "MESSAGE_CHOISE": "Do you want to modify the existing one or cancel it?"
+    }
+  },
+  "TRANSACTION": {
+    "TITLE": "New Transaction",
+    "EDIT_TITLE": "Edit Transaction",
+    "UPDATE": "Update",
+    "RECENT_TRANSACTIONS_TITLE": "Recent Transactions"
+  },
+  "BALANCE": {
+    "BALANCE_TITLE": "Total Balance",
+    "ACCOUNTS_TITLE": "Accounts with balance"
+  },
+  "RECURRING": {
+    "UPCOMING_TITLE": "Upcoming recurring",
+    "NO_UPCOMING": "No upcoming recurring transactions"
+  },
+  "ACCOUNTS": {
+    "TITLE": "Accounts",
+    "TOTAL_LABEL": "Total Balance",
+    "EMPTY": "No accounts yet",
+    "EXCLUDED_BADGE": "Excluded from total balance",
+    "BACK": "Back",
+    "NEW_ACCOUNT": {
+      "TITLE": "New Account",
+      "ACTION": "New Account",
+      "ICON_LABEL": "Select Icon",
+      "NAME": "Account Name",
+      "NAME_PLACEHOLDER": "E.g. Current Account",
+      "INITIAL_BALANCE": "Initial Balance",
+      "CURRENCY": "Currency",
+      "EXCLUDE_TOTAL": "Exclude from total balance",
+      "SAVE": "Save"
+    },
+    "EDIT_ACCOUNT": {
+      "TITLE": "Edit Account",
+      "BALANCES_TITLE": "Total balance by currency",
+      "ADD_CURRENCY": "Add currency",
+      "CURRENCY": "Currency",
+      "TOTAL_BALANCE": "Total balance",
+      "SAVE": "Save",
+      "DELETE": "Delete account"
+    },
+    "DELETE_BLOCKED": {
+      "TITLE": "Account has transactions",
+      "MESSAGE": "This account has transactions. Before deleting it, delete those transactions or move them one by one to another account."
+    },
+    "TRANSFER": {
+      "TITLE": "New Transfer",
+      "EDIT_TITLE": "Edit Transfer",
+      "SUBTITLE": "Move money between your accounts simply and safely.",
+      "ACTION": "Transfer",
+      "FROM": "From",
+      "TO": "To",
+      "AMOUNT": "Amount",
+      "CURRENCY": "Currency",
+      "DATE": "Date",
+      "DESCRIPTION": "Reason (optional)",
+      "DESCRIPTION_PLACEHOLDER": "E.g. Transfer between accounts",
+      "SAME_ACCOUNT_ERROR": "Choose two different accounts.",
+      "CONFIRM": "Confirm",
+      "SAVE": "Save",
+      "DELETE": "Delete transfer"
+    },
+    "HISTORY": {
+      "TITLE": "Transfer History",
+      "ACTION": "Transfer History",
+      "PERIOD": "Period",
+      "PERIOD_1M": "Last month",
+      "PERIOD_3M": "Last 3 months",
+      "PERIOD_12M": "Last 12 months",
+      "PERIOD_ALL": "All",
+      "FILTERS": "Filters",
+      "EMPTY": "No transfers in the selected period"
+    }
+  },
+  "SUMMARY": {
+    "TITLE": "Summary",
+    "SUBTITLE": "Overview of transactions, balances and trends.",
+    "NEW_TRANSACTION": "New transaction",
+    "NEW_TRANSACTION_SHORT": "New",
+    "FILTERS": {
+      "TITLE": "Summary filters",
+      "TYPE": "Filter type",
+      "PERIOD": "Period",
+      "START_DATE": "From",
+      "END_DATE": "To",
+      "ACCOUNT": "Account",
+      "CATEGORY": "Category",
+      "SUBCATEGORY": "Subcategory",
+      "MIN_AMOUNT": "Minimum amount",
+      "MAX_AMOUNT": "Maximum amount",
+      "ALL_ACCOUNTS": "All accounts",
+      "ALL_CATEGORIES": "All categories",
+      "ALL_SUBCATEGORIES": "All subcategories",
+      "ACTIVE_COUNT": "Active filters: {{count}}",
+      "RESET": "Clear filters"
+    },
+    "EXPORT": {
+      "BUTTON": "Export",
+      "ALL": "Export all",
+      "FILTERED": "Export filtered",
+      "CONFIRM_FILTERED_OR_ALL": "Do you want to export all transactions or only the ones filtered in the summary?",
+      "CONFIRM_ALL": "No filters are active. Do you confirm exporting all transactions?",
+      "CONFIRM_EXPORT": "Confirm export"
+    },
+    "PERIOD": {
+      "ALL": "All",
+      "CURRENT_MONTH": "Current month",
+      "PREVIOUS_MONTH": "Previous month",
+      "LAST_3_MONTHS": "Last 3 months",
+      "CURRENT_YEAR": "Current year",
+      "LAST_YEAR": "Last year",
+      "TWO_YEARS_AGO": "Two years ago",
+      "CUSTOM": "Custom range"
+    },
+    "STATS": {
+      "TITLE": "Statistics",
+      "TOTAL_BALANCE": "Total balance",
+      "BALANCE_HINT": "Estimated balance at period end",
+      "INCOME": "Income",
+      "EXPENSE": "Expenses",
+      "NET": "Net",
+      "VS_PREVIOUS": "vs previous period",
+      "ALL_PERIODS": "Across all transactions",
+      "TOP_CATEGORY": "Top expense category",
+      "MOST_USED_ACCOUNT": "Most used account",
+      "AVG_DAILY_EXPENSE": "Average expenses",
+      "PER_DAY": "per day",
+      "TOTAL_TRANSACTIONS": "Transactions",
+      "TRANSACTIONS_COUNT": "transactions",
+      "NO_DATA": "No data"
+    },
+    "CHARTS": {
+      "CATEGORIES_TITLE": "Categories",
+      "ACCOUNTS_TITLE": "Account balances",
+      "ACCOUNTS_HINT": "Estimated distribution",
+      "INCOME_EXPENSE_TITLE": "Income vs expenses",
+      "INCOME": "Income",
+      "EXPENSE": "Expenses",
+      "NO_DATA": "No data for this period"
+    },
+    "CALENDAR": {
+      "TITLE": "Custom range calendar",
+      "PREV_YEAR": "Previous year",
+      "NEXT_YEAR": "Next year",
+      "PREV_MONTH": "Previous month",
+      "NEXT_MONTH": "Next month"
+    },
+    "TRANSACTIONS": {
+      "TITLE": "Transactions",
+      "VISIBLE_ITEMS": "results",
+      "SEARCH": "Search",
+      "SEARCH_PLACEHOLDER": "Description, category or account",
+      "LOAD_MORE": "Load more",
+      "EMPTY": "No transactions in the selected period",
+      "NO_DESCRIPTION": "Transaction without description",
+      "UNKNOWN_ACCOUNT": "Unknown account",
+      "NO_CATEGORY": "Uncategorized",
+      "TRANSFER": "Transfer"
+    }
+  },
+  "MONTHLY_SUMMARY": {
+    "MONTHLY_SUMMARY_TITLE": "Monthly Income / Expense",
+    "NO_DATA": "No Monthly Data"
+  },
+  "ANNUAL_INCOME_EXPENSE": {
+    "TITLE": "Yearly Income / Expense",
+    "INCOMES": "Incomes",
+    "EXPENSES": "Expenses",
+    "NO_DATA": "No yearly data"
+  },
+  "YEARLY_BALANCE_TREND": {
+    "MONTH_NAMES": [
+      "JAN",
+      "FEB",
+      "MAR",
+      "APR",
+      "MAY",
+      "JUN",
+      "JUL",
+      "AUG",
+      "SEP",
+      "OCT",
+      "NOV",
+      "DEC"
+    ],
+    "TITLE": "Yearly Balance Trend",
+    "ALL_CURRENCIES": "ALL"
+  },
+  "INCOME_EXPENSE_BREAKDOWN": {
+    "TITLE": "Categories Incomes / Expenses",
+    "INCOMES": "Incomes",
+    "EXPENSES": "Expenses",
+    "NO_INCOMES": "No incomes this month",
+    "NO_EXPENSES": "No expenses this month"
+  },
+  "SETTINGS": {
+    "TITLE": "Profile Settings",
+    "LANGUAGE": "Language",
+    "LOGOUT": "Logout",
+    "SECTIONS": {
+      "DATA": "Data",
+      "RESET_TITLE": "Reset data",
+      "CSV": "CSV",
+      "IMPORT_EXPORT_TITLE": "Import and export",
+      "PREFERENCES": "Preferences",
+      "DISPLAY_TITLE": "Display",
+      "SECURITY": "Security"
+    },
+    "PASSWORD": {
+      "TITLE": "Change password",
+      "ACTION": "Change password",
+      "CURRENT": "Current password",
+      "NEW": "New password",
+      "CONFIRM": "Repeat new password",
+      "SUBMIT": "Update password",
+      "SUCCESS": "Password updated successfully.",
+      "ERROR_REQUIRED": "Fill in all fields. The new password must be at least 6 characters long.",
+      "ERROR_MISMATCH": "The new passwords do not match.",
+      "ERROR_CURRENT": "The current password is not correct.",
+      "ERROR_GENERIC": "Unable to update the password. Try again."
+    },
+    "RESET": {
+      "TRANSACTIONS": "Delete transactions",
+      "CATEGORIES": "Delete all categories",
+      "ACCOUNTS": "Delete all accounts"
+    },
+    "TEMPLATE": {
+      "TRANSACTIONS": {
+        "TITLE": "Confirm transaction deletion",
+        "MESSAGE": "Are you sure you want to delete all your transactions?"
+      },
+      "CATEGORIES": {
+        "TITLE": "Confirm category deletion",
+        "MESSAGE": "Are you sure you want to delete all your categories?"
+      },
+      "ACCOUNTS": {
+        "TITLE": "Confirm account deletion",
+        "MESSAGE": "Are you sure you want to delete all your accounts?"
+      }
+    },
+    "TRANSACTION_DELETE": {
+      "TITLE": "Delete transactions",
+      "MESSAGE": "Choose whether to delete transactions for a specific account or all transactions.",
+      "SCOPE_LABEL": "Transaction deletion type",
+      "SCOPE_ACCOUNT": "By account",
+      "SCOPE_ALL": "All",
+      "ACCOUNT": "Account"
+    },
+    "ACCOUNT_DELETE_BLOCKED": {
+      "TITLE": "Accounts have transactions",
+      "MESSAGE": "One or more accounts have transactions. Before deleting accounts, delete those transactions or move them one by one to another account."
+    },
+    "ANALYTICS": {
+      "TITLE": "Product analytics",
+      "DESCRIPTION": "Share anonymous usage signals to help improve Capitally. No emails, tokens, descriptions or financial amounts are sent.",
+      "ENABLE": "Enable",
+      "DISABLE": "Disable"
+    },
+    "IMPORT_EXPORT": {
+      "FILE_TYPES": {
+        "TRANSACTIONS": "Transactions",
+        "TRANSFERS": "Transfers",
+        "ACCOUNTS": "Accounts"
+      },
+      "IMPORT": {
+        "TITLE": "Import transactions",
+        "DIALOG_TITLE": "Import CSV",
+        "TYPE_LABEL": "CSV file type",
+        "UPLOAD_FILE": "Select or drag the transactions CSV file here",
+        "UPLOAD_FILE_TRANSACTIONS": "Select or drag the transactions CSV file here",
+        "UPLOAD_FILE_TRANSFERS": "Select or drag the transfers CSV file here",
+        "UPLOAD_FILE_ACCOUNTS": "Select or drag the accounts CSV file here",
+        "IMPORT": "Import",
+        "FORMAT_ERROR": "The file must be in CSV format",
+        "HEADER_ERROR": "The CSV does not contain the expected columns for the selected type.",
+        "GENERIC_ERROR": "Unable to import the CSV. Check the file format and separator."
+      },
+      "EXPORT": {
+        "TITLE": "Export data",
+        "DIALOG_TITLE": "Export CSV",
+        "DESCRIPTION": "Set filters for transactions and transfers. The accounts file always exports every account.",
+        "FORM": {
+          "ACCOUNT": "Account",
+          "CURRENCY": "Currency",
+          "TRANSACTION_TYPE": "Transaction type",
+          "ALL_TYPES": "All types",
+          "DESCRIPTION": "Description",
+          "MACROCATEGORY": "Macro category",
+          "CATEGORY": "Category",
+          "MIN_AMOUNT": "Minimum amount",
+          "MAX_AMOUNT": "Maximum amount",
+          "START_DATE": "Start date",
+          "END_DATE": "End date",
+          "ERROR": {
+            "AMOUNT": "The minimum amount must be lower than the maximum amount",
+            "DATE": "The start date must be before the end date"
+          },
+          "EXPORTING": "Exporting",
+          "EXPORT": "Export",
+          "EXPORT_TRANSACTIONS": "Transactions",
+          "EXPORT_TRANSFERS": "Transfers",
+          "EXPORT_ACCOUNTS": "Accounts"
+        }
+      },
+      "TEMPLATE": {
+        "TITLE": "Download template",
+        "DIALOG_TITLE": "Download CSV template",
+        "DESCRIPTION": "Download the sample file with the correct columns for each import.",
+        "DOWNLOAD": "Download template",
+        "DOWNLOADING": "Downloading...",
+        "DOWNLOAD_TRANSACTIONS": "Transactions",
+        "DOWNLOAD_TRANSFERS": "Transfers",
+        "DOWNLOAD_ACCOUNTS": "Accounts"
+      },
+      "RESULT": {
+        "SUCCESS_TITLE": "Import completed",
+        "FAILED_TITLE": "Import failed",
+        "IMPORTED_PREFIX": "Imported",
+        "IMPORTED_MIDDLE": "transactions out of",
+        "IMPORTED_MIDDLE_TRANSACTIONS": "transactions out of",
+        "IMPORTED_MIDDLE_TRANSFERS": "transfers out of",
+        "IMPORTED_MIDDLE_ACCOUNTS": "accounts out of",
+        "IMPORTED_SUFFIX": "total rows.",
+        "NEW_ACCOUNTS": "New accounts added",
+        "NEW_CATEGORIES": "New categories added",
+        "ERRORS_TITLE": "Errors found ({{count}})",
+        "ROW": "Row",
+        "FIELD": "Field",
+        "VALUE": "Value"
+      }
+    }
+  }
+}

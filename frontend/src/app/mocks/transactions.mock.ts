@@ -1,0 +1,22 @@
+export const transactionsMock = [
+  { id: 25, userId: 1, accountId: 2, amount: 15.00, currencyCode: 'EUR', date: '2025-11-24', description: 'Benzina', categoryId: 1, transactionType: 'EXPENSE', isRecurring: false, recurrencePeriod: null, recurrenceEndDate: null },
+  { id: 24, userId: 1, accountId: 3, amount: 2000.00, currencyCode: 'EUR', date: '2025-09-18', description: 'Stipendio settembre', categoryId: 2, transactionType: 'INCOME', isRecurring: false, recurrencePeriod: null, recurrenceEndDate: null },
+  { id: 23, userId: 1, accountId: 2, amount: 20.95, currencyCode: 'EUR', date: '2025-09-01', description: 'Abbonamento ChatGPT Plus', categoryId: 36, transactionType: 'EXPENSE', isRecurring: false, recurrencePeriod: null, recurrenceEndDate: null },
+  { id: 22, userId: 1, accountId: 2, amount: 5.00, currencyCode: 'EUR', date: '2025-08-29', description: 'Betflag', categoryId: 27, transactionType: 'EXPENSE', isRecurring: false, recurrencePeriod: null, recurrenceEndDate: null },
+  { id: 18, userId: 1, accountId: 5, amount: 150.00, currencyCode: 'USD', date: '2025-08-18', description: 'Rimborso spese USA', categoryId: 35, transactionType: 'INCOME', isRecurring: false, recurrencePeriod: null, recurrenceEndDate: null },
+  { id: 17, userId: 1, accountId: 5, amount: 25.00, currencyCode: 'USD', date: '2025-08-17', description: 'Marshall', categoryId: 5, transactionType: 'EXPENSE', isRecurring: false, recurrencePeriod: null, recurrenceEndDate: null },
+  { id: 15, userId: 1, accountId: 3, amount: 50.00, currencyCode: 'EUR', date: '2025-08-08', description: 'Benzina Q8', categoryId: 1, transactionType: 'EXPENSE', isRecurring: false, recurrencePeriod: null, recurrenceEndDate: null },
+  { id: 16, userId: 1, accountId: 4, amount: 2000.00, currencyCode: 'EUR', date: '2025-08-08', description: 'Stipendio Agosto', categoryId: 2, transactionType: 'INCOME', isRecurring: false, recurrencePeriod: null, recurrenceEndDate: null },
+  { id: 14, userId: 1, accountId: 2, amount: 15.00, currencyCode: 'EUR', date: '2025-08-06', description: 'Spotify Premium', categoryId: 3, transactionType: 'EXPENSE', isRecurring: false, recurrencePeriod: null, recurrenceEndDate: null },
+  { id: 12, userId: 1, accountId: 2, amount: 25.00, currencyCode: 'EUR', date: '2025-08-05', description: 'Benzina Agip', categoryId: 1, transactionType: 'EXPENSE', isRecurring: false, recurrencePeriod: null, recurrenceEndDate: null },
+  { id: 10, userId: 1, accountId: 4, amount: 15.00, currencyCode: 'EUR', date: '2025-08-04', description: 'Farmacia 24h', categoryId: 4, transactionType: 'EXPENSE', isRecurring: false, recurrencePeriod: null, recurrenceEndDate: null },
+  { id: 11, userId: 1, accountId: 4, amount: 15.00, currencyCode: 'EUR', date: '2025-08-04', description: 'Zara', categoryId: 5, transactionType: 'EXPENSE', isRecurring: false, recurrencePeriod: null, recurrenceEndDate: null },
+  { id: 8, userId: 1, accountId: 3, amount: 1800.00, currencyCode: 'EUR', date: '2025-08-03', description: 'Stipendio Agosto', categoryId: 2, transactionType: 'INCOME', isRecurring: false, recurrencePeriod: null, recurrenceEndDate: null },
+  { id: 9, userId: 1, accountId: 2, amount: 20.00, currencyCode: 'EUR', date: '2025-08-03', description: "Mc Donald's", categoryId: 8, transactionType: 'EXPENSE', isRecurring: false, recurrencePeriod: null, recurrenceEndDate: null },
+  { id: 7, userId: 1, accountId: 3, amount: 25.00, currencyCode: 'EUR', date: '2025-08-02', description: 'Benzina Q8', categoryId: 1, transactionType: 'EXPENSE', isRecurring: false, recurrencePeriod: null, recurrenceEndDate: null },
+  { id: 6, userId: 1, accountId: 3, amount: 5.00, currencyCode: 'EUR', date: '2025-08-02', description: 'Autogrill', categoryId: 9, transactionType: 'EXPENSE', isRecurring: false, recurrencePeriod: null, recurrenceEndDate: null },
+  { id: 19, userId: 1, accountId: 3, amount: 10.00, currencyCode: 'EUR', date: '2025-07-07', description: 'Farmacia', categoryId: 4, transactionType: 'EXPENSE', isRecurring: false, recurrencePeriod: null, recurrenceEndDate: null },
+  { id: 20, userId: 1, accountId: 3, amount: 30.00, currencyCode: 'EUR', date: '2025-06-03', description: 'Benzina Q8', categoryId: 1, transactionType: 'EXPENSE', isRecurring: false, recurrencePeriod: null, recurrenceEndDate: null },
+  { id: 21, userId: 1, accountId: 2, amount: 15.00, currencyCode: 'EUR', date: '2025-04-17', description: 'Zara', categoryId: 5, transactionType: 'EXPENSE', isRecurring: false, recurrencePeriod: null, recurrenceEndDate: null }
+];
+

@@ -1,0 +1,36 @@
+<section class="annual-income-expense">
+  <header class="header">
+    <h3>{{ 'ANNUAL_INCOME_EXPENSE.TITLE' | translate }}</h3>
+
+    <div class="year-nav">
+      <button type="button" class="nav-btn" (click)="previousYear()" aria-label="Previous year">
+        <img src="assets/icons/arrow-left.svg" alt="">
+      </button>
+
+      <span class="year">{{ year }}</span>
+
+      <button
+        type="button"
+        class="nav-btn"
+        [class.disabled]="isNextYearDisabled()"
+        [disabled]="isNextYearDisabled()"
+        (click)="nextYear()"
+        aria-label="Next year">
+        <img src="assets/icons/arrow-right.svg" alt="">
+      </button>
+    </div>
+
+    <span class="currency">{{ defaultCurrency }}</span>
+  </header>
+
+  <div class="chart-container">
+    <p class="no-data" *ngIf="noData">{{ 'ANNUAL_INCOME_EXPENSE.NO_DATA' | translate }}</p>
+
+    <canvas
+      baseChart
+      type="bar"
+      [data]="{ labels: labels, datasets: datasets }"
+      [options]="barOptions">
+    </canvas>
+  </div>
+</section>

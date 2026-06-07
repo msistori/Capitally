@@ -1,0 +1,145 @@
+<main class="auth-container" [class.is-register]="mode() === 'register'">
+  <div class="pane-grid">
+    <!-- IMMAGINE come card -->
+    <section class="visual">
+      <div id="login-bg-img" class="glass"></div>
+    </section>
+
+    <!-- LOGIN -->
+    <section class="form-area form-login" [class.active]="mode() === 'login'">
+      <div class="form-card glass">
+        <h1>{{ 'LOGIN_PAGE.LOGIN.TITLE' | translate }}</h1>
+
+        <form [formGroup]="form" (ngSubmit)="submit()">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>{{ 'LOGIN_PAGE.LOGIN.EMAIL_USERNAME' | translate }}</mat-label>
+            <input matInput type="text" formControlName="usernameOrEmail" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>{{ 'LOGIN_PAGE.PASSWORD' | translate }}</mat-label>
+            <input
+              matInput
+              [type]="hideLoginPassword() ? 'password' : 'text'"
+              formControlName="password"
+            />
+            <button
+              mat-icon-button
+              matSuffix
+              type="button"
+              (click)="hideLoginPassword.set(!hideLoginPassword())"
+              tabindex="-1"
+            >
+              <mat-icon>{{ hideLoginPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </mat-form-field>
+
+          <button type="button" class="forgot-link" (click)="openForgotPassword()" [disabled]="loading()">
+            {{ 'LOGIN_PAGE.FORGOT.ACTION' | translate }}
+          </button>
+
+          <button mat-raised-button color="primary" class="primary-btn" [disabled]="loading()">
+            {{ 'LOGIN_PAGE.LOGIN.SUBMIT' | translate }}
+          </button>
+        </form>
+
+        <form
+          class="forgot-form"
+          *ngIf="forgotPasswordOpen()"
+          [formGroup]="forgotPasswordForm"
+          (ngSubmit)="submitForgotPassword()">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>{{ 'LOGIN_PAGE.FORGOT.USERNAME_EMAIL' | translate }}</mat-label>
+            <input matInput type="text" formControlName="usernameOrEmail" />
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" class="primary-btn" [disabled]="loading()">
+            {{ 'LOGIN_PAGE.FORGOT.SUBMIT' | translate }}
+          </button>
+
+          <p class="success" *ngIf="forgotPasswordSuccess()">{{ forgotPasswordSuccess() }}</p>
+          <p class="error" *ngIf="forgotPasswordError()">{{ forgotPasswordError() }}</p>
+        </form>
+
+        <div class="alt">
+          <button mat-button class="guest" (click)="continueAsGuest()" [disabled]="loading()">
+            {{ 'LOGIN_PAGE.GUEST' | translate }}
+          </button>
+        </div>
+
+        <div class="switch">
+          <button type="button" class="switch-btn" (click)="switchMode('register')">
+            <span class="link">{{ 'LOGIN_PAGE.LOGIN.SIGN_UP' | translate }}</span>
+          </button>
+        </div>
+
+        <p class="error" *ngIf="error()">{{ error() }}</p>
+      </div>
+    </section>
+
+    <!-- REGISTER -->
+    <section class="form-area form-register" [class.active]="mode() === 'register'">
+      <div class="form-card glass">
+        <h1>{{ 'LOGIN_PAGE.REGISTER.TITLE' | translate }}</h1>
+
+        <form [formGroup]="registerForm" (ngSubmit)="submit()">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>{{ 'LOGIN_PAGE.REGISTER.USERNAME' | translate }}</mat-label>
+            <input matInput formControlName="username" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>{{ 'LOGIN_PAGE.REGISTER.EMAIL' | translate }}</mat-label>
+            <input matInput type="email" formControlName="email" />
+            <mat-error *ngIf="registerForm.controls.email.hasError('email') || registerForm.controls.email.hasError('pattern')">
+              {{ 'LOGIN_PAGE.REGISTER.EMAIL_INVALID_ERROR' | translate }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>{{ 'LOGIN_PAGE.PASSWORD' | translate }}</mat-label>
+            <input
+              matInput
+              [type]="hideRegisterPassword() ? 'password' : 'text'"
+              formControlName="password"
+            />
+            <button
+              mat-icon-button
+              matSuffix
+              type="button"
+              (click)="hideRegisterPassword.set(!hideRegisterPassword())"
+              tabindex="-1"
+            >
+              <mat-icon>{{ hideRegisterPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </mat-form-field>
+
+          <mat-checkbox class="legal-consent" formControlName="legalAccepted">
+            {{ 'LOGIN_PAGE.REGISTER.LEGAL_PREFIX' | translate }}
+            <a [routerLink]="termsLink" (click)="$event.stopPropagation()">{{ 'LOGIN_PAGE.LEGAL.TERMS' | translate }}</a>
+            {{ 'LOGIN_PAGE.REGISTER.LEGAL_AND' | translate }}
+            <a [routerLink]="privacyLink" (click)="$event.stopPropagation()">{{ 'LOGIN_PAGE.LEGAL.PRIVACY' | translate }}</a>
+          </mat-checkbox>
+
+          <button mat-raised-button color="primary" class="primary-btn" [disabled]="loading()">
+            {{ 'LOGIN_PAGE.REGISTER.SUBMIT' | translate }}
+          </button>
+        </form>
+
+        <div class="alt">
+          <button mat-button class="guest" (click)="continueAsGuest()" [disabled]="loading()">
+            {{ 'LOGIN_PAGE.GUEST' | translate }}
+          </button>
+        </div>
+
+        <div class="switch">
+          <button type="button" class="switch-btn" (click)="switchMode('login')">
+            <span class="link">{{ 'LOGIN_PAGE.REGISTER.SIGN_IN' | translate }}</span>
+          </button>
+        </div>
+
+        <p class="error" *ngIf="error()">{{ error() }}</p>
+      </div>
+    </section>
+  </div>
+</main>

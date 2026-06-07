@@ -1,0 +1,24 @@
+package com.capitally.app.model.response;
+
+import com.capitally.app.core.enums.TransactionRecurrencePeriodEnum;
+import com.capitally.app.core.enums.TransactionTypeEnum;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class UpcomingRecurringTransactionResponseDTO {
+    private String description;
+    private BigDecimal amount;
+    private String currency;
+    private LocalDate nextDate;
+    private TransactionRecurrencePeriodEnum frequency;
+    private String category;
+    private String account;
+    private TransactionTypeEnum transactionType;
+}

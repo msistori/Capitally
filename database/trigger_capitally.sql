@@ -1,7 +1,4 @@
-
--- ======================================
--- TRIGGERS FOR updated_at
--- ======================================
+-- updated_at trigger support for mutable Capitally tables.
 
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
@@ -11,31 +8,21 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Triggers for tables
-CREATE TRIGGER trg_users_updated_at
-BEFORE UPDATE ON users
-FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER trg_accounts_updated_at
-BEFORE UPDATE ON accounts
-FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER trg_categories_updated_at
-BEFORE UPDATE ON categories
-FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER trg_transactions_updated_at
-BEFORE UPDATE ON transactions
-FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER trg_budgets_updated_at
-BEFORE UPDATE ON budgets
-FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER trg_investments_updated_at
-BEFORE UPDATE ON investments
-FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER trg_assets_updated_at
-BEFORE UPDATE ON assets
-FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+DO $$
+DECLARE
+    table_name text;
+    trigger_name text;
+BEGIN
+    FOREACH table_name IN ARRAY ARRAY['t_user', 't_account', 't_category', 't_transaction']
+    LOOP
+        IF to_regclass(table_name) IS NOT NULL THEN
+            trigger_name := 'trg_' || substring(table_name from 3) || '_updated_at';
+            EXECUTE format('DROP TRIGGER IF EXISTS %I ON %I', trigger_name, table_name);
+            EXECUTE format(
+                'CREATE TRIGGER %I BEFORE UPDATE ON %I FOR EACH ROW EXECUTE FUNCTION update_updated_at_column()',
+                trigger_name,
+                table_name
+            );
+        END IF;
+    END LOOP;
+END $$;

@@ -1,0 +1,431 @@
+$primary: #005f73;
+$secondary: #caf0f8;
+$danger: #b42318;
+$border: rgba(0, 95, 115, 0.18);
+
+.settings {
+  color: $primary;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-height: calc(100vh - 7rem);
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+
+.modal-header {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-between;
+  align-items: flex-end;
+  position: relative;
+  padding: 0.5rem;
+  min-height: 3rem;
+  pointer-events: none;
+
+  .title {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    margin: 0;
+    font-size: 1.55rem;
+    font-weight: 600;
+    text-align: center;
+    width: max-content;
+    max-width: calc(100% - 4rem);
+  }
+
+  .close-btn {
+    height: 48px;
+    width: 48px;
+    pointer-events: auto;
+  }
+}
+
+.settings-section {
+  border: 1px solid $border;
+  border-radius: 0.9rem;
+  padding: 0.9rem;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.section-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-bottom: 0.75rem;
+
+  h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+}
+
+.section-kicker {
+  color: rgba(0, 95, 115, 0.72);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.action-grid {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.settings-action,
+.logout-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.65rem;
+  width: 100%;
+  border: 1px solid $primary;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  padding: 0.85rem 0.95rem;
+  text-align: left;
+
+  mat-icon {
+    flex: 0 0 auto;
+  }
+}
+
+.settings-action {
+  background: #fff;
+  color: $primary;
+}
+
+.danger-action {
+  border-color: rgba(180, 35, 24, 0.32);
+  color: $danger;
+}
+
+.logout-btn {
+  justify-content: center;
+  background-color: $primary;
+  color: #fff;
+}
+
+.currency-block,
+.language-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.preferences-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.security-section {
+  .password-form {
+    display: grid;
+    gap: 0.75rem;
+    
+    mat-form-field {
+      mat-label,
+      input {
+        color: $primary;
+      }
+    }
+  }
+
+  .password-actions {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .password-toggle,
+  .password-action {
+    justify-content: center;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+  }
+
+  .password-cancel {
+    border-color: $border;
+    justify-content: center;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+  }
+}
+
+.currency-label,
+.language-label {
+  font-weight: 700;
+  color: $primary;
+}
+
+.currency-field {
+  width: 100%;
+}
+
+.language-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+
+  button {
+    background: #fff;
+    border: 1px solid $primary;
+    border-radius: 0.65rem;
+    padding: 0.65rem 0.75rem;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+    color: $primary;
+
+    &.active {
+      background: $primary;
+      color: #fff;
+    }
+  }
+}
+
+.confirm-dialog {
+  color: $primary;
+  min-width: min(78vw, 360px);
+
+  h2 {
+    color: $primary;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0;
+    padding: 0.35rem 0 0.75rem;
+    text-align: center;
+  }
+
+  mat-dialog-content {
+    color: $primary;
+    padding: 0;
+    text-align: center;
+
+    p {
+      margin: 0;
+    }
+
+    .warning-copy {
+      color: $danger;
+      font-weight: 700;
+      margin-top: 0.45rem;
+    }
+  }
+}
+
+.template-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.55rem;
+  margin-top: 1rem;
+  padding: 0;
+
+  &.single-action {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dialog-secondary,
+.dialog-danger,
+.dialog-primary {
+  border-radius: 0.65rem;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  padding: 0.7rem 0.9rem;
+}
+
+.dialog-secondary {
+  background: #fff;
+  border: 1px solid $primary;
+  color: $primary;
+}
+
+.dialog-danger {
+  background: $danger;
+  border: 1px solid $danger;
+  color: #fff;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+.dialog-primary {
+  background: $primary;
+  border: 1px solid $primary;
+  color: #fff;
+}
+
+.settings-message {
+  font-weight: 700;
+  margin: 0;
+  text-align: center;
+
+  &.success {
+    color: #157347;
+  }
+
+  &.error {
+    color: $danger;
+  }
+}
+
+.transaction-delete-dialog {
+  mat-dialog-content {
+    display: grid;
+    gap: 0.85rem;
+    text-align: left;
+  }
+}
+
+.scope-grid {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: 1fr 1fr;
+
+  button {
+    background: #fff;
+    border: 1px solid $primary;
+    border-radius: 0.65rem;
+    color: $primary;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+    padding: 0.7rem 0.75rem;
+
+    &.active {
+      background: $primary;
+      color: #fff;
+    }
+  }
+}
+
+.dialog-field {
+  display: grid;
+  gap: 0.4rem;
+
+  span {
+    color: $primary;
+    font-weight: 700;
+  }
+}
+
+.dialog-select {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid $border;
+  border-radius: 0.65rem;
+  box-sizing: border-box;
+  color: $primary;
+  font: inherit;
+  font-weight: 700;
+  min-height: 3rem;
+  padding: 0.75rem 0.9rem;
+  width: 100%;
+}
+
+::ng-deep .cdk-overlay-pane:has(.currency-panel-class) {
+  position: absolute;
+  box-shadow: 0px 2px 8px $primary;
+  background-color: #ffffff;
+  color: $primary;
+  font-weight: bold;
+  border-radius: 0.5rem;
+
+  .currency-panel-class {
+    padding: 0;
+
+    .search-option {
+      height: auto;
+      cursor: default;
+
+      .search {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid $primary;
+        border-radius: 0.6rem;
+        padding: 0.7rem 0.8rem;
+        outline: none;
+        font-size: 1rem;
+      }
+    }
+
+    .currency-item {
+      border-top: 1px solid $border;
+      border-radius: 0.5rem;
+      text-align: center;
+
+      .currency-code {
+        font-weight: 700;
+        color: $primary;
+      }
+
+      .currency-name {
+        margin-left: 0.35rem;
+        color: lighten($primary, 20%);
+        font-size: 0.9em;
+        font-weight: 500;
+      }
+    }
+
+    .current-hidden {
+      display: none !important;
+    }
+
+    .no-results {
+      opacity: 0.8;
+      text-align: center;
+    }
+  }
+}
+
+@media (min-width: 640px) {
+  .settings {
+    max-height: min(78vh, 760px);
+    padding: 0.75rem;
+  }
+
+  .action-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .settings-action {
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 6.5rem;
+    text-align: center;
+
+    mat-icon {
+      margin-inline: auto;
+    }
+  }
+
+  .template-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .template-actions.single-action {
+    grid-template-columns: 1fr;
+  }
+
+  .security-section {
+    .password-actions {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+}

@@ -1,0 +1,16 @@
+<header [ngClass]="hideLogout ? 'header login-header' : 'header'">
+  <a class="logo-container" [routerLink]="logoLink" aria-label="Go to Capitally">
+    <img src="assets/logo_white.svg" alt="Capitally logo" class="logo" />
+    <span class="title">Capitally</span>
+  </a>
+
+  <div class="header-options">
+    <button *ngFor="let lang of availableLanguages" (click)="changeLanguage(lang)"
+      [class.active]="currentLang === lang">
+      {{ lang === 'it' ? 'IT' : 'EN' }}
+    </button>
+    <button *ngIf="!hideLogout" class="logout-btn" (click)="logout()">
+      <mat-icon>logout</mat-icon>
+    </button>
+  </div>
+</header>

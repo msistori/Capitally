@@ -1,0 +1,354 @@
+<main class="summary-page">
+  <section class="summary-hero">
+    <span class="hero-icon" aria-hidden="true">
+      <mat-icon>list_alt</mat-icon>
+    </span>
+    <div>
+      <h1>{{ 'SUMMARY.TITLE' | translate }}</h1>
+    </div>
+  </section>
+
+  <section class="summary-filters glass-card" [attr.aria-label]="'SUMMARY.FILTERS.TITLE' | translate">
+    <label class="field filter-type-field">
+      <span>{{ 'SUMMARY.FILTERS.TYPE' | translate }}</span>
+      <mat-select class="select-control" panelClass="summary-select-panel" [disableOptionCentering]="true" [formControl]="filterTypeControl">
+        <mat-select-trigger>{{ filterTypeSelectLabel() }}</mat-select-trigger>
+        <mat-option value="period">{{ 'SUMMARY.FILTERS.PERIOD' | translate }}</mat-option>
+        <mat-option value="account">{{ 'SUMMARY.FILTERS.ACCOUNT' | translate }}</mat-option>
+        <mat-option value="category">{{ 'SUMMARY.FILTERS.CATEGORY' | translate }}</mat-option>
+        <mat-option value="subcategory">{{ 'SUMMARY.FILTERS.SUBCATEGORY' | translate }}</mat-option>
+        <mat-option value="minAmount">{{ 'SUMMARY.FILTERS.MIN_AMOUNT' | translate }}</mat-option>
+        <mat-option value="maxAmount">{{ 'SUMMARY.FILTERS.MAX_AMOUNT' | translate }}</mat-option>
+      </mat-select>
+    </label>
+
+    <div class="selected-filter" [ngSwitch]="filterTypeControl.value">
+      <ng-container *ngSwitchCase="'period'">
+    <label class="field period-field selected-filter-field">
+      <span class="period-field-span">{{ 'SUMMARY.FILTERS.PERIOD' | translate }}</span>
+      <mat-select
+        #periodSelect
+        class="select-control"
+        panelClass="summary-select-panel"
+        [disableOptionCentering]="true"
+        [formControl]="periodControl"
+        (selectionChange)="onPeriodSelectionChange($event.value, periodSelect)">
+        <mat-select-trigger>{{ periodSelectLabel() }}</mat-select-trigger>
+        <mat-option value="all">{{ 'SUMMARY.PERIOD.ALL' | translate }}</mat-option>
+        <mat-option value="current-month">{{ 'SUMMARY.PERIOD.CURRENT_MONTH' | translate }}</mat-option>
+        <mat-option value="previous-month">{{ 'SUMMARY.PERIOD.PREVIOUS_MONTH' | translate }}</mat-option>
+        <mat-option value="last-3-months">{{ 'SUMMARY.PERIOD.LAST_3_MONTHS' | translate }}</mat-option>
+        <mat-option value="current-year">{{ 'SUMMARY.PERIOD.CURRENT_YEAR' | translate }}</mat-option>
+        <mat-option value="last-year">{{ 'SUMMARY.PERIOD.LAST_YEAR' | translate }}</mat-option>
+        <mat-option value="two-years-ago">{{ 'SUMMARY.PERIOD.TWO_YEARS_AGO' | translate }}</mat-option>
+        <mat-option value="custom" (click)="onCustomPeriodOptionClick(periodSelect)">
+          {{ 'SUMMARY.PERIOD.CUSTOM' | translate }}
+        </mat-option>
+      </mat-select>
+    </label>
+
+    <div class="custom-range-popover" *ngIf="isCustomRangePopupOpen">
+      <div class="custom-range">
+        <div class="custom-date-tabs">
+          <button
+            type="button"
+            class="custom-date-tab"
+            [class.active]="customCalendarField === 'start'"
+            (click)="selectCustomCalendarField('start')">
+            <span>{{ 'SUMMARY.FILTERS.START_DATE' | translate }}</span>
+            <strong>{{ customDateLabel('start') }}</strong>
+          </button>
+
+          <button
+            type="button"
+            class="custom-date-tab"
+            [class.active]="customCalendarField === 'end'"
+            (click)="selectCustomCalendarField('end')">
+            <span>{{ 'SUMMARY.FILTERS.END_DATE' | translate }}</span>
+            <strong>{{ customDateLabel('end') }}</strong>
+          </button>
+        </div>
+
+        <section class="custom-calendar" [attr.aria-label]="'SUMMARY.CALENDAR.TITLE' | translate">
+          <header class="custom-calendar-header">
+            <button type="button" (click)="previousCustomCalendarYear()" [attr.aria-label]="'SUMMARY.CALENDAR.PREV_YEAR' | translate">
+              <mat-icon>keyboard_double_arrow_left</mat-icon>
+            </button>
+            <button type="button" (click)="previousCustomCalendarMonth()" [attr.aria-label]="'SUMMARY.CALENDAR.PREV_MONTH' | translate">
+              <mat-icon>chevron_left</mat-icon>
+            </button>
+
+            <h2>{{ customCalendarMonthLabel() | titlecase }}</h2>
+
+            <button
+              type="button"
+              (click)="nextCustomCalendarMonth()"
+              [disabled]="isNextCustomCalendarMonthDisabled()"
+              [class.disabled]="isNextCustomCalendarMonthDisabled()"
+              [attr.aria-label]="'SUMMARY.CALENDAR.NEXT_MONTH' | translate">
+              <mat-icon>chevron_right</mat-icon>
+            </button>
+            <button
+              type="button"
+              (click)="nextCustomCalendarYear()"
+              [disabled]="isNextCustomCalendarYearDisabled()"
+              [class.disabled]="isNextCustomCalendarYearDisabled()"
+              [attr.aria-label]="'SUMMARY.CALENDAR.NEXT_YEAR' | translate">
+              <mat-icon>keyboard_double_arrow_right</mat-icon>
+            </button>
+          </header>
+
+          <div class="calendar-weekdays">
+            <span *ngFor="let day of summaryWeekDays">{{ day }}</span>
+          </div>
+
+          <div class="calendar-grid">
+            <ng-container *ngFor="let week of summaryCalendarWeeks; trackBy: trackByCalendarWeek">
+              <button
+                type="button"
+                class="calendar-day"
+                *ngFor="let day of week; trackBy: trackByCalendarDay"
+                [class.outside]="day.outside"
+                [class.selected]="day.selected"
+                [class.in-range]="day.inRange"
+                [class.today]="day.today"
+                [class.future]="day.future"
+                [disabled]="day.future"
+                [attr.aria-label]="day.future ? null : (day.date | date:'dd/MM/yyyy')"
+                (click)="selectSummaryCalendarDay(day)">
+                <span *ngIf="!day.future">{{ day.label }}</span>
+              </button>
+            </ng-container>
+          </div>
+        </section>
+      </div>
+    </div>
+      </ng-container>
+
+      <label class="field selected-filter-field" *ngSwitchCase="'account'">
+        <span>{{ 'SUMMARY.FILTERS.ACCOUNT' | translate }}</span>
+        <mat-select class="select-control" panelClass="summary-select-panel" [disableOptionCentering]="true" [formControl]="accountFilterControl">
+          <mat-option value="all">{{ 'SUMMARY.FILTERS.ALL_ACCOUNTS' | translate }}</mat-option>
+          <mat-option *ngFor="let account of accounts; trackBy: trackByAccount" [value]="account.id">
+            {{ account.name }}
+          </mat-option>
+        </mat-select>
+      </label>
+
+      <label class="field selected-filter-field" *ngSwitchCase="'category'">
+        <span>{{ 'SUMMARY.FILTERS.CATEGORY' | translate }}</span>
+        <mat-select class="select-control" panelClass="summary-select-panel" [disableOptionCentering]="true" [formControl]="macroCategoryFilterControl">
+          <mat-option value="all">{{ 'SUMMARY.FILTERS.ALL_CATEGORIES' | translate }}</mat-option>
+          <mat-option *ngFor="let macroCategory of macroCategoryOptions" [value]="macroCategory">
+            {{ macroCategory }}
+          </mat-option>
+        </mat-select>
+      </label>
+
+      <label class="field selected-filter-field" *ngSwitchCase="'subcategory'">
+        <span>{{ 'SUMMARY.FILTERS.SUBCATEGORY' | translate }}</span>
+        <mat-select class="select-control" panelClass="summary-select-panel" [disableOptionCentering]="true" [formControl]="categoryFilterControl">
+          <mat-option value="all">{{ 'SUMMARY.FILTERS.ALL_SUBCATEGORIES' | translate }}</mat-option>
+          <mat-option *ngFor="let category of categoryFilterOptions; trackBy: trackByCategory" [value]="category.id">
+            {{ category.category }}
+          </mat-option>
+        </mat-select>
+      </label>
+
+      <label class="field selected-filter-field" *ngSwitchCase="'minAmount'">
+        <span>{{ 'SUMMARY.FILTERS.MIN_AMOUNT' | translate }}</span>
+        <input type="number" min="0" inputmode="decimal" [formControl]="minAmountFilterControl" placeholder="0,00" />
+      </label>
+
+      <label class="field selected-filter-field" *ngSwitchCase="'maxAmount'">
+        <span>{{ 'SUMMARY.FILTERS.MAX_AMOUNT' | translate }}</span>
+        <input type="number" min="0" inputmode="decimal" [formControl]="maxAmountFilterControl" placeholder="0,00" />
+      </label>
+    </div>
+
+    <div class="active-filter-summary" *ngIf="activeSummaryFilterCount > 0">
+      {{ 'SUMMARY.FILTERS.ACTIVE_COUNT' | translate:{ count: activeSummaryFilterCount } }}
+    </div>
+
+    <div class="filter-actions">
+      <button class="outline-action compact" type="button" (click)="resetSummaryFilters()">
+        {{ 'SUMMARY.FILTERS.RESET' | translate }}
+      </button>
+      <button class="primary-action compact" type="button" (click)="openSummaryExport()">
+        <mat-icon>download</mat-icon>
+        <span>{{ 'SUMMARY.EXPORT.BUTTON' | translate }}</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="stats-grid" [attr.aria-label]="'SUMMARY.STATS.TITLE' | translate">
+    <article class="stat-card highlight">
+      <span>{{ 'SUMMARY.STATS.TOTAL_BALANCE' | translate }}</span>
+      <strong [class.negative]="totalBalance < 0">
+        {{ totalBalance | currency: defaultCurrency:'symbol-narrow':'1.2-2' }}
+      </strong>
+      <small>{{ 'SUMMARY.STATS.BALANCE_HINT' | translate }}</small>
+    </article>
+
+    <article class="stat-card">
+      <span>{{ 'SUMMARY.STATS.INCOME' | translate }}</span>
+      <strong class="positive">{{ totalIncome | currency: defaultCurrency:'symbol-narrow':'1.2-2' }}</strong>
+      <small>{{ selectedRangeLabel }}</small>
+    </article>
+
+    <article class="stat-card">
+      <span>{{ 'SUMMARY.STATS.EXPENSE' | translate }}</span>
+      <strong class="negative">{{ totalExpense | currency: defaultCurrency:'symbol-narrow':'1.2-2' }}</strong>
+      <small>{{ selectedRangeLabel }}</small>
+    </article>
+
+    <article class="stat-card">
+      <span>{{ 'SUMMARY.STATS.NET' | translate }}</span>
+      <strong [class.positive]="netBalance >= 0" [class.negative]="netBalance < 0">
+        {{ netBalance | currency: defaultCurrency:'symbol-narrow':'1.2-2' }}
+      </strong>
+      <small *ngIf="previousNetDelta !== null">
+        {{ 'SUMMARY.STATS.VS_PREVIOUS' | translate }}
+        <span [class.positive]="previousNetDelta >= 0" [class.negative]="previousNetDelta < 0">
+          {{ previousNetDelta | currency: defaultCurrency:'symbol-narrow':'1.2-2' }}
+        </span>
+      </small>
+      <small *ngIf="previousNetDelta === null">{{ 'SUMMARY.STATS.ALL_PERIODS' | translate }}</small>
+    </article>
+
+    <article class="stat-card">
+      <span>{{ 'SUMMARY.STATS.TOP_CATEGORY' | translate }}</span>
+      <strong>{{ topExpenseCategory?.name || ('SUMMARY.STATS.NO_DATA' | translate) }}</strong>
+      <small *ngIf="topExpenseCategory">
+        {{ topExpenseCategory.amount | currency: defaultCurrency:'symbol-narrow':'1.2-2' }}
+      </small>
+    </article>
+
+    <article class="stat-card">
+      <span>{{ 'SUMMARY.STATS.MOST_USED_ACCOUNT' | translate }}</span>
+      <strong>{{ mostUsedAccount?.name || ('SUMMARY.STATS.NO_DATA' | translate) }}</strong>
+      <small *ngIf="mostUsedAccount">
+        {{ mostUsedAccount.count }} {{ 'SUMMARY.STATS.TRANSACTIONS_COUNT' | translate }}
+      </small>
+    </article>
+
+    <article class="stat-card">
+      <span>{{ 'SUMMARY.STATS.AVG_DAILY_EXPENSE' | translate }}</span>
+      <strong class="negative">{{ averageDailyExpense | currency: defaultCurrency:'symbol-narrow':'1.2-2' }}</strong>
+      <small>{{ 'SUMMARY.STATS.PER_DAY' | translate }}</small>
+    </article>
+
+    <article class="stat-card">
+      <span>{{ 'SUMMARY.STATS.TOTAL_TRANSACTIONS' | translate }}</span>
+      <strong>{{ transactionCount }}</strong>
+      <small>{{ selectedRangeLabel }}</small>
+    </article>
+  </section>
+
+  <section class="summary-content">
+    <div class="charts-grid">
+      <article class="chart-card wide">
+        <header>
+          <div>
+            <h2>{{ 'SUMMARY.CHARTS.CATEGORIES_TITLE' | translate }}</h2>
+            <span>{{ selectedRangeLabel }}</span>
+          </div>
+        </header>
+        <div class="chart-frame" *ngIf="hasCategoryChartData; else emptyChart">
+          <canvas baseChart [type]="'bar'" [data]="categoryChartData" [options]="categoryChartOptions"></canvas>
+        </div>
+      </article>
+
+      <article class="chart-card">
+        <header>
+          <div>
+            <h2>{{ 'SUMMARY.CHARTS.ACCOUNTS_TITLE' | translate }}</h2>
+            <span>{{ 'SUMMARY.CHARTS.ACCOUNTS_HINT' | translate }}</span>
+          </div>
+        </header>
+        <div class="chart-frame donut" *ngIf="hasAccountChartData; else emptyChart">
+          <canvas baseChart [type]="'doughnut'" [data]="accountChartData" [options]="doughnutChartOptions"></canvas>
+        </div>
+      </article>
+
+      <article class="chart-card">
+        <header>
+          <div>
+            <h2>{{ 'SUMMARY.CHARTS.INCOME_EXPENSE_TITLE' | translate }}</h2>
+            <span>{{ selectedRangeLabel }}</span>
+          </div>
+        </header>
+        <div class="chart-frame donut" *ngIf="hasIncomeExpenseChartData; else emptyChart">
+          <canvas baseChart [type]="'doughnut'" [data]="incomeExpenseChartData" [options]="doughnutChartOptions"></canvas>
+        </div>
+      </article>
+    </div>
+
+    <aside class="summary-side-panel">
+      <section class="transactions-panel glass-card">
+        <header class="transactions-heading">
+          <div>
+            <h2>{{ 'SUMMARY.TRANSACTIONS.TITLE' | translate }}</h2>
+            <span>{{ transactionRows.length }} {{ 'SUMMARY.TRANSACTIONS.VISIBLE_ITEMS' | translate }}</span>
+          </div>
+          <button class="primary-action compact" type="button" (click)="openNewTransaction()">
+            <mat-icon>add</mat-icon>
+            <span>{{ 'SUMMARY.NEW_TRANSACTION_SHORT' | translate }}</span>
+          </button>
+        </header>
+
+        <label class="field search-field">
+          <span>{{ 'SUMMARY.TRANSACTIONS.SEARCH' | translate }}</span>
+          <input type="search" [formControl]="searchControl" [placeholder]="'SUMMARY.TRANSACTIONS.SEARCH_PLACEHOLDER' | translate" />
+        </label>
+
+        <div class="transaction-list" *ngIf="visibleTransactionRows.length; else emptyTransactions">
+          <button
+            class="transaction-card"
+            type="button"
+            *ngFor="let row of visibleTransactionRows; trackBy: trackByTransaction"
+            (click)="openEditTransaction(row)">
+            <span class="transaction-type" [class.income]="row.type === TransactionTypeEnum.INCOME" [class.expense]="row.type === TransactionTypeEnum.EXPENSE">
+              <mat-icon>{{ row.type === TransactionTypeEnum.INCOME ? 'south_west' : 'north_east' }}</mat-icon>
+            </span>
+
+            <span class="transaction-copy">
+              <strong class="transaction-description">{{ row.description }}</strong>
+              <small class="transaction-meta">
+                <span class="transaction-category-line">
+                  <strong class="transaction-macro-category" *ngIf="row.macroCategoryName">{{ row.macroCategoryName }}</strong>
+                  <span class="transaction-category-separator" *ngIf="row.macroCategoryName">&middot;</span>
+                  <span class="transaction-category-name">{{ row.categoryName }}</span>
+                </span>
+                <span class="transaction-account">{{ row.accountName }}</span>
+                <span class="transaction-date">{{ row.date | date:'dd/MM/yyyy' }}</span>
+              </small>
+            </span>
+
+            <strong class="transaction-amount" [class.positive]="row.type === TransactionTypeEnum.INCOME" [class.negative]="row.type === TransactionTypeEnum.EXPENSE">
+              {{ row.type === TransactionTypeEnum.INCOME ? '+' : '-' }}{{ row.amount | currency: row.currencyCode:'symbol-narrow':'1.2-2' }}
+            </strong>
+          </button>
+        </div>
+
+        <button class="outline-action load-more" type="button" *ngIf="canLoadMore" (click)="loadMoreTransactions()">
+          {{ 'SUMMARY.TRANSACTIONS.LOAD_MORE' | translate }}
+        </button>
+      </section>
+
+      <app-upcoming-recurring
+        class="summary-recurring"
+        *ngIf="upcomingRecurringTransactions.length"
+        [items]="upcomingRecurringTransactions">
+      </app-upcoming-recurring>
+    </aside>
+  </section>
+</main>
+
+<ng-template #emptyChart>
+  <div class="empty-state chart-empty">{{ 'SUMMARY.CHARTS.NO_DATA' | translate }}</div>
+</ng-template>
+
+<ng-template #emptyTransactions>
+  <div class="empty-state">{{ 'SUMMARY.TRANSACTIONS.EMPTY' | translate }}</div>
+</ng-template>

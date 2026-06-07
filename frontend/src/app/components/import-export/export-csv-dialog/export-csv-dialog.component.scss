@@ -1,0 +1,182 @@
+$primary: #005f73;
+$secondary: #caf0f8;
+$danger: #b42318;
+
+.csv-dialog {
+  color: $primary;
+  min-width: min(78vw, 360px);
+
+  h2 {
+    color: $primary;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0;
+    padding: 0.2rem 0 0.55rem;
+    text-align: center;
+  }
+}
+
+.content {
+  max-height: min(68vh, 640px);
+  overflow-y: auto;
+  padding: 0;
+}
+
+.info-area {
+  align-items: center;
+  background: rgba(202, 240, 248, 0.28);
+  border: 1px solid rgba(0, 95, 115, 0.18);
+  border-radius: 0.65rem;
+  display: flex;
+  gap: 0.55rem;
+  margin-bottom: 0.7rem;
+  padding: 0.65rem 0.75rem;
+  text-align: left;
+
+  p {
+    color: $primary;
+    margin: 0;
+    font-size: 0.92rem;
+    line-height: 1.25;
+  }
+}
+
+.confirmation-info {
+  margin-bottom: 0;
+}
+
+.dialog-icon {
+  align-items: center;
+  background: $secondary;
+  border-radius: 50%;
+  color: $primary !important;
+  display: inline-flex;
+  flex: 0 0 auto;
+  height: 2.35rem;
+  justify-content: center;
+  width: 2.35rem;
+
+  &.mat-icon {
+    color: $primary !important;
+    font-size: 1.35rem;
+    height: 2.35rem;
+    width: 2.35rem;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+:host ::ng-deep .mat-mdc-form-field {
+  --mdc-outlined-text-field-outline-color: rgba(0, 95, 115, 0.34);
+  --mdc-outlined-text-field-hover-outline-color: #005f73;
+  --mdc-outlined-text-field-focus-outline-color: #005f73;
+  --mdc-outlined-text-field-label-text-color: #005f73;
+  --mdc-outlined-text-field-hover-label-text-color: #005f73;
+  --mdc-outlined-text-field-focus-label-text-color: #005f73;
+  --mdc-outlined-text-field-input-text-color: #005f73;
+  --mdc-outlined-text-field-caret-color: #005f73;
+}
+
+:host ::ng-deep .mat-mdc-form-field:hover .mdc-floating-label,
+:host ::ng-deep .mat-mdc-form-field.mat-focused .mdc-floating-label,
+:host ::ng-deep .mat-mdc-form-field .mdc-floating-label,
+:host ::ng-deep .mat-mdc-select-value,
+:host ::ng-deep input.mat-mdc-input-element {
+  color: $primary !important;
+}
+
+:host ::ng-deep .export-datepicker-toggle {
+  color: $primary;
+
+  .mat-mdc-icon-button,
+  .mat-datepicker-toggle-default-icon {
+    color: $primary;
+  }
+}
+
+.errors {
+  background: rgba(180, 35, 24, 0.08);
+  border: 1px solid rgba(180, 35, 24, 0.22);
+  border-radius: 0.65rem;
+  color: $danger;
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+
+  p {
+    margin: 0;
+
+    + p {
+      margin-top: 0.35rem;
+    }
+  }
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.55rem;
+  margin-top: 1rem;
+  padding: 0;
+}
+
+.btn-secondary,
+.btn-primary {
+  border-radius: 0.65rem;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  padding: 0.7rem 0.9rem;
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.65;
+  }
+}
+
+.btn-secondary {
+  background: #fff;
+  border: 1px solid $primary;
+  color: $primary;
+}
+
+.btn-primary {
+  background: $primary;
+  border: 1px solid $primary;
+  color: #fff;
+  align-items: center;
+  display: inline-flex;
+  gap: 0.45rem;
+  justify-content: center;
+
+  mat-icon {
+    color: #fff;
+    font-size: 1.15rem;
+    height: 1.15rem;
+    width: 1.15rem;
+  }
+}
+
+@media (min-width: 560px) {
+  .grid,
+  .actions {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .actions.confirm-actions {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 860px) {
+  .actions:not(.confirm-actions) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
