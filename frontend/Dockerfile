@@ -6,7 +6,7 @@ COPY package*.json ./
 RUN npm ci
 
 COPY . .
-ARG BUILD_CONFIGURATION=local
+ARG BUILD_CONFIGURATION=production
 RUN npx ng build -c ${BUILD_CONFIGURATION}
 
 FROM nginx:1.27-alpine
