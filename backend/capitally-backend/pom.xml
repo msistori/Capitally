@@ -8,7 +8,7 @@
     </parent>
     <groupId>com.capitally</groupId>
     <artifactId>capitally-backend</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <description>Backend API for Capitally personal finance app</description>
 
     <properties>
