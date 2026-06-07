@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, computed, inject } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild, computed, inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
 import { LoadingOverlayComponent } from './loader/loading-overlay/loading-overlay.component';
@@ -8,6 +8,9 @@ import { filter } from 'rxjs';
 import { AnalyticsEvent } from './analytics/analytics.events';
 import { AnalyticsService } from './analytics/analytics.service';
 import { LegalNavigationService } from './services/legal-navigation.service';
+import { AppUpdateService } from './pwa/app-update.service';
+import { SeoService } from './seo/seo.service';
+import { APP_LANGUAGES, currentOrDefaultLanguage, isAppLanguage, languageFromUrl, routePath } from './routing/localized-routes';
 
 @Component({
   selector: 'app-root',
@@ -15,18 +18,24 @@ import { LegalNavigationService } from './services/legal-navigation.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit, OnDestroy {
-  private readonly availableLanguages = ['it', 'en'];
+  @ViewChild('contentScrollContainer', { static: true })
+  private contentScrollContainer!: ElementRef<HTMLElement>;
+
+  private readonly availableLanguages = APP_LANGUAGES;
   private loader = inject(LoaderService);
   private router = inject(Router);
   private document = inject(DOCUMENT);
   private analytics = inject(AnalyticsService);
   private legalNavigation = inject(LegalNavigationService);
+  private appUpdate = inject(AppUpdateService);
+  private seo = inject(SeoService);
   loading = computed(() => this.loader.isLoading());
   disableScroll = false;
   legalRoute = false;
   publicRoute = false;
   dashboardRoute = false;
   welcomeRoute = false;
+  installRoute = false;
   private touchStartY = 0;
   private removeTouchStartListener?: () => void;
   private removeTouchMoveListener?: () => void;
@@ -35,15 +44,18 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.analytics.initialize();
+    this.seo.initialize();
+    this.appUpdate.initialize();
     this.setRouteLayout(this.router.url || '/');
 
     this.translate.addLangs(this.availableLanguages);
     const saved = localStorage.getItem('lang');
     const browser = this.translate.getBrowserLang();
     const fallback = 'it';
-    const initLang = saved && this.availableLanguages.includes(saved)
+    const routeLang = languageFromUrl(this.router.url);
+    const initLang = routeLang || (isAppLanguage(saved)
       ? saved
-      : browser && this.availableLanguages.includes(browser) ? browser : fallback;
+      : isAppLanguage(browser) ? browser : fallback);
 
     this.translate.use(initLang);
 
@@ -51,7 +63,13 @@ export class AppComponent implements OnInit, OnDestroy {
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe(event => {
         const url = event.urlAfterRedirects || event.url;
+        const urlLanguage = languageFromUrl(url);
+        if (urlLanguage && urlLanguage !== this.translate.currentLang) {
+          this.translate.use(urlLanguage);
+          localStorage.setItem('lang', urlLanguage);
+        }
         this.setRouteLayout(url);
+        this.scrollToPageTop();
         this.analytics.track(AnalyticsEvent.PAGE_VIEWED, {
           page: this.routeName(url)
         });
@@ -75,22 +93,32 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private setRouteLayout(url: string): void {
     this.legalNavigation.rememberOriginUrl(url);
-    this.disableScroll = url.startsWith('/login');
-    this.legalRoute = url.startsWith('/legal');
+    const path = routePath(url);
+    this.disableScroll = path.endsWith('/login') || path.endsWith('/registrazione') || path.endsWith('/register');
+    this.legalRoute = this.legalNavigation.isLegalUrl(url);
     this.publicRoute = this.legalNavigation.usesPublicChrome(url);
-    this.dashboardRoute = url.startsWith('/dashboard');
-    this.welcomeRoute = this.routePath(url) === '/';
+    this.dashboardRoute = path.startsWith('/app/dashboard');
+    this.welcomeRoute = path === '/it' || path === '/en' || path === '/';
+    this.installRoute = path === '/it/installazione-app' || path === '/en/install-app';
     this.document.documentElement.classList.toggle('login-route', this.disableScroll);
     this.document.body.classList.toggle('login-route', this.disableScroll);
   }
 
   private routePath(url: string): string {
-    return (url.split(/[?#]/, 1)[0] || '/');
+    return routePath(url);
   }
 
   private routeName(url: string): string {
-    const path = this.routePath(url).replace(/^\/+/, '') || 'welcome';
+    const language = currentOrDefaultLanguage(url, this.translate.currentLang);
+    const path = this.routePath(url).replace(/^\/+/, '').replace(new RegExp(`^${language}/?`), '') || 'welcome';
     return path.split('/')[0] || 'login';
+  }
+
+  private scrollToPageTop(): void {
+    requestAnimationFrame(() => {
+      this.contentScrollContainer.nativeElement.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      this.document.defaultView?.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    });
   }
 
   private installLoginTouchLock(): void {

@@ -34,6 +34,7 @@ public class UserService {
     private final CategoryMapper categoryMapper;
     private final TransactionMapper transactionMapper;
     private final PasswordEncoder passwordEncoder;
+    private final CategoryVisibilityService categoryVisibilityService;
 
     public UserService(
             UserRepository repo,
@@ -43,7 +44,8 @@ public class UserService {
             AccountMapper accountMapper,
             CategoryMapper categoryMapper,
             TransactionMapper transactionMapper,
-            PasswordEncoder passwordEncoder
+            PasswordEncoder passwordEncoder,
+            CategoryVisibilityService categoryVisibilityService
     ) {
         this.repo = repo;
         this.accountRepository = accountRepository;
@@ -53,6 +55,7 @@ public class UserService {
         this.categoryMapper = categoryMapper;
         this.transactionMapper = transactionMapper;
         this.passwordEncoder = passwordEncoder;
+        this.categoryVisibilityService = categoryVisibilityService;
     }
 
     @Transactional(readOnly = true)
@@ -91,7 +94,7 @@ public class UserService {
                 accountRepository.findByUserId(userId).stream()
                         .map(accountMapper::mapAccountEntityToDTO)
                         .toList(),
-                categoryRepository.findByUser_Id(userId).stream()
+                categoryVisibilityService.visibleCategories(categoryRepository.findByUser_Id(userId)).stream()
                         .map(categoryMapper::mapCategoryEntityToDTO)
                         .toList(),
                 transactionRepository.findAll((root, query, cb) -> cb.equal(root.get("user").get("id"), userId)).stream()

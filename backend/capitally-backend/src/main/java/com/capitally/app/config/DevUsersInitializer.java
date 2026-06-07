@@ -3,6 +3,7 @@ package com.capitally.app.config;
 import com.capitally.app.core.entity.UserEntity;
 import com.capitally.app.core.enums.UserRoleEnum;
 import com.capitally.app.core.repository.UserRepository;
+import com.capitally.app.service.DefaultCategoryService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.*;
@@ -15,7 +16,7 @@ import java.util.List;
 @EnableConfigurationProperties(DevUsersProperties.class)
 public class DevUsersInitializer {
     @Bean
-    CommandLineRunner seedUsers(DevUsersProperties props, UserRepository repo, PasswordEncoder pe) {
+    CommandLineRunner seedUsers(DevUsersProperties props, UserRepository repo, PasswordEncoder pe, DefaultCategoryService defaultCategoryService) {
         return args -> {
             if (props.getUsers() == null) return;
             for (DevUsersProperties.UserDef u : props.getUsers()) {
@@ -30,7 +31,9 @@ public class DevUsersInitializer {
                             .enabled(u.isEnabled())
                             .roles(roles)
                             .build();
-                    return repo.save(ent);
+                    UserEntity saved = repo.save(ent);
+                    defaultCategoryService.createForUser(saved, null);
+                    return saved;
                 });
             }
         };

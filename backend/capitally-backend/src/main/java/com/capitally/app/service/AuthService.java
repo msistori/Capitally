@@ -1,9 +1,7 @@
 package com.capitally.app.service;
 
-import com.capitally.app.core.entity.CategoryEntity;
 import com.capitally.app.core.entity.UserEntity;
 import com.capitally.app.core.enums.UserRoleEnum;
-import com.capitally.app.core.repository.CategoryRepository;
 import com.capitally.app.core.repository.UserRepository;
 import com.capitally.app.core.security.JwtTokenProvider;
 import com.capitally.app.model.request.ForgotPasswordRequestDTO;
@@ -41,10 +39,12 @@ public class AuthService {
     private final JwtTokenProvider jwt;
     private final PasswordEncoder pe;
     private final UserRepository repo;
-    private final CategoryRepository categoryRepository;
+    private final DefaultCategoryService defaultCategoryService;
+    private final DemoDataRefreshService demoDataRefreshService;
     private final ResendEmailService resendEmailService;
     private final ForgotPasswordEmailQuotaService forgotPasswordEmailQuotaService;
 
+    @Transactional
     public AuthResponseDTO register(RegisterRequestDTO req) {
         if (repo.findByUsername(req.username()).isPresent()) throw new ResponseStatusException(CONFLICT, AUTH_USER_TAKEN_ERROR);
         if (repo.findByEmail(req.email()).isPresent()) throw new ResponseStatusException(CONFLICT, AUTH_EMAIL_TAKEN_ERROR);
@@ -57,15 +57,7 @@ public class AuthService {
                 .build();
         repo.save(u);
 
-        //Save Default Category
-        CategoryEntity defaultCategory = CategoryEntity.builder()
-                .macroCategory("Other")
-                .category("Other")
-                .iconName("Question-mark")
-                .user(u)
-                .build();
-
-        categoryRepository.save(defaultCategory);
+        defaultCategoryService.createForUser(u, req.lang());
 
         String token = jwt.generate(u.getId(), u.getUsername(), u.getRoles().stream().map(Enum::name).collect(Collectors.toSet()));
         return new AuthResponseDTO(token, "Bearer", u.getUsername(), u.getEmail(), u.getRoles().stream().map(Enum::name).collect(Collectors.toSet()));
@@ -76,6 +68,9 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(auth);
         String username = auth.getName();
         UserEntity u = repo.findByUsername(username).orElseThrow();
+        if (u.getRoles() != null && u.getRoles().contains(UserRoleEnum.DEMO)) {
+            demoDataRefreshService.refreshIfNeeded(u);
+        }
         String token = jwt.generate(u.getId(), u.getUsername(), u.getRoles().stream().map(Enum::name).collect(Collectors.toSet()));
         return new AuthResponseDTO(token, "Bearer", u.getUsername(), u.getEmail(), u.getRoles().stream().map(Enum::name).collect(Collectors.toSet()));
     }

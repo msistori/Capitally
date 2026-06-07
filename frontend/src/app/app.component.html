@@ -2,8 +2,9 @@
   <app-header></app-header>
 
   <main
+    #contentScrollContainer
     class="content"
-    [ngClass]="{ 'login-content': disableScroll, 'public-content': legalRoute && !showNavbar, 'legal-route-content': legalRoute, 'dashboard-content': dashboardRoute, 'welcome-content': welcomeRoute, 'with-navbar': showNavbar, 'with-legal-footer': showLegalFooter }"
+    [ngClass]="{ 'login-content': disableScroll, 'public-content': legalRoute && !showNavbar, 'legal-route-content': legalRoute, 'dashboard-content': dashboardRoute, 'welcome-content': welcomeRoute, 'install-content': installRoute, 'with-navbar': showNavbar, 'with-legal-footer': showLegalFooter }"
   >
     <div
       class="app-shell"

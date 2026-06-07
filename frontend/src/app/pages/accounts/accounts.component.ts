@@ -16,6 +16,7 @@ import { FxRateService } from '../../services/fx-rate.service';
 import { RefreshService } from '../../services/refresh.service';
 import { TransactionService } from '../../services/transaction.service';
 import { TransferService } from '../../services/transfer.service';
+import { PRIVATE_ROUTES } from '../../routing/localized-routes';
 
 type AccountsView = 'overview' | 'new-account' | 'new-transfer' | 'history';
 type HistoryPeriod = '1m' | '3m' | '12m' | 'all';
@@ -190,19 +191,19 @@ export class AccountsComponent implements OnInit, OnDestroy {
   }
 
   setView(view: AccountsView): void {
-    this.router.navigate(['/accounts'], {
+    this.router.navigate([PRIVATE_ROUTES.accounts], {
       queryParams: view === 'overview' ? {} : { view }
     });
   }
 
   editAccount(summary: AccountSummary): void {
-    this.router.navigate(['/accounts'], {
+    this.router.navigate([PRIVATE_ROUTES.accounts], {
       queryParams: { view: 'new-account', accountId: summary.account.id }
     });
   }
 
   editTransfer(transfer: TransferModel): void {
-    this.router.navigate(['/accounts'], {
+    this.router.navigate([PRIVATE_ROUTES.accounts], {
       queryParams: { view: 'new-transfer', transferGroupId: transfer.transferGroupId }
     });
   }

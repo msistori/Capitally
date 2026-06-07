@@ -85,7 +85,13 @@ export class AnalyticsService {
     if (!this.canTrack()) return;
 
     const distinctId = this.storage.getUserId();
-    if (!distinctId) return;
+    const accessToken = this.storage.getAccessToken();
+    if (!distinctId || !accessToken) {
+      this.queueEvent(event, properties);
+      return;
+    }
+
+    this.flushPendingEvents();
 
     const payload = {
       event,

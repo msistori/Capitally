@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from 'src/app/services/auth.service';
 import { LegalNavigationService } from 'src/app/services/legal-navigation.service';
+import { APP_LANGUAGES, AppLanguage, LOCALIZED_ROUTES, PRIVATE_ROUTES, currentOrDefaultLanguage, equivalentLocalizedPath, isAppLanguage } from 'src/app/routing/localized-routes';
 
 @Component({
   selector: 'app-header',
@@ -14,8 +15,8 @@ export class HeaderComponent {
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
 
-  readonly availableLanguages = ['it', 'en'];
-  currentLang!: string;
+  readonly availableLanguages = APP_LANGUAGES;
+  currentLang!: AppLanguage;
   hideLogout: boolean = false;
 
   constructor(
@@ -27,16 +28,14 @@ export class HeaderComponent {
     const saved = localStorage.getItem('lang');
     const browser = this.translate.getBrowserLang();
     const fallback = 'en';
-    const initLang = saved && this.availableLanguages.includes(saved)
-      ? saved
-      : browser && this.availableLanguages.includes(browser) ? browser : fallback;
+    const initLang = currentOrDefaultLanguage(this.router.url, saved || browser || fallback);
     this.translate.use(initLang);
     this.currentLang = initLang;
 
     this.translate.onLangChange
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(event => {
-        if (this.availableLanguages.includes(event.lang)) {
+        if (isAppLanguage(event.lang)) {
           this.currentLang = event.lang;
         }
       });
@@ -53,19 +52,25 @@ export class HeaderComponent {
   }
 
   changeLanguage(lang: string): void {
-    if (lang !== this.currentLang && this.availableLanguages.includes(lang)) {
+    if (lang !== this.currentLang && isAppLanguage(lang)) {
       this.translate.use(lang);
       this.currentLang = lang;
       localStorage.setItem('lang', lang);
+      this.router.navigateByUrl(equivalentLocalizedPath(this.router.url, lang));
     }
   }
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/login']);
+    this.router.navigate([LOCALIZED_ROUTES[this.currentLang].login]);
+  }
+
+  get logoLink(): string {
+    return this.hideLogout ? LOCALIZED_ROUTES[this.currentLang].home : PRIVATE_ROUTES.dashboard;
   }
 
   private setHeaderState(url: string): void {
     this.hideLogout = this.legalNavigation.usesPublicChrome(url);
   }
+
 }

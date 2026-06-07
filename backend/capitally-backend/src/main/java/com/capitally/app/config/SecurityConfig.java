@@ -73,9 +73,18 @@ public class SecurityConfig {
                         "/*.css",
                         "/*.ico",
                         "/*.map",
+                        "/manifest.webmanifest",
+                        "/ngsw-worker.js",
+                        "/ngsw.json",
+                        "/safety-worker.js",
+                        "/worker-basic.min.js",
                         "/.well-known/**",
                         "/robots.txt",
-                        "/favicon.ico"
+                        "/sitemap.xml",
+                        "/favicon.ico",
+                        "/it/**",
+                        "/en/**",
+                        "/app/**"
                 ).permitAll()
                 .anyRequest().authenticated()
         );

@@ -25,6 +25,9 @@ public interface CategoryRepository extends JpaRepository<CategoryEntity, BigInt
     Optional<CategoryEntity> findByCategoryAndMacroCategoryAndUser_Id(
             String category, String macroCategory, BigInteger userId);
 
+    List<CategoryEntity> findByUser_IdAndMacroCategoryAndCategoryAndIconName(
+            BigInteger userId, String macroCategory, String category, String iconName);
+
     Optional<CategoryEntity> findByIdAndUser_Id(BigInteger id, BigInteger userId);
 
     void deleteByUser_Id(BigInteger userId);

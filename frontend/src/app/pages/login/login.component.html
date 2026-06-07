@@ -116,9 +116,9 @@
 
           <mat-checkbox class="legal-consent" formControlName="legalAccepted">
             {{ 'LOGIN_PAGE.REGISTER.LEGAL_PREFIX' | translate }}
-            <a routerLink="/legal/terms" [queryParams]="{ returnTo: '/login' }" (click)="$event.stopPropagation()">{{ 'LOGIN_PAGE.LEGAL.TERMS' | translate }}</a>
+            <a [routerLink]="termsLink" (click)="$event.stopPropagation()">{{ 'LOGIN_PAGE.LEGAL.TERMS' | translate }}</a>
             {{ 'LOGIN_PAGE.REGISTER.LEGAL_AND' | translate }}
-            <a routerLink="/legal/privacy" [queryParams]="{ returnTo: '/login' }" (click)="$event.stopPropagation()">{{ 'LOGIN_PAGE.LEGAL.PRIVACY' | translate }}</a>
+            <a [routerLink]="privacyLink" (click)="$event.stopPropagation()">{{ 'LOGIN_PAGE.LEGAL.PRIVACY' | translate }}</a>
           </mat-checkbox>
 
           <button mat-raised-button color="primary" class="primary-btn" [disabled]="loading()">

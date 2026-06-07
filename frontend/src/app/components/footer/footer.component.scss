@@ -14,6 +14,14 @@ $secondary: #caf0f8;
   background: transparent;
 }
 
+:host-context(.install-content) .legal-footer {
+  background: transparent;
+}
+
+:host-context(.login-content) .legal-footer {
+  background: transparent;
+}
+
 .legal-links {
   display: flex;
   flex-wrap: wrap;
@@ -48,5 +56,14 @@ $secondary: #caf0f8;
     border-radius: 6px;
     text-shadow: var(--text-glow);
     margin: 0;
+  }
+}
+
+:host-context(.install-content) .legal-links {
+  a,
+  button,
+  p {
+    color: #caf0f8;
+    text-shadow: 0 1px 10px rgba(0, 27, 35, 0.48);
   }
 }

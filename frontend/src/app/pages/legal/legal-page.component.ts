@@ -9,6 +9,7 @@ import { Subscription } from 'rxjs';
 import { LEGAL_DOCUMENT_KEYS, LEGAL_DOCUMENTS, LEGAL_PAGE_COPY, resolveLegalLanguage } from './legal-documents';
 import { LegalDocument, LegalDocumentKey, LegalLanguage, LegalPageCopy } from './legal-document.model';
 import { LegalNavigationService } from '../../services/legal-navigation.service';
+import { localizedLegalPath } from '../../routing/localized-routes';
 
 @Component({
   selector: 'app-legal-page',
@@ -23,7 +24,6 @@ export class LegalPageComponent implements OnInit, OnDestroy {
   currentLanguage: LegalLanguage = 'it';
   copy: LegalPageCopy = LEGAL_PAGE_COPY.it;
   backLabel = this.copy.backToLogin;
-  returnQueryParams: { returnTo: string } = { returnTo: '/login' };
   readonly documentKeys = LEGAL_DOCUMENT_KEYS;
 
   private routeSubscription?: Subscription;
@@ -46,7 +46,9 @@ export class LegalPageComponent implements OnInit, OnDestroy {
 
     this.routeSubscription = this.route.paramMap.subscribe(params => {
       const key = params.get('document') as LegalDocumentKey | null;
-      this.currentKey = key && this.isLegalDocumentKey(key) ? key : 'terms';
+      const routeKey = this.route.snapshot.data['document'] as LegalDocumentKey | undefined;
+      this.currentKey = routeKey || (key && this.isLegalDocumentKey(key) ? key : 'terms');
+      this.currentLanguage = resolveLegalLanguage(this.route.snapshot.data['lang'] || this.currentLanguage);
       this.updateLocalizedContent();
       this.updateReturnTarget();
     });
@@ -68,7 +70,11 @@ export class LegalPageComponent implements OnInit, OnDestroy {
   }
 
   returnToOrigin(): void {
-    this.router.navigateByUrl(this.legalNavigation.getReturnUrl(this.router.url));
+    this.router.navigateByUrl(this.legalNavigation.getLocalizedReturnUrl(this.router.url, this.currentLanguage));
+  }
+
+  documentLink(key: LegalDocumentKey): string {
+    return localizedLegalPath(this.currentLanguage, key);
   }
 
   private isLegalDocumentKey(value: string): value is LegalDocumentKey {
@@ -82,13 +88,11 @@ export class LegalPageComponent implements OnInit, OnDestroy {
   }
 
   private updateReturnTarget(): void {
-    const returnUrl = this.legalNavigation.getReturnUrl(this.router.url);
-    this.returnQueryParams = { returnTo: returnUrl };
     this.updateBackLabel();
   }
 
   private updateBackLabel(): void {
-    const returnUrl = this.returnQueryParams.returnTo;
+    const returnUrl = this.legalNavigation.getLocalizedReturnUrl(this.router.url, this.currentLanguage);
     this.backLabel = this.legalNavigation.isLoginUrl(returnUrl)
       ? this.copy.backToLogin
       : this.copy.backToPreviousPage;

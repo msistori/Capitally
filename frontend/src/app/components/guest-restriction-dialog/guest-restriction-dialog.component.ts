@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { LOCALIZED_ROUTES, currentOrDefaultLanguage } from '../../routing/localized-routes';
 
 @Component({
   selector: 'app-guest-restriction-dialog',
@@ -21,6 +22,7 @@ export class GuestRestrictionDialogComponent {
 
   onLogin() {
     this.dialog.closeAll();
-    this.router.navigate(['/login']);
+    const language = currentOrDefaultLanguage(this.router.url, localStorage.getItem('lang'));
+    this.router.navigate([LOCALIZED_ROUTES[language].login]);
   }
 }

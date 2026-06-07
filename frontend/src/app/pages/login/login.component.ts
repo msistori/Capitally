@@ -13,6 +13,7 @@ import { switchMap } from 'rxjs';
 import { GuestService } from 'src/app/services/guest.service';
 import { AnalyticsEvent } from 'src/app/analytics/analytics.events';
 import { AnalyticsService } from 'src/app/analytics/analytics.service';
+import { AppLanguage, LOCALIZED_ROUTES, PRIVATE_ROUTES, currentOrDefaultLanguage } from 'src/app/routing/localized-routes';
 
 @Component({
   selector: 'app-login',
@@ -33,7 +34,7 @@ import { AnalyticsService } from 'src/app/analytics/analytics.service';
 })
 export class LoginComponent {
   readonly availableLanguages = ['it', 'en'];
-  currentLang!: string;
+  currentLang!: AppLanguage;
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private router = inject(Router);
@@ -46,14 +47,20 @@ export class LoginComponent {
     const saved = localStorage.getItem('lang');
     const browser = this.translate.getBrowserLang();
     const fallback = 'it';
-    const initLang = saved && this.availableLanguages.includes(saved)
-      ? saved
-      : browser && this.availableLanguages.includes(browser) ? browser : fallback;
+    const initLang = currentOrDefaultLanguage(this.router.url, saved || browser || fallback);
     this.translate.use(initLang);
     this.currentLang = initLang;
-    if (this.route.snapshot.queryParamMap.get('mode') === 'register') {
+    if (this.route.snapshot.data['authMode'] === 'register' || this.route.snapshot.queryParamMap.get('mode') === 'register') {
       this.mode.set('register');
     }
+  }
+
+  get termsLink(): string {
+    return LOCALIZED_ROUTES[this.currentLang].legal.terms;
+  }
+
+  get privacyLink(): string {
+    return LOCALIZED_ROUTES[this.currentLang].legal.privacy;
   }
 
   mode = signal<'login' | 'register'>('login');
@@ -149,7 +156,7 @@ export class LoginComponent {
       this.auth.login({ usernameOrEmail: usernameOrEmail.trim(), password }).subscribe({
         next: () => {
           this.loading.set(false);
-          this.router.navigate(['/dashboard']);
+          this.router.navigate([PRIVATE_ROUTES.dashboard]);
         },
         error: e => {
           this.loading.set(false);
@@ -177,7 +184,7 @@ export class LoginComponent {
       this.loading.set(true);
       
       const { password } = this.registerForm.getRawValue();
-      this.auth.register({ username, email, password }).pipe(
+      this.auth.register({ username, email, password, lang: this.currentLang }).pipe(
         switchMap(() =>
           this.auth.login({
             usernameOrEmail: email,
@@ -189,7 +196,7 @@ export class LoginComponent {
           this.analytics.track(AnalyticsEvent.AUTH_REGISTRATION_COMPLETED);
           this.guestService.clearGuestLogin();
           this.loading.set(false);
-          this.router.navigate(['/dashboard']);
+          this.router.navigate([PRIVATE_ROUTES.dashboard]);
         },
         error: e => {
           this.loading.set(false);
@@ -215,7 +222,7 @@ export class LoginComponent {
       next: () => {
         this.guestService.setGuestLogin();
         this.loading.set(false);
-        this.router.navigate(['/dashboard']);
+        this.router.navigate([PRIVATE_ROUTES.dashboard]);
       },
       error: e => {
         this.loading.set(false);

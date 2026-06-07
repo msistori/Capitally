@@ -13,8 +13,7 @@
       <a
         *ngFor="let key of documentKeys"
         [class.active]="currentKey === key"
-        [routerLink]="['/legal', key]"
-        [queryParams]="returnQueryParams"
+        [routerLink]="documentLink(key)"
       >
         {{ copy.tabs[key] }}
       </a>

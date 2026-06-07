@@ -5,8 +5,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
+import { AnalyticsEvent } from '../../analytics/analytics.events';
+import { AnalyticsService } from '../../analytics/analytics.service';
 import { AuthService } from '../../services/auth.service';
 import { GuestService } from '../../services/guest.service';
+import { LOCALIZED_ROUTES, PRIVATE_ROUTES, currentOrDefaultLanguage } from '../../routing/localized-routes';
 
 @Component({
   selector: 'app-welcome',
@@ -20,6 +23,7 @@ export class WelcomeComponent implements AfterViewInit, OnDestroy {
   private guestService = inject(GuestService);
   private router = inject(Router);
   private translate = inject(TranslateService);
+  private analytics = inject(AnalyticsService);
   private host = inject<ElementRef<HTMLElement>>(ElementRef);
   private questionTimer?: ReturnType<typeof setInterval>;
   private revealObserver?: IntersectionObserver;
@@ -96,6 +100,18 @@ export class WelcomeComponent implements AfterViewInit, OnDestroy {
     { title: 'WELCOME_PAGE.FLOW.STEP_3.TITLE', text: 'WELCOME_PAGE.FLOW.STEP_3.TEXT' }
   ];
 
+  get loginLink(): string {
+    return LOCALIZED_ROUTES[this.currentLanguage].login;
+  }
+
+  get registerLink(): string {
+    return LOCALIZED_ROUTES[this.currentLanguage].register;
+  }
+
+  private get currentLanguage() {
+    return currentOrDefaultLanguage(this.router.url, this.translate.currentLang);
+  }
+
   constructor() {
     this.questionTimer = setInterval(() => {
       this.activeHeroQuestionIndex = (this.activeHeroQuestionIndex + 1) % this.heroQuestions.length;
@@ -137,24 +153,42 @@ export class WelcomeComponent implements AfterViewInit, OnDestroy {
 
   setHeroSlide(index: number): void {
     this.activeHeroSlideIndex = index;
+    this.analytics.track(AnalyticsEvent.WELCOME_PREVIEW_SELECTED, {
+      preview: this.heroSlides[index]?.mode ?? 'unknown',
+      index
+    });
   }
 
-  continueAsGuest(): void {
+  trackLoginClick(): void {
+    this.analytics.track(AnalyticsEvent.WELCOME_LOGIN_CLICKED);
+  }
+
+  trackRegisterClick(): void {
+    this.analytics.track(AnalyticsEvent.WELCOME_REGISTER_CLICKED);
+  }
+
+  continueAsGuest(source: 'hero' | 'flow' = 'hero'): void {
     if (this.loading) return;
 
     this.error = null;
     this.loading = true;
     this.guestService.clearGuestLogin();
+    this.analytics.track(AnalyticsEvent.WELCOME_GUEST_STARTED, { source });
 
     this.auth.loginAsGuest().subscribe({
       next: () => {
         this.guestService.setGuestLogin();
         this.loading = false;
-        this.router.navigate(['/dashboard']);
+        this.analytics.track(AnalyticsEvent.WELCOME_GUEST_SUCCEEDED, { source });
+        this.router.navigate([PRIVATE_ROUTES.dashboard]);
       },
       error: e => {
         this.loading = false;
         this.error = e?.error?.message || this.translate.instant('LOGIN_PAGE.GUEST_ERROR');
+        this.analytics.track(AnalyticsEvent.WELCOME_GUEST_FAILED, {
+          source,
+          reason: e?.status ? `http_${e.status}` : 'unknown'
+        });
       }
     });
   }

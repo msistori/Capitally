@@ -14,15 +14,20 @@
         <p class="hero-copy">{{ 'WELCOME_PAGE.HERO.SUBTITLE' | translate }}</p>
 
         <div class="hero-actions" aria-label="Welcome actions">
-          <button mat-raised-button class="primary-action" type="button" (click)="continueAsGuest()" [disabled]="loading">
+          <button mat-raised-button class="primary-action" type="button" (click)="continueAsGuest('hero')" [disabled]="loading">
             <mat-icon>play_arrow</mat-icon>
             {{ 'WELCOME_PAGE.ACTIONS.GUEST' | translate }}
           </button>
-          <a mat-stroked-button class="secondary-action" routerLink="/login" [queryParams]="{ mode: 'register' }">
+          <a
+            mat-stroked-button
+            class="secondary-action"
+            [routerLink]="registerLink"
+            (click)="trackRegisterClick()"
+          >
             <mat-icon>person_add</mat-icon>
             {{ 'WELCOME_PAGE.ACTIONS.CREATE_ACCOUNT' | translate }}
           </a>
-          <a mat-button class="text-action" routerLink="/login">
+          <a mat-button class="text-action" [routerLink]="loginLink" (click)="trackLoginClick()">
             <mat-icon>login</mat-icon>
             {{ 'WELCOME_PAGE.ACTIONS.LOGIN' | translate }}
           </a>
@@ -208,7 +213,7 @@
       <p class="eyebrow">{{ 'WELCOME_PAGE.FLOW.EYEBROW' | translate }}</p>
       <h2 id="welcome-flow-title">{{ 'WELCOME_PAGE.FLOW.TITLE' | translate }}</h2>
       <p>{{ 'WELCOME_PAGE.FLOW.TEXT' | translate }}</p>
-      <button mat-raised-button class="primary-action" type="button" (click)="continueAsGuest()" [disabled]="loading">
+      <button mat-raised-button class="primary-action" type="button" (click)="continueAsGuest('flow')" [disabled]="loading">
         <mat-icon>rocket_launch</mat-icon>
         {{ 'WELCOME_PAGE.ACTIONS.TRY_GUEST' | translate }}
       </button>

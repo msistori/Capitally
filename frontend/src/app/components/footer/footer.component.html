@@ -1,8 +1,9 @@
 <footer class="legal-footer">
   <nav class="legal-links" aria-label="Legal Documents">
-    <a routerLink="/legal/terms" [queryParams]="legalQueryParams">{{ 'LOGIN_PAGE.LEGAL.TERMS' | translate }}</a>
-    <a routerLink="/legal/privacy" [queryParams]="legalQueryParams">{{ 'LOGIN_PAGE.LEGAL.PRIVACY' | translate }}</a>
-    <a routerLink="/legal/cookies" [queryParams]="legalQueryParams">{{ 'LOGIN_PAGE.LEGAL.COOKIES' | translate }}</a>
+    <a [routerLink]="termsLink">{{ 'LOGIN_PAGE.LEGAL.TERMS' | translate }}</a>
+    <a [routerLink]="privacyLink">{{ 'LOGIN_PAGE.LEGAL.PRIVACY' | translate }}</a>
+    <a [routerLink]="cookiesLink">{{ 'LOGIN_PAGE.LEGAL.COOKIES' | translate }}</a>
+    <a [routerLink]="installLink">{{ 'LOGIN_PAGE.LEGAL.INSTALL_APP' | translate }}</a>
     <button type="button" (click)="openPrivacyPreferences()">
       {{ 'LOGIN_PAGE.LEGAL.PRIVACY_PREFERENCES' | translate }}
     </button>

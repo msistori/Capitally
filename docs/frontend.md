@@ -50,6 +50,22 @@ The app ships translation files:
 
 Legal documents are implemented as localized TypeScript content under `src/app/pages/legal/documents`.
 
+## SEO And Public Routing
+
+Public routes use localized clean paths under `/it` and `/en`. Authenticated product routes are under `/app` and are marked as non-indexable.
+
+Detailed SEO documentation:
+
+- [SEO](seo.md)
+
+## Progressive Web App
+
+The frontend is configured as an Angular PWA for production builds with a web manifest, Angular service worker, install icons and update handling.
+
+Detailed PWA documentation:
+
+- [PWA](pwa.md)
+
 ## Production Nginx
 
 `frontend/nginx.conf` serves the Angular build and proxies route prefixes such as `/auth`, `/dashboard`, `/transaction`, `/transactions`, `/account`, `/transfer`, `/category`, `/currency`, `/users`, `/analytics`, `/api`, `/v3` and Swagger paths to `BACKEND_URL`.

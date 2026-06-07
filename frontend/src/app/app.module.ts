@@ -2,6 +2,7 @@ import { NgModule, LOCALE_ID } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS, HttpClientXsrfModule } from '@angular/common/http';
+import { ServiceWorkerModule } from '@angular/service-worker';
 import { AuthInterceptor } from './auth/auth.interceptor';
 
 import { TranslateModule } from '@ngx-translate/core';
@@ -50,6 +51,7 @@ import { AccountsModule } from './pages/accounts/accounts.module';
 import { SummaryModule } from './pages/summary/summary.module';
 import { AnalyticsConsentInterceptor } from './analytics/analytics-consent.interceptor';
 import { CookieConsentComponent } from './components/cookie-consent/cookie-consent.component';
+import { environment } from '../environments/environment';
 
 registerLocaleData(localeIt);
 registerLocaleData(localeEn);
@@ -101,7 +103,11 @@ const globalRippleConfig: RippleGlobalOptions = { disabled: true };
     AccountsModule,
     SummaryModule,
     MatDialogModule,
-    LoadingOverlayComponent
+    LoadingOverlayComponent,
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production,
+      registrationStrategy: 'registerWhenStable:30000'
+    })
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },

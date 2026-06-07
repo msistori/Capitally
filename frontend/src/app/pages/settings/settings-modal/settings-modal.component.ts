@@ -17,6 +17,7 @@ import { CurrencyService } from 'src/app/services/currency.service';
 import { AccountModel } from 'src/app/models/account.model';
 import { AnalyticsEvent } from 'src/app/analytics/analytics.events';
 import { AnalyticsService } from 'src/app/analytics/analytics.service';
+import { AppLanguage, LOCALIZED_ROUTES, isAppLanguage } from 'src/app/routing/localized-routes';
 
 type Currency = { code: string; name?: string };
 
@@ -59,7 +60,7 @@ export class SettingsModalComponent {
   accounts: AccountModel[] = [];
 
   readonly availableLanguages = ['it', 'en'];
-  currentLang!: string;
+  currentLang!: AppLanguage;
 
   selectedCurrencyCode = this.storage.getDefaultCurrency();
 
@@ -80,16 +81,16 @@ export class SettingsModalComponent {
     const saved = localStorage.getItem('lang');
     const browser = this.translateService.getBrowserLang();
     const fallback = 'it';
-    const initLang = saved && this.availableLanguages.includes(saved)
+    const initLang = isAppLanguage(saved)
       ? saved
-      : browser && this.availableLanguages.includes(browser) ? browser : fallback;
+      : isAppLanguage(browser) ? browser : fallback;
     this.translateService.use(initLang);
     this.currentLang = initLang;
 
     this.translateService.onLangChange
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(event => {
-        if (this.availableLanguages.includes(event.lang)) {
+        if (isAppLanguage(event.lang)) {
           this.currentLang = event.lang;
         }
       });
@@ -280,7 +281,7 @@ export class SettingsModalComponent {
   logout(): void {
     this.authService.logout();
     this.close();
-    this.router.navigate(['/login']);
+    this.router.navigate([LOCALIZED_ROUTES[this.currentLang].login]);
   }
 
   onCurrencyPanelOpenChange(opened: boolean): void {
@@ -331,7 +332,7 @@ export class SettingsModalComponent {
   }
 
   changeLanguage(lang: string): void {
-    if (lang !== this.currentLang && this.availableLanguages.includes(lang)) {
+    if (lang !== this.currentLang && isAppLanguage(lang)) {
       this.translateService.use(lang);
       this.currentLang = lang;
       localStorage.setItem('lang', lang);

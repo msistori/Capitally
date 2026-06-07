@@ -37,7 +37,7 @@ export class AuthService {
   }
 
   register(payload: RegisterPayload): Observable<void> {
-    const body = { username: payload.username, email: payload.email, password: payload.password };
+    const body = { username: payload.username, email: payload.email, password: payload.password, lang: payload.lang };
     return this.http.post<void>(`${API}/register`, body);
   }
 

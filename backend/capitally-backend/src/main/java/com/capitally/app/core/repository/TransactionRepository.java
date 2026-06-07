@@ -16,6 +16,8 @@ public interface TransactionRepository extends JpaRepository<TransactionEntity, 
 
     List<TransactionEntity> findAllByAccountId(BigInteger accountId);
 
+    List<TransactionEntity> findByUser_Id(BigInteger userId);
+
     List<TransactionEntity> findByUserIdAndDateBetween(BigInteger userId, LocalDate start, LocalDate end);
 
     List<TransactionEntity> findByUserIdAndIsRecurringTrue(BigInteger userId);

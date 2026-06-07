@@ -37,6 +37,8 @@ A runtime, il frontend e servito da Nginx e inoltra le chiamate API al backend S
 - [Database](docs/database.md)
 - [Servizi esterni](docs/external-services.md)
 - [Sicurezza](docs/security.md)
+- [SEO](docs/seo.md)
+- [PWA](docs/pwa.md)
 
 ## Prerequisiti
 

@@ -8,6 +8,7 @@ import { SettingsModalComponent } from '../../pages/settings/settings-modal/sett
 import { RefreshService } from 'src/app/services/refresh.service';
 import { AnalyticsEvent } from 'src/app/analytics/analytics.events';
 import { AnalyticsService } from 'src/app/analytics/analytics.service';
+import { PRIVATE_ROUTES } from 'src/app/routing/localized-routes';
 
 @Component({
   selector: 'app-navbar',
@@ -33,24 +34,24 @@ export class NavbarComponent {
     const user = this.storage.getUser();
     const url = this.router.url || '';
     
-    return (!!token || !!user) && !url.startsWith('/login');
+    return (!!token || !!user) && !url.includes('/login');
   }
 
   goToHome(): void {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate([PRIVATE_ROUTES.dashboard]);
   }
 
   goToAccounts(): void {
-    this.router.navigate(['/accounts']);
+    this.router.navigate([PRIVATE_ROUTES.accounts]);
   }
 
   goToSummary(): void {
-    this.router.navigate(['/summary']);
+    this.router.navigate([PRIVATE_ROUTES.summary]);
   }
 
   openSettingsModal(): void {
     if (this.isLegalRoute()) {
-      this.router.navigate(['/dashboard']).then(navigated => {
+      this.router.navigate([PRIVATE_ROUTES.dashboard]).then(navigated => {
         if (navigated) {
           this.openSettingsDialog();
         }
@@ -89,7 +90,7 @@ export class NavbarComponent {
 
   openTransactionModal() {
     if (this.isLegalRoute()) {
-      this.router.navigate(['/dashboard']).then(navigated => {
+      this.router.navigate([PRIVATE_ROUTES.dashboard]).then(navigated => {
         if (navigated) {
           this.openTransactionDialog();
         }
@@ -130,6 +131,10 @@ export class NavbarComponent {
   }
 
   private isLegalRoute(): boolean {
-    return this.router.url.startsWith('/legal');
+    return this.router.url.includes('/termini-condizioni')
+      || this.router.url.includes('/terms-and-conditions')
+      || this.router.url.includes('/privacy')
+      || this.router.url.includes('/cookie-policy')
+      || this.router.url.startsWith('/legal');
   }
 }

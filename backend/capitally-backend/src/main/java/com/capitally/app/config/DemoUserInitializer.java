@@ -3,6 +3,7 @@ package com.capitally.app.config;
 import com.capitally.app.core.entity.UserEntity;
 import com.capitally.app.core.enums.UserRoleEnum;
 import com.capitally.app.core.repository.UserRepository;
+import com.capitally.app.service.DefaultCategoryService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +16,7 @@ import java.util.List;
 @Profile("demo")
 public class DemoUserInitializer {
     @Bean
-    CommandLineRunner seedDemo(UserRepository repo, PasswordEncoder pe) {
+    CommandLineRunner seedDemo(UserRepository repo, PasswordEncoder pe, DefaultCategoryService defaultCategoryService) {
         return args -> {
             repo.findByUsername("demo").orElseGet(() -> {
                 UserEntity u = UserEntity.builder()
@@ -25,7 +26,9 @@ public class DemoUserInitializer {
                         .enabled(true)
                         .roles(List.of(UserRoleEnum.USER, UserRoleEnum.DEMO))
                         .build();
-                return repo.save(u);
+                UserEntity saved = repo.save(u);
+                defaultCategoryService.createForUser(saved, null);
+                return saved;
             });
         };
     }

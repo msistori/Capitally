@@ -37,6 +37,8 @@ At runtime, the frontend is served by Nginx and proxies API calls to the Spring 
 - [Database](docs/database.md)
 - [External services](docs/external-services.md)
 - [Security](docs/security.md)
+- [SEO](docs/seo.md)
+- [PWA](docs/pwa.md)
 
 ## Prerequisites
 

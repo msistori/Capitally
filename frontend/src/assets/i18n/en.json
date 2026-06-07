@@ -2,6 +2,35 @@
   "APP": {
     "TITLE": "Capitally"
   },
+  "PWA": {
+    "UPDATE_AVAILABLE": "A new version of Capitally is available. Reload now?"
+  },
+  "INSTALL_PAGE": {
+    "EYEBROW": "Installable app",
+    "TITLE": "Install Capitally on your device",
+    "SUBTITLE": "Capitally can be used as an installable app on desktop, Android and iOS. The experience stays the same as the web app, with faster access from your home screen or application menu.",
+    "ACTION": "Install app",
+    "BACK_HOME": "Back to home",
+    "BACK_PREVIOUS": "Back to previous page",
+    "ANDROID": {
+      "TITLE": "Android",
+      "TEXT": "Open Capitally in Chrome and use the install button when available, or choose Add to Home screen from the browser menu."
+    },
+    "IOS": {
+      "TITLE": "iPhone and iPad",
+      "TEXT": "Open Capitally in Safari, tap Share and choose Add to Home Screen. iOS does not always show an automatic prompt."
+    },
+    "DESKTOP": {
+      "TITLE": "Desktop",
+      "TEXT": "On compatible browsers you can install Capitally from the address bar or browser menu, then open it as a standalone window."
+    }
+  },
+  "NOT_FOUND": {
+    "EYEBROW": "404 error",
+    "TITLE": "Page not found",
+    "TEXT": "The requested page does not exist or is no longer available.",
+    "ACTION": "Back to home"
+  },
   "NAV": {
     "HOME": "Home",
     "ACCOUNTS": "Accounts",
@@ -61,6 +90,7 @@
       "TERMS": "Terms and Conditions",
       "PRIVACY": "Privacy Policy",
       "COOKIES": "Cookie Policy",
+      "INSTALL_APP": "Install app",
       "PRIVACY_PREFERENCES": "Privacy preferences"
     },
     "PASSWORD": "Password",
