@@ -1,6 +1,7 @@
 package com.capitally.app.config;
 
 import com.capitally.app.core.security.JwtAuthenticationFilter;
+import com.capitally.app.core.security.DemoWriteGuardFilter;
 import com.capitally.app.core.security.JwtTokenProvider;
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.HttpServletResponse;
@@ -90,6 +91,7 @@ public class SecurityConfig {
         );
         http.addFilterBefore(new JwtAuthenticationFilter(jwt),
                 UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAfter(new DemoWriteGuardFilter(), JwtAuthenticationFilter.class);
         return http.build();
     }
 

@@ -12,7 +12,9 @@ export class AuthInterceptor implements HttpInterceptor {
 
     const isExternal = req.url.startsWith('http://') || req.url.startsWith('https://');
     const isLoginOrRegister =
-      req.url.startsWith('/auth/login') || req.url.startsWith('/auth/register');
+      req.url.startsWith('/auth/login') ||
+      req.url.startsWith('/auth/guest-login') ||
+      req.url.startsWith('/auth/register');
 
     const shouldAuth = !isExternal && !isLoginOrRegister && !!token;
 

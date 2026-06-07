@@ -25,6 +25,10 @@ export class AuthService {
   private constructor(private guestService: GuestService) {}
 
   login(payload: Credentials, method: 'credentials' | 'guest' = 'credentials'): Observable<AuthUser> {
+    if (method === 'credentials') {
+      this.guestService.clearGuestLogin();
+    }
+
     const body = { usernameOrEmail: payload.usernameOrEmail, password: payload.password };
     return this.http.post<BackendLoginResponse>(`${API}/login`, body).pipe(
       tap(res => this.storage.setAccessToken(res.token)),
@@ -50,11 +54,14 @@ export class AuthService {
   }
 
   loginAsGuest(): Observable<AuthUser> {
-    const creds: Credentials = {
-      usernameOrEmail: environment.demoUser?.usernameOrEmail ?? '',
-      password: environment.demoUser?.password ?? ''
-    };
-    return this.login(creds, 'guest');
+    return this.http.post<BackendLoginResponse>(`${API}/guest-login`, {}).pipe(
+      tap(res => this.storage.setAccessToken(res.token)),
+      switchMap(() => this.me()),
+      tap(user => {
+        this.afterLogin(user, { accessToken: this.storage.getAccessToken() || '' });
+        this.analytics.track(AnalyticsEvent.AUTH_LOGIN_SUCCEEDED, { method: 'guest' });
+      })
+    );
   }
 
   me(): Observable<AuthUser> {

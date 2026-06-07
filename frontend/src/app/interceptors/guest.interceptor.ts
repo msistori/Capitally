@@ -9,10 +9,12 @@ export class GuestInterceptor implements HttpInterceptor {
   constructor(private guestService: GuestService) {}
   
   intercept(req: HttpRequest<any>, next: HttpHandler) {
+    const path = new URL(req.urlWithParams, window.location.origin).pathname;
     
     if (
       this.guestService.isGuestUser() &&
-      req.method !== 'GET'
+      req.method !== 'GET' &&
+      !path.startsWith('/auth/')
     ) {
       this.guestService.showGuestRestriction();
       return EMPTY;
