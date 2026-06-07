@@ -24,6 +24,11 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(req));
     }
 
+    @PostMapping("/guest-login")
+    public ResponseEntity<AuthResponseDTO> guestLogin() {
+        return ResponseEntity.ok(authService.guestLogin());
+    }
+
     @PostMapping("/register")
     @Transactional
     public ResponseEntity<AuthResponseDTO> register(@RequestBody RegisterRequestDTO req) {
