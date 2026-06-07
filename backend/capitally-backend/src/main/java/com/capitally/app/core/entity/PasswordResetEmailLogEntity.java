@@ -2,6 +2,8 @@ package com.capitally.app.core.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
@@ -22,6 +24,7 @@ public class PasswordResetEmailLogEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "password_reset_email_log_seq")
     @SequenceGenerator(name = "password_reset_email_log_seq", sequenceName = "password_reset_email_log_seq", allocationSize = 1)
+    @JdbcTypeCode(SqlTypes.BIGINT)
     private BigInteger id;
 
     @ManyToOne(fetch = FetchType.LAZY)

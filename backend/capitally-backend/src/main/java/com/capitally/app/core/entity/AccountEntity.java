@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -19,6 +21,7 @@ public class AccountEntity extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "account_seq")
     @SequenceGenerator(name = "account_seq", sequenceName = "account_seq", allocationSize = 1)
+    @JdbcTypeCode(SqlTypes.BIGINT)
     private BigInteger id;
 
     private String name;

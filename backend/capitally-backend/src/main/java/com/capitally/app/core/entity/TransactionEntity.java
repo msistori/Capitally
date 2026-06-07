@@ -4,6 +4,8 @@ import com.capitally.app.core.enums.TransactionRecurrencePeriodEnum;
 import com.capitally.app.core.enums.TransactionTypeEnum;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -20,6 +22,7 @@ public class TransactionEntity extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transaction_seq")
     @SequenceGenerator(name = "transaction_seq", sequenceName = "transaction_seq", allocationSize = 1)
+    @JdbcTypeCode(SqlTypes.BIGINT)
     private BigInteger id;
 
     @ManyToOne
