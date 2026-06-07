@@ -58,6 +58,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers(
                         "/auth/**",
+                        "/analytics/config",
+                        "/api/analytics/config",
                         "/v3/api-docs/**",
                         "/swagger-ui/**",
                         "/swagger-ui.html",
@@ -71,9 +73,18 @@ public class SecurityConfig {
                         "/*.css",
                         "/*.ico",
                         "/*.map",
+                        "/manifest.webmanifest",
+                        "/ngsw-worker.js",
+                        "/ngsw.json",
+                        "/safety-worker.js",
+                        "/worker-basic.min.js",
                         "/.well-known/**",
                         "/robots.txt",
-                        "/favicon.ico"
+                        "/sitemap.xml",
+                        "/favicon.ico",
+                        "/it/**",
+                        "/en/**",
+                        "/app/**"
                 ).permitAll()
                 .anyRequest().authenticated()
         );
@@ -87,7 +98,7 @@ public class SecurityConfig {
         CorsConfiguration c = new CorsConfiguration();
         c.setAllowedOrigins(List.of("*"));
         c.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS","HEAD"));
-        c.setAllowedHeaders(List.of("Authorization","Content-Type","Accept","Accept-Language"));
+        c.setAllowedHeaders(List.of("Authorization","Content-Type","Accept","Accept-Language","X-Analytics-Consent"));
         UrlBasedCorsConfigurationSource src = new UrlBasedCorsConfigurationSource();
         src.registerCorsConfiguration("/**", c);
         return src;

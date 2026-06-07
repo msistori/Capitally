@@ -1,0 +1,18 @@
+<nav class="app-nav" aria-label="Main navigation">
+
+  <div class="nav-actions">
+
+    <app-footer-action [icon]="'home'" [label]="'NAV.HOME' | translate" [active]="!anyDialogOpen && isRoute('/app/dashboard')" (action)="goToHome()"></app-footer-action>
+
+    <app-footer-action [icon]="'account_balance'" [label]="'NAV.ACCOUNTS' | translate" [active]="!anyDialogOpen && isRoute('/app/accounts')" (action)="goToAccounts()"></app-footer-action>
+
+    <app-footer-action [icon]="'add'" [label]="'NAV.ADD_TRANSACTION' | translate" (action)="openTransactionModal()"
+      [active]="transactionDialogOpen" [disabled]="transactionDialogOpen"></app-footer-action>
+
+    <app-footer-action [icon]="'list_alt'" [label]="'NAV.SUMMARY' | translate" [active]="!anyDialogOpen && isRoute('/app/summary')" (action)="goToSummary()"></app-footer-action>
+
+    <app-footer-action [icon]="'settings'" [label]="'NAV.SETTINGS' | translate" (action)="openSettingsModal()"
+      [active]="settingsDialogOpen" [disabled]="settingsDialogOpen"></app-footer-action>
+
+  </div>
+</nav>

@@ -1,5 +1,5 @@
 <header [ngClass]="hideLogout ? 'header login-header' : 'header'">
-  <a class="logo-container" routerLink="/dashboard" aria-label="Go to dashboard">
+  <a class="logo-container" [routerLink]="logoLink" aria-label="Go to Capitally">
     <img src="assets/logo_white.svg" alt="Capitally logo" class="logo" />
     <span class="title">Capitally</span>
   </a>

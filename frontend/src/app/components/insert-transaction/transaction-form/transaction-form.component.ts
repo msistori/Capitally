@@ -12,6 +12,9 @@ import { AccountService } from '../../../services/account.service';
 import { AccountModel } from '../../../models/account.model';
 import { TranslateService } from '@ngx-translate/core';
 import { StorageService } from '../../../auth/storage.service';
+import { RefreshService } from 'src/app/services/refresh.service';
+import { forkJoin } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'app-transaction-form',
@@ -27,6 +30,8 @@ export class TransactionFormComponent implements OnInit, OnChanges {
   currencySearchControl = new FormControl('');
   categories: CategoryModel[] = [];
   recentCategories: CategoryModel[] = [];
+  descriptionSuggestions: string[] = [];
+  filteredDescriptionSuggestions: string[] = [];
   accounts: AccountModel[] = [];
   plus!: { name: string; icon: string };
   selectedCategory: string | null = null;
@@ -50,6 +55,7 @@ export class TransactionFormComponent implements OnInit, OnChanges {
     protected utils: Utils,
     private currencyService: CurrencyService,
     private transactionService: TransactionService,
+    private refreshService: RefreshService,
     private categoryService: CategoryService,
     private accountService: AccountService,
     public translateService: TranslateService
@@ -80,17 +86,28 @@ export class TransactionFormComponent implements OnInit, OnChanges {
       this.filterCurrencies(searchTerm || '');
     });
 
-    this.categoryService.getCategories(this.userId.toString())
-      .subscribe(data => {
-        this.categories = data;
-        this.recentCategories = this.categories.slice(0, 3);
-        this.applySelectedCategoryLabel();
-      });
+    this.form.get('description')!.valueChanges.pipe(
+      startWith(this.form.get('description')!.value || ''),
+      map(value => this.getFilteredDescriptionSuggestions(value || ''))
+    ).subscribe(suggestions => this.filteredDescriptionSuggestions = suggestions);
 
-    this.accountService.getAccounts(this.userId.toString())
-      .subscribe(data => this.accounts = data.sort((a, b) =>
-        a.name.localeCompare(b.name)
-      ));
+    forkJoin({
+      categories: this.categoryService.getCategories(),
+      transactions: this.transactionService.getTransactions(),
+      accounts: this.accountService.getAccounts()
+    }).subscribe({
+      next: ({ categories, transactions, accounts }) => {
+        this.categories = categories;
+        this.accounts = this.getAccountsByRecentTransactions(accounts, transactions);
+        this.descriptionSuggestions = this.getUniqueDescriptions(transactions);
+        this.filteredDescriptionSuggestions = this.getFilteredDescriptionSuggestions(
+          this.form.get('description')!.value || ''
+        );
+        this.updateRecentCategories(transactions);
+        this.applySelectedCategoryLabel();
+      },
+      error: err => console.error('Transaction form data error', err)
+    });
 
     const base = './../../../../assets/icons';
     this.plus = { name: 'CATEGORY.OTHER', icon: `${base}/plus.svg` };
@@ -157,6 +174,86 @@ export class TransactionFormComponent implements OnInit, OnChanges {
       this.currencySearchControl.setValue('');
       this.filteredCurrencies = this.currencies;
     }
+  }
+
+  private getUniqueDescriptions(transactions: TransactionModel[]): string[] {
+    const unique = new Map<string, string>();
+
+    for (const transaction of transactions) {
+      const description = (transaction.description || '').trim();
+      if (!description) continue;
+
+      const key = description.toLowerCase();
+      if (!unique.has(key)) {
+        unique.set(key, description);
+      }
+    }
+
+    return Array.from(unique.values());
+  }
+
+  private getFilteredDescriptionSuggestions(value: string): string[] {
+    const term = value.toLowerCase().trim();
+    if (!term) return [];
+
+    return this.descriptionSuggestions
+      .filter(description => {
+        const normalizedDescription = description.toLowerCase();
+        return normalizedDescription.includes(term) && normalizedDescription !== term;
+      })
+      .slice(0, 8);
+  }
+
+  private updateRecentCategories(transactions: TransactionModel[]): void {
+    const categoriesById = new Map(
+      this.categories
+        .filter(category => category.id !== undefined)
+        .map(category => [Number(category.id), category])
+    );
+    const seenCategoryIds = new Set<number>();
+    const recentCategories: CategoryModel[] = [];
+
+    for (const transaction of this.getTransactionsByInsertionDate(transactions)) {
+      if (transaction.categoryId === null || transaction.categoryId === undefined) continue;
+
+      const categoryId = Number(transaction.categoryId);
+      const category = categoriesById.get(categoryId);
+      if (!category || seenCategoryIds.has(categoryId)) continue;
+
+      seenCategoryIds.add(categoryId);
+      recentCategories.push(category);
+
+      if (recentCategories.length === 3) break;
+    }
+
+    this.recentCategories = recentCategories.length ? recentCategories : this.categories.slice(0, 3);
+  }
+
+  private getTransactionsByInsertionDate(transactions: TransactionModel[]): TransactionModel[] {
+    return [...transactions].sort((a, b) => Number(b.id ?? 0) - Number(a.id ?? 0));
+  }
+
+  private getAccountsByRecentTransactions(accounts: AccountModel[], transactions: TransactionModel[]): AccountModel[] {
+    const accountsById = new Map(accounts.map(account => [Number(account.id), account]));
+    const seenAccountIds = new Set<number>();
+    const recentAccounts: AccountModel[] = [];
+
+    for (const transaction of this.getTransactionsByInsertionDate(transactions)) {
+      const accountId = Number(transaction.accountId);
+      const account = accountsById.get(accountId);
+      if (!account || seenAccountIds.has(accountId)) continue;
+
+      seenAccountIds.add(accountId);
+      recentAccounts.push(account);
+
+      if (recentAccounts.length === 3) break;
+    }
+
+    const remainingAccounts = accounts
+      .filter(account => !seenAccountIds.has(Number(account.id)))
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    return [...recentAccounts, ...remainingAccounts];
   }
 
   private buildMonthMatrixDate(d: Date) {
@@ -388,5 +485,12 @@ export class TransactionFormComponent implements OnInit, OnChanges {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  }
+
+  removeTransaction(): void {
+    this.transactionService.deleteTransaction(this.transaction?.id).subscribe({
+          next: () => {this.refreshService.triggerRefresh(), this.submitted.emit()},
+          error: err => console.error(err)
+        });
   }
 }

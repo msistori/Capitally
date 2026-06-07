@@ -2,6 +2,35 @@
   "APP": {
     "TITLE": "Capitally"
   },
+  "PWA": {
+    "UPDATE_AVAILABLE": "E disponibile una nuova versione di Capitally. Vuoi ricaricare ora?"
+  },
+  "INSTALL_PAGE": {
+    "EYEBROW": "App installabile",
+    "TITLE": "Installa Capitally sul tuo dispositivo",
+    "SUBTITLE": "Capitally può essere usata come app installabile su desktop, Android e iOS. L'esperienza resta la stessa della web app, con accesso piu rapido dalla schermata home o dal menu applicazioni.",
+    "ACTION": "Installa app",
+    "BACK_HOME": "Torna alla home",
+    "BACK_PREVIOUS": "Torna alla pagina precedente",
+    "ANDROID": {
+      "TITLE": "Android",
+      "TEXT": "Apri Capitally da Chrome e usa il pulsante di installazione quando disponibile, oppure scegli Aggiungi alla schermata Home dal menu del browser."
+    },
+    "IOS": {
+      "TITLE": "iPhone e iPad",
+      "TEXT": "Apri Capitally da Safari, tocca Condividi e scegli Aggiungi alla schermata Home. iOS non mostra sempre un prompt automatico."
+    },
+    "DESKTOP": {
+      "TITLE": "Desktop",
+      "TEXT": "Su browser compatibili puoi installare Capitally dalla barra degli indirizzi o dal menu del browser, poi aprirla come finestra indipendente."
+    }
+  },
+  "NOT_FOUND": {
+    "EYEBROW": "Errore 404",
+    "TITLE": "Pagina non trovata",
+    "TEXT": "La pagina richiesta non esiste o non e piu disponibile.",
+    "ACTION": "Torna alla home"
+  },
   "NAV": {
     "HOME": "Home",
     "ACCOUNTS": "Conti",
@@ -32,6 +61,16 @@
       "SIGN_UP": "Non hai ancora un account? Crealo ora!",
       "ERROR": "Errore durante il login"
     },
+    "FORGOT": {
+      "ACTION": "Password dimenticata?",
+      "USERNAME_EMAIL": "Email o Username",
+      "SUBMIT": "Invia nuova password",
+      "REQUIRED": "Inserisci email o username",
+      "SUCCESS": "Se l'account esiste, riceverai una mail con una password temporanea. Dopo l'accesso potrai cambiarla in Impostazioni.",
+      "ERROR": "Impossibile inviare la nuova password. Riprova piu tardi.",
+      "DAILY_LIMIT_ERROR": "Abbiamo raggiunto il limite giornaliero di email per il recupero password. Riprova domani.",
+      "MONTHLY_LIMIT_ERROR": "Abbiamo raggiunto il limite mensile di email per il recupero password. Riprova piu avanti o contatta il supporto."
+    },
     "REGISTER": {
       "TITLE": "Benvenuto!",
       "USERNAME": "Username",
@@ -42,11 +81,183 @@
       "SIGN_IN": "Hai già un account? Fai l'accesso!",
       "ERROR": "Errore durante la registrazione",
       "USER_TAKEN_ERROR": "Username già utilizzato",
-      "EMAIL_TAKEN_ERROR": "Email già utilizzata"
+      "EMAIL_TAKEN_ERROR": "Email già utilizzata",
+      "LEGAL_PREFIX": "Dichiaro di aver letto e accetto",
+      "LEGAL_AND": "e",
+      "LEGAL_REQUIRED_ERROR": "Devi accettare Termini e Privacy Policy per registrarti"
+    },
+    "LEGAL": {
+      "TERMS": "Termini e Condizioni",
+      "PRIVACY": "Privacy Policy",
+      "COOKIES": "Cookie Policy",
+      "INSTALL_APP": "Installa app",
+      "PRIVACY_PREFERENCES": "Preferenze privacy"
     },
     "PASSWORD": "Password",
     "GUEST": "Entra come ospite",
     "GUEST_ERROR": "Login come ospite fallito"
+  },
+  "WELCOME_PAGE": {
+    "HERO": {
+      "EYEBROW": "Una domanda semplice",
+      "TITLE": "Capitally",
+      "SUBTITLE": "Capitally trasforma le tue transazioni in grafici, statistiche e insight semplici da leggere.",
+      "GUEST_HINT": "Prova subito la modalità ospite: esplora dashboard, conti, transazioni e resoconti con dati demo, senza creare un account.",
+      "QUESTIONS": {
+        "MONTHLY_SPEND": "Sai quanto spendi davvero ogni mese?",
+        "ACCOUNT_WEIGHT": "Quale conto pesa di più sul tuo saldo?",
+        "SAVINGS": "Quanto riesci a risparmiare?",
+        "EXPENSES_DESTINATION": "Dove finiscono le tue uscite?"
+      },
+      "SLIDES": {
+        "DASHBOARD": {
+          "TITLE": "Dashboard completa",
+          "SUBTITLE": "Saldo, andamento e movimenti in un colpo d'occhio.",
+          "TREND": "Saldo totale"
+        },
+        "ACCOUNTS": {
+          "TITLE": "Conti e giroconti",
+          "SUBTITLE": "Organizza saldi, valute e spostamenti tra conti.",
+          "TREND": "conti collegati"
+        },
+        "TRANSACTIONS": {
+          "TITLE": "Transazioni vive",
+          "SUBTITLE": "Ogni spesa cambia subito categorie e statistiche.",
+          "TREND": "movimenti questa settimana"
+        },
+        "SUMMARY": {
+          "TITLE": "Insight chiari",
+          "SUBTITLE": "Capisci dove migliori e dove il budget scappa.",
+          "TREND": "risparmio rispetto al mese scorso"
+        }
+      },
+      "TRANSACTIONS": {
+        "SALARY": "Stipendio",
+        "RENT": "Affitto",
+        "GROCERIES": "Spesa",
+        "CURRENT_ACCOUNT": "Conto corrente",
+        "SAVINGS_ACCOUNT": "Risparmi",
+        "CARD_ACCOUNT": "Carta",
+        "RESTAURANT": "Ristorante",
+        "SUBSCRIPTION": "Abbonamento",
+        "TRANSFER": "Giroconto",
+        "PHARMACY": "Farmacia",
+        "FUEL": "Benzina",
+        "FREELANCE": "Freelance"
+      },
+      "ACCOUNT_MOCK": {
+        "MAIN": "Conto corrente",
+        "SAVINGS": "Risparmi",
+        "TRANSFER_FROM": "Carta",
+        "TRANSFER_TO": "Risparmi"
+      }
+    },
+    "ACTIONS": {
+      "GUEST": "Prova come ospite",
+      "TRY_GUEST": "Apri la modalità ospite",
+      "CREATE_ACCOUNT": "Crea account",
+      "LOGIN": "Accedi"
+    },
+    "HIGHLIGHTS": {
+      "CONTROL": {
+        "VALUE": "1 vista",
+        "LABEL": "per saldo, movimenti e andamento"
+      },
+      "TRENDS": {
+        "VALUE": "12 mesi",
+        "LABEL": "di trend entrate e uscite"
+      },
+      "GUEST": {
+        "VALUE": "0 setup",
+        "LABEL": "per esplorare con dati demo"
+      }
+    },
+    "PRODUCT": {
+      "EYEBROW": "Oltre la dashboard",
+      "TITLE": "Strumenti per decidere prima",
+      "TEXT": "Capitally non mostra solo cosa è già successo: ti aiuta a pianificare ricorrenze, controllare budget, spostare denaro tra conti e importare dati senza perdere ordine.",
+      "WORKSPACE": {
+        "LABEL": "Area operativa",
+        "TITLE": "Pianificazione, controllo e dati"
+      },
+      "CARDS": {
+        "RECURRING": {
+          "TITLE": "Ricorrenze",
+          "TEXT": "Vedi affitti, abbonamenti e pagamenti periodici prima che arrivino."
+        },
+        "BUDGET": {
+          "TITLE": "Budget",
+          "TEXT": "Segui l'avanzamento mensile e capisci quando stai superando le soglie."
+        },
+        "IMPORT": {
+          "TITLE": "Import CSV",
+          "TEXT": "Importa dati esistenti e tieni uno storico coerente senza riscrivere tutto."
+        },
+        "TRANSFERS": {
+          "TITLE": "Giroconti",
+          "TEXT": "Sposta denaro tra conti senza confondere entrate, uscite e saldo reale."
+        }
+      },
+      "MOCK": {
+        "RENT": "Affitto",
+        "SUBSCRIPTION": "Abbonamento",
+        "READY": "Pronto",
+        "CARD": "Carta",
+        "SAVINGS": "Risparmi"
+      }
+    },
+    "DEMO": {
+      "MONTH": "Mese corrente",
+      "SALARY": "Stipendio",
+      "RENT": "Affitto",
+      "FOOD": "Spesa"
+    },
+    "FEATURES": {
+      "EYEBROW": "Funzionalità",
+      "TITLE": "Tutto quello che serve per tracciare meglio",
+      "SUBTITLE": "Dalla prima transazione al resoconto annuale, Capitally ti aiuta a mantenere ordine senza fogli sparsi o calcoli manuali.",
+      "ACCOUNTS": {
+        "TITLE": "Conti e valute",
+        "TEXT": "Gestisci conti diversi, saldi iniziali e valute, includendo o escludendo ciò che non vuoi nel saldo totale."
+      },
+      "TRANSACTIONS": {
+        "TITLE": "Entrate e uscite",
+        "TEXT": "Registra movimenti con categoria, conto, data, descrizione e importo per ricostruire ogni scelta finanziaria."
+      },
+      "TRANSFERS": {
+        "TITLE": "Giroconti",
+        "TEXT": "Sposta importi tra conti senza falsare entrate e uscite, mantenendo uno storico ordinato dei trasferimenti."
+      },
+      "RECURRING": {
+        "TITLE": "Ricorrenze",
+        "TEXT": "Imposta pagamenti ripetuti e visualizza quelli in arrivo per anticipare affitti, abbonamenti, rate e stipendi."
+      },
+      "INSIGHTS": {
+        "TITLE": "Resoconti e trend",
+        "TEXT": "Filtra periodi, categorie e conti, poi analizza saldo, media uscite, categorie principali e confronto entrate/uscite."
+      },
+      "IMPORT_EXPORT": {
+        "TITLE": "Import ed export CSV",
+        "TEXT": "Importa dati esistenti o esporta transazioni, giroconti e conti per conservare una copia ordinata dei tuoi dati."
+      }
+    },
+    "FLOW": {
+      "EYEBROW": "Provalo ora",
+      "TITLE": "Dalla curiosità alla chiarezza in pochi minuti",
+      "TEXT": "La modalità ospite ti permette di esplorare l’esperienza completa con dati demo. Quando sei pronto, crea il tuo account e inizia a costruire il tuo storico reale.",
+      "STEP_1": {
+        "TITLE": "Entra come ospite",
+        "TEXT": "Apri Capitally con dati demo già pronti, senza registrazione e senza configurazioni iniziali."
+      },
+      "STEP_2": {
+        "TITLE": "Esplora le visualizzazioni",
+        "TEXT": "Scorri dashboard, grafici, categorie, conti e resoconti per capire come leggere le tue abitudini."
+      },
+      "STEP_3": {
+        "TITLE": "Passa ai tuoi dati",
+        "TEXT": "Crea un account quando vuoi salvare davvero movimenti, ricorrenze, conti e preferenze."
+      }
+    }
   },
   "FORM": {
     "AMOUNT": "Importo",
@@ -138,7 +349,8 @@
     "RECENT_TRANSACTIONS_TITLE": "Ultime Transazioni"
   },
   "BALANCE": {
-    "BALANCE_TITLE": "Saldo Totale"
+    "BALANCE_TITLE": "Saldo Totale",
+    "ACCOUNTS_TITLE": "Conti con saldo"
   },
   "RECURRING": {
     "UPCOMING_TITLE": "Ricorrenti in arrivo",
@@ -188,7 +400,8 @@
       "DESCRIPTION_PLACEHOLDER": "Es. Giroconto tra conti",
       "SAME_ACCOUNT_ERROR": "Scegli due conti diversi.",
       "CONFIRM": "Conferma",
-      "SAVE": "Salva"
+      "SAVE": "Salva",
+      "DELETE": "Elimina giroconto"
     },
     "HISTORY": {
       "TITLE": "Storico Giroconti",
@@ -332,7 +545,21 @@
       "CSV": "CSV",
       "IMPORT_EXPORT_TITLE": "Import ed export",
       "PREFERENCES": "Preferenze",
-      "DISPLAY_TITLE": "Visualizzazione"
+      "DISPLAY_TITLE": "Visualizzazione",
+      "SECURITY": "Sicurezza"
+    },
+    "PASSWORD": {
+      "TITLE": "Cambio password",
+      "ACTION": "Cambia password",
+      "CURRENT": "Password attuale",
+      "NEW": "Nuova password",
+      "CONFIRM": "Ripeti nuova password",
+      "SUBMIT": "Aggiorna password",
+      "SUCCESS": "Password aggiornata correttamente.",
+      "ERROR_REQUIRED": "Compila tutti i campi. La nuova password deve avere almeno 6 caratteri.",
+      "ERROR_MISMATCH": "Le nuove password non coincidono.",
+      "ERROR_CURRENT": "La password attuale non e corretta.",
+      "ERROR_GENERIC": "Impossibile aggiornare la password. Riprova."
     },
     "RESET": {
       "TRANSACTIONS": "Cancella transazioni",
@@ -366,19 +593,35 @@
       "TITLE": "Conti con transazioni",
       "MESSAGE": "Sono presenti transazioni su uno o piu conti. Prima di eliminare i conti, cancella quelle transazioni o spostale singolarmente su un altro conto."
     },
+    "ANALYTICS": {
+      "TITLE": "Analytics prodotto",
+      "DESCRIPTION": "Condividi segnali anonimi di utilizzo per migliorare Capitally. Non vengono inviati email, token, descrizioni o importi finanziari.",
+      "ENABLE": "Abilita",
+      "DISABLE": "Disabilita"
+    },
     "IMPORT_EXPORT": {
+      "FILE_TYPES": {
+        "TRANSACTIONS": "Transazioni",
+        "TRANSFERS": "Giroconti",
+        "ACCOUNTS": "Conti"
+      },
       "IMPORT": {
         "TITLE": "Importa transazioni",
-        "DIALOG_TITLE": "Importa transazioni CSV",
+        "DIALOG_TITLE": "Importa CSV",
+        "TYPE_LABEL": "Tipo file CSV",
         "UPLOAD_FILE": "Seleziona o trascina qui il file CSV delle transazioni",
+        "UPLOAD_FILE_TRANSACTIONS": "Seleziona o trascina qui il CSV delle transazioni",
+        "UPLOAD_FILE_TRANSFERS": "Seleziona o trascina qui il CSV dei giroconti",
+        "UPLOAD_FILE_ACCOUNTS": "Seleziona o trascina qui il CSV dei conti",
         "IMPORT": "Importa",
         "FORMAT_ERROR": "Il file deve essere in formato CSV",
+        "HEADER_ERROR": "Il CSV non contiene le colonne previste per il tipo selezionato.",
         "GENERIC_ERROR": "Impossibile importare il CSV. Verifica il formato del file e il separatore usato."
       },
       "EXPORT": {
-        "TITLE": "Esporta transazioni",
-        "DIALOG_TITLE": "Esporta transazioni CSV",
-        "DESCRIPTION": "Imposta i filtri da applicare al file CSV. Lascia i campi vuoti per esportare tutte le transazioni.",
+        "TITLE": "Esporta dati",
+        "DIALOG_TITLE": "Esporta CSV",
+        "DESCRIPTION": "Imposta i filtri per transazioni e giroconti. Il file conti esporta sempre tutti i conti.",
         "FORM": {
           "ACCOUNT": "Conto",
           "CURRENCY": "Valuta",
@@ -396,21 +639,30 @@
             "DATE": "La data iniziale deve essere precedente a quella finale"
           },
           "EXPORTING": "Esportazione in corso",
-          "EXPORT": "Esporta"
+          "EXPORT": "Esporta",
+          "EXPORT_TRANSACTIONS": "Transazioni",
+          "EXPORT_TRANSFERS": "Giroconti",
+          "EXPORT_ACCOUNTS": "Conti"
         }
       },
       "TEMPLATE": {
         "TITLE": "Scarica template",
         "DIALOG_TITLE": "Scarica template CSV",
-        "DESCRIPTION": "Scarica il file modello con le colonne corrette per importare le transazioni.",
+        "DESCRIPTION": "Scarica il file modello con le colonne corrette per ogni import.",
         "DOWNLOAD": "Scarica template",
-        "DOWNLOADING": "Download in corso..."
+        "DOWNLOADING": "Download in corso...",
+        "DOWNLOAD_TRANSACTIONS": "Transazioni",
+        "DOWNLOAD_TRANSFERS": "Giroconti",
+        "DOWNLOAD_ACCOUNTS": "Conti"
       },
       "RESULT": {
         "SUCCESS_TITLE": "Importazione completata",
         "FAILED_TITLE": "Importazione fallita",
         "IMPORTED_PREFIX": "Importate",
         "IMPORTED_MIDDLE": "transazioni su",
+        "IMPORTED_MIDDLE_TRANSACTIONS": "transazioni su",
+        "IMPORTED_MIDDLE_TRANSFERS": "giroconti su",
+        "IMPORTED_MIDDLE_ACCOUNTS": "conti su",
         "IMPORTED_SUFFIX": "righe totali.",
         "NEW_ACCOUNTS": "Nuovi conti aggiunti",
         "NEW_CATEGORIES": "Nuove categorie aggiunte",

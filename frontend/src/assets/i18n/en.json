@@ -2,6 +2,35 @@
   "APP": {
     "TITLE": "Capitally"
   },
+  "PWA": {
+    "UPDATE_AVAILABLE": "A new version of Capitally is available. Reload now?"
+  },
+  "INSTALL_PAGE": {
+    "EYEBROW": "Installable app",
+    "TITLE": "Install Capitally on your device",
+    "SUBTITLE": "Capitally can be used as an installable app on desktop, Android and iOS. The experience stays the same as the web app, with faster access from your home screen or application menu.",
+    "ACTION": "Install app",
+    "BACK_HOME": "Back to home",
+    "BACK_PREVIOUS": "Back to previous page",
+    "ANDROID": {
+      "TITLE": "Android",
+      "TEXT": "Open Capitally in Chrome and use the install button when available, or choose Add to Home screen from the browser menu."
+    },
+    "IOS": {
+      "TITLE": "iPhone and iPad",
+      "TEXT": "Open Capitally in Safari, tap Share and choose Add to Home Screen. iOS does not always show an automatic prompt."
+    },
+    "DESKTOP": {
+      "TITLE": "Desktop",
+      "TEXT": "On compatible browsers you can install Capitally from the address bar or browser menu, then open it as a standalone window."
+    }
+  },
+  "NOT_FOUND": {
+    "EYEBROW": "404 error",
+    "TITLE": "Page not found",
+    "TEXT": "The requested page does not exist or is no longer available.",
+    "ACTION": "Back to home"
+  },
   "NAV": {
     "HOME": "Home",
     "ACCOUNTS": "Accounts",
@@ -32,6 +61,16 @@
       "SIGN_UP": "Don't have an account? Sign up!",
       "ERROR": "Login failed"
     },
+    "FORGOT": {
+      "ACTION": "Forgot password?",
+      "USERNAME_EMAIL": "Email or Username",
+      "SUBMIT": "Send new password",
+      "REQUIRED": "Enter email or username",
+      "SUCCESS": "If the account exists, you will receive an email with a temporary password. After signing in, you can change it in Settings.",
+      "ERROR": "Unable to send the new password. Try again later.",
+      "DAILY_LIMIT_ERROR": "We have reached the daily email limit for password recovery. Try again tomorrow.",
+      "MONTHLY_LIMIT_ERROR": "We have reached the monthly email limit for password recovery. Try again later or contact support."
+    },
     "REGISTER": {
       "TITLE": "Welcome!",
       "USERNAME": "Username",
@@ -42,11 +81,183 @@
       "SIGN_IN": "Already have an account? Sign in",
       "ERROR": "Registration failed",
       "USER_TAKEN_ERROR": "Username already used",
-      "EMAIL_TAKEN_ERROR": "Email already used"
+      "EMAIL_TAKEN_ERROR": "Email already used",
+      "LEGAL_PREFIX": "I confirm that I have read and accept",
+      "LEGAL_AND": "and",
+      "LEGAL_REQUIRED_ERROR": "You must accept the Terms and Privacy Policy to sign up"
+    },
+    "LEGAL": {
+      "TERMS": "Terms and Conditions",
+      "PRIVACY": "Privacy Policy",
+      "COOKIES": "Cookie Policy",
+      "INSTALL_APP": "Install app",
+      "PRIVACY_PREFERENCES": "Privacy preferences"
     },
     "PASSWORD": "Password",
     "GUEST": "Enter as Guest",
     "GUEST_ERROR": "Guest login failed"
+  },
+  "WELCOME_PAGE": {
+    "HERO": {
+      "EYEBROW": "One simple question",
+      "TITLE": "Capitally",
+      "SUBTITLE": "Capitally turns your transactions into charts, statistics and insights that are simple to read.",
+      "GUEST_HINT": "Try guest mode right away: explore dashboards, accounts, transactions and summaries with demo data, without creating an account.",
+      "QUESTIONS": {
+        "MONTHLY_SPEND": "Do you really know how much you spend every month?",
+        "ACCOUNT_WEIGHT": "Which account weighs most on your balance?",
+        "SAVINGS": "How much are you actually saving?",
+        "EXPENSES_DESTINATION": "Where do your expenses go?"
+      },
+      "SLIDES": {
+        "DASHBOARD": {
+          "TITLE": "Complete dashboard",
+          "SUBTITLE": "Balance, trends and activity at a glance.",
+          "TREND": "Total balance"
+        },
+        "ACCOUNTS": {
+          "TITLE": "Accounts and transfers",
+          "SUBTITLE": "Organize balances, currencies and moves between accounts.",
+          "TREND": "connected accounts"
+        },
+        "TRANSACTIONS": {
+          "TITLE": "Live transactions",
+          "SUBTITLE": "Every expense immediately updates categories and stats.",
+          "TREND": "transactions this week"
+        },
+        "SUMMARY": {
+          "TITLE": "Clear insights",
+          "SUBTITLE": "See where you improve and where the budget slips.",
+          "TREND": "saving versus last month"
+        }
+      },
+      "TRANSACTIONS": {
+        "SALARY": "Salary",
+        "RENT": "Rent",
+        "GROCERIES": "Groceries",
+        "CURRENT_ACCOUNT": "Current account",
+        "SAVINGS_ACCOUNT": "Savings",
+        "CARD_ACCOUNT": "Card",
+        "RESTAURANT": "Restaurant",
+        "SUBSCRIPTION": "Subscription",
+        "TRANSFER": "Transfer",
+        "PHARMACY": "Pharmacy",
+        "FUEL": "Fuel",
+        "FREELANCE": "Freelance"
+      },
+      "ACCOUNT_MOCK": {
+        "MAIN": "Current account",
+        "SAVINGS": "Savings",
+        "TRANSFER_FROM": "Card",
+        "TRANSFER_TO": "Savings"
+      }
+    },
+    "ACTIONS": {
+      "GUEST": "Try as guest",
+      "TRY_GUEST": "Open guest mode",
+      "CREATE_ACCOUNT": "Create account",
+      "LOGIN": "Sign in"
+    },
+    "HIGHLIGHTS": {
+      "CONTROL": {
+        "VALUE": "1 view",
+        "LABEL": "for balance, activity and trends"
+      },
+      "TRENDS": {
+        "VALUE": "12 months",
+        "LABEL": "of income and expense trends"
+      },
+      "GUEST": {
+        "VALUE": "0 setup",
+        "LABEL": "to explore with demo data"
+      }
+    },
+    "PRODUCT": {
+      "EYEBROW": "Beyond the dashboard",
+      "TITLE": "Tools to decide earlier",
+      "TEXT": "Capitally does not only show what already happened: it helps you plan recurring activity, control budgets, move money between accounts and import data without losing structure.",
+      "WORKSPACE": {
+        "LABEL": "Workspace",
+        "TITLE": "Planning, control and data"
+      },
+      "CARDS": {
+        "RECURRING": {
+          "TITLE": "Recurring",
+          "TEXT": "See rent, subscriptions and repeated payments before they arrive."
+        },
+        "BUDGET": {
+          "TITLE": "Budget",
+          "TEXT": "Track monthly progress and understand when you are crossing limits."
+        },
+        "IMPORT": {
+          "TITLE": "CSV import",
+          "TEXT": "Bring in existing data and keep a consistent history without retyping everything."
+        },
+        "TRANSFERS": {
+          "TITLE": "Transfers",
+          "TEXT": "Move money between accounts without confusing income, expenses and real balance."
+        }
+      },
+      "MOCK": {
+        "RENT": "Rent",
+        "SUBSCRIPTION": "Subscription",
+        "READY": "Ready",
+        "CARD": "Card",
+        "SAVINGS": "Savings"
+      }
+    },
+    "DEMO": {
+      "MONTH": "Current month",
+      "SALARY": "Salary",
+      "RENT": "Rent",
+      "FOOD": "Groceries"
+    },
+    "FEATURES": {
+      "EYEBROW": "Features",
+      "TITLE": "Everything you need to track better",
+      "SUBTITLE": "From the first transaction to the yearly summary, Capitally keeps things organized without scattered spreadsheets or manual calculations.",
+      "ACCOUNTS": {
+        "TITLE": "Accounts and currencies",
+        "TEXT": "Manage different accounts, initial balances and currencies, including or excluding what should not affect your total balance."
+      },
+      "TRANSACTIONS": {
+        "TITLE": "Income and expenses",
+        "TEXT": "Record activity with category, account, date, description and amount so every financial choice can be understood later."
+      },
+      "TRANSFERS": {
+        "TITLE": "Transfers",
+        "TEXT": "Move money between accounts without distorting income and expenses, while keeping a clean transfer history."
+      },
+      "RECURRING": {
+        "TITLE": "Recurring activity",
+        "TEXT": "Set repeated payments and see what is coming next, from rent and subscriptions to installments and salary."
+      },
+      "INSIGHTS": {
+        "TITLE": "Summaries and trends",
+        "TEXT": "Filter periods, categories and accounts, then analyze balance, average expenses, top categories and income versus expenses."
+      },
+      "IMPORT_EXPORT": {
+        "TITLE": "CSV import and export",
+        "TEXT": "Import existing data or export transactions, transfers and accounts to keep an organized copy of your information."
+      }
+    },
+    "FLOW": {
+      "EYEBROW": "Try it now",
+      "TITLE": "From curiosity to clarity in minutes",
+      "TEXT": "Guest mode lets you explore the full experience with demo data. When you are ready, create your account and start building your real financial history.",
+      "STEP_1": {
+        "TITLE": "Enter as guest",
+        "TEXT": "Open Capitally with ready-made demo data, no registration and no initial setup."
+      },
+      "STEP_2": {
+        "TITLE": "Explore the visuals",
+        "TEXT": "Move through dashboards, charts, categories, accounts and summaries to see how your habits become easier to read."
+      },
+      "STEP_3": {
+        "TITLE": "Switch to your data",
+        "TEXT": "Create an account when you want to save real transactions, recurring activity, accounts and preferences."
+      }
+    }
   },
   "FORM": {
     "AMOUNT": "Amount",
@@ -139,7 +350,8 @@
     "RECENT_TRANSACTIONS_TITLE": "Recent Transactions"
   },
   "BALANCE": {
-    "BALANCE_TITLE": "Total Balance"
+    "BALANCE_TITLE": "Total Balance",
+    "ACCOUNTS_TITLE": "Accounts with balance"
   },
   "RECURRING": {
     "UPCOMING_TITLE": "Upcoming recurring",
@@ -189,7 +401,8 @@
       "DESCRIPTION_PLACEHOLDER": "E.g. Transfer between accounts",
       "SAME_ACCOUNT_ERROR": "Choose two different accounts.",
       "CONFIRM": "Confirm",
-      "SAVE": "Save"
+      "SAVE": "Save",
+      "DELETE": "Delete transfer"
     },
     "HISTORY": {
       "TITLE": "Transfer History",
@@ -334,7 +547,21 @@
       "CSV": "CSV",
       "IMPORT_EXPORT_TITLE": "Import and export",
       "PREFERENCES": "Preferences",
-      "DISPLAY_TITLE": "Display"
+      "DISPLAY_TITLE": "Display",
+      "SECURITY": "Security"
+    },
+    "PASSWORD": {
+      "TITLE": "Change password",
+      "ACTION": "Change password",
+      "CURRENT": "Current password",
+      "NEW": "New password",
+      "CONFIRM": "Repeat new password",
+      "SUBMIT": "Update password",
+      "SUCCESS": "Password updated successfully.",
+      "ERROR_REQUIRED": "Fill in all fields. The new password must be at least 6 characters long.",
+      "ERROR_MISMATCH": "The new passwords do not match.",
+      "ERROR_CURRENT": "The current password is not correct.",
+      "ERROR_GENERIC": "Unable to update the password. Try again."
     },
     "RESET": {
       "TRANSACTIONS": "Delete transactions",
@@ -367,19 +594,35 @@
       "TITLE": "Accounts have transactions",
       "MESSAGE": "One or more accounts have transactions. Before deleting accounts, delete those transactions or move them one by one to another account."
     },
+    "ANALYTICS": {
+      "TITLE": "Product analytics",
+      "DESCRIPTION": "Share anonymous usage signals to help improve Capitally. No emails, tokens, descriptions or financial amounts are sent.",
+      "ENABLE": "Enable",
+      "DISABLE": "Disable"
+    },
     "IMPORT_EXPORT": {
+      "FILE_TYPES": {
+        "TRANSACTIONS": "Transactions",
+        "TRANSFERS": "Transfers",
+        "ACCOUNTS": "Accounts"
+      },
       "IMPORT": {
         "TITLE": "Import transactions",
-        "DIALOG_TITLE": "Import transactions CSV",
+        "DIALOG_TITLE": "Import CSV",
+        "TYPE_LABEL": "CSV file type",
         "UPLOAD_FILE": "Select or drag the transactions CSV file here",
+        "UPLOAD_FILE_TRANSACTIONS": "Select or drag the transactions CSV file here",
+        "UPLOAD_FILE_TRANSFERS": "Select or drag the transfers CSV file here",
+        "UPLOAD_FILE_ACCOUNTS": "Select or drag the accounts CSV file here",
         "IMPORT": "Import",
         "FORMAT_ERROR": "The file must be in CSV format",
+        "HEADER_ERROR": "The CSV does not contain the expected columns for the selected type.",
         "GENERIC_ERROR": "Unable to import the CSV. Check the file format and separator."
       },
       "EXPORT": {
-        "TITLE": "Export transactions",
-        "DIALOG_TITLE": "Export transactions CSV",
-        "DESCRIPTION": "Set the filters to apply to the CSV file. Leave every field empty to export all transactions.",
+        "TITLE": "Export data",
+        "DIALOG_TITLE": "Export CSV",
+        "DESCRIPTION": "Set filters for transactions and transfers. The accounts file always exports every account.",
         "FORM": {
           "ACCOUNT": "Account",
           "CURRENCY": "Currency",
@@ -397,21 +640,30 @@
             "DATE": "The start date must be before the end date"
           },
           "EXPORTING": "Exporting",
-          "EXPORT": "Export"
+          "EXPORT": "Export",
+          "EXPORT_TRANSACTIONS": "Transactions",
+          "EXPORT_TRANSFERS": "Transfers",
+          "EXPORT_ACCOUNTS": "Accounts"
         }
       },
       "TEMPLATE": {
         "TITLE": "Download template",
         "DIALOG_TITLE": "Download CSV template",
-        "DESCRIPTION": "Download the sample file with the correct columns for importing transactions.",
+        "DESCRIPTION": "Download the sample file with the correct columns for each import.",
         "DOWNLOAD": "Download template",
-        "DOWNLOADING": "Downloading..."
+        "DOWNLOADING": "Downloading...",
+        "DOWNLOAD_TRANSACTIONS": "Transactions",
+        "DOWNLOAD_TRANSFERS": "Transfers",
+        "DOWNLOAD_ACCOUNTS": "Accounts"
       },
       "RESULT": {
         "SUCCESS_TITLE": "Import completed",
         "FAILED_TITLE": "Import failed",
         "IMPORTED_PREFIX": "Imported",
         "IMPORTED_MIDDLE": "transactions out of",
+        "IMPORTED_MIDDLE_TRANSACTIONS": "transactions out of",
+        "IMPORTED_MIDDLE_TRANSFERS": "transfers out of",
+        "IMPORTED_MIDDLE_ACCOUNTS": "accounts out of",
         "IMPORTED_SUFFIX": "total rows.",
         "NEW_ACCOUNTS": "New accounts added",
         "NEW_CATEGORIES": "New categories added",

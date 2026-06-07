@@ -8,14 +8,13 @@ $glass-strong: rgba(255, 255, 255, 0.78);
 
 :host {
   display: block;
-  height: 100%;
+  min-height: 100%;
 }
 
 .accounts-page {
   box-sizing: border-box;
   color: $primary;
-  height: 100%;
-  overflow-y: auto;
+  min-height: 100%;
   padding: 1.25rem 1rem 1.75rem;
 }
 
@@ -60,8 +59,11 @@ $glass-strong: rgba(255, 255, 255, 0.78);
 .accounts-overview,
 .history-view,
 .glass-panel {
+  box-sizing: border-box;
   margin: 0 auto;
   max-width: 1180px;
+  min-width: 0;
+  width: 100%;
 }
 
 .accounts-overview {
@@ -323,6 +325,7 @@ $glass-strong: rgba(255, 255, 255, 0.78);
   display: grid;
   gap: 1rem;
   grid-template-columns: minmax(0, 1fr) minmax(8rem, 0.65fr);
+  min-width: 0;
 }
 
 .balance-editor {
@@ -446,15 +449,17 @@ input,
 .transfer-calendar-card {
   background: #fff;
   border-radius: 0.5rem;
+  box-sizing: border-box;
   box-shadow: 0 2px 8px rgba(0, 95, 115, 0.55);
   color: $primary;
   display: grid;
   gap: 0.75rem;
   margin: 0 auto;
   max-width: 34rem;
+  min-width: 0;
   padding: 1rem;
   text-align: center;
-  width: min(100%, 34rem);
+  width: 100%;
 }
 
 .transfer-calendar-label {
@@ -482,6 +487,10 @@ input,
 
   strong {
     font-weight: 800;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
@@ -489,6 +498,7 @@ input,
 .transfer-calendar-week {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
+  min-width: 0;
 }
 
 .transfer-calendar-weekdays span {
@@ -512,7 +522,8 @@ input,
   margin: 0 auto;
   max-height: 2.25rem;
   max-width: 2.25rem;
-  min-width: 2rem;
+  min-width: 0;
+  width: min(2.25rem, 100%);
 
   &.outside {
     opacity: 0.35;
@@ -745,7 +756,23 @@ input,
 }
 
 @media (max-width: 639px) {
+  .hero-copy {
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(0, 95, 115, 0.18);
+    border-radius: 0.75rem;
+    box-shadow: 0 8px 20px rgba(0, 95, 115, 0.1);
+    box-sizing: border-box;
+    padding: 0.75rem 0.9rem;
+    width: 100%;
+  }
+
   .overview-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .field-row {
     grid-template-columns: 1fr;
   }
 
@@ -818,12 +845,12 @@ input,
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    order: 2;
+    order: 3;
   }
 
   .overview-actions {
-    margin: 1rem auto 0;
-    order: 3;
+    margin: 1rem auto;
+    order: 2;
   }
 
   .account-card {

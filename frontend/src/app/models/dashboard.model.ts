@@ -2,9 +2,18 @@ import { RecurrencePeriodEnum, TransactionTypeEnum } from "./transaction.model";
 
 export interface DashboardOverviewResponseDTO {
   totalBalancePerCurrency: { [currencyCode: string]: number };
+  accountBalances: AccountBalanceResponseDTO[];
   totalIncomeThisMonth:  { [currencyCode: string]: number };
   totalExpenseThisMonth:  { [currencyCode: string]: number };
   upcomingRecurringCount: number;
+}
+
+export interface AccountBalanceResponseDTO {
+  accountId: number;
+  accountName: string;
+  iconName?: string | null;
+  currency: string;
+  balance: number;
 }
 
 export interface CurrentBalanceResponseDTO {

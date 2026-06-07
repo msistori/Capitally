@@ -1,0 +1,49 @@
+{
+  "$schema": "./node_modules/@angular/service-worker/config/schema.json",
+  "index": "/index.html",
+  "assetGroups": [
+    {
+      "name": "app-shell",
+      "installMode": "prefetch",
+      "resources": {
+        "files": [
+          "/favicon.ico",
+          "/index.html",
+          "/manifest.webmanifest",
+          "/*.css",
+          "/*.js"
+        ]
+      }
+    },
+    {
+      "name": "static-assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/assets/**",
+          "/robots.txt",
+          "/sitemap.xml"
+        ]
+      }
+    }
+  ],
+  "navigationUrls": [
+    "/**",
+    "!/auth/**",
+    "!/api/**",
+    "!/analytics/**",
+    "!/dashboard/**",
+    "!/transaction/**",
+    "!/transactions/**",
+    "!/account/**",
+    "!/accounts/**",
+    "!/transfer/**",
+    "!/category/**",
+    "!/currency/**",
+    "!/users/**",
+    "!/v3/**",
+    "!/swagger-ui/**",
+    "!/swagger-ui.html"
+  ]
+}

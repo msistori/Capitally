@@ -7,9 +7,8 @@
         <version>3.3.13</version>
     </parent>
     <groupId>com.capitally</groupId>
-    <artifactId>capitally-app</artifactId>
+    <artifactId>capitally-backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>capitally-app</name>
     <description>Backend API for Capitally personal finance app</description>
 
     <properties>
@@ -22,11 +21,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-oauth2-client</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>

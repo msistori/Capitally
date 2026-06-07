@@ -125,6 +125,45 @@ $border: rgba(0, 95, 115, 0.18);
   gap: 0.75rem;
 }
 
+.security-section {
+  .password-form {
+    display: grid;
+    gap: 0.75rem;
+    
+    mat-form-field {
+      mat-label,
+      input {
+        color: $primary;
+      }
+    }
+  }
+
+  .password-actions {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .password-toggle,
+  .password-action {
+    justify-content: center;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+  }
+
+  .password-cancel {
+    border-color: $border;
+    justify-content: center;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+  }
+}
+
 .currency-label,
 .language-label {
   font-weight: 700;
@@ -230,6 +269,20 @@ $border: rgba(0, 95, 115, 0.18);
   background: $primary;
   border: 1px solid $primary;
   color: #fff;
+}
+
+.settings-message {
+  font-weight: 700;
+  margin: 0;
+  text-align: center;
+
+  &.success {
+    color: #157347;
+  }
+
+  &.error {
+    color: $danger;
+  }
 }
 
 .transaction-delete-dialog {
@@ -368,5 +421,11 @@ $border: rgba(0, 95, 115, 0.18);
 
   .template-actions.single-action {
     grid-template-columns: 1fr;
+  }
+
+  .security-section {
+    .password-actions {
+      grid-template-columns: 1fr 1fr;
+    }
   }
 }

@@ -34,9 +34,31 @@
             </button>
           </mat-form-field>
 
+          <button type="button" class="forgot-link" (click)="openForgotPassword()" [disabled]="loading()">
+            {{ 'LOGIN_PAGE.FORGOT.ACTION' | translate }}
+          </button>
+
           <button mat-raised-button color="primary" class="primary-btn" [disabled]="loading()">
             {{ 'LOGIN_PAGE.LOGIN.SUBMIT' | translate }}
           </button>
+        </form>
+
+        <form
+          class="forgot-form"
+          *ngIf="forgotPasswordOpen()"
+          [formGroup]="forgotPasswordForm"
+          (ngSubmit)="submitForgotPassword()">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>{{ 'LOGIN_PAGE.FORGOT.USERNAME_EMAIL' | translate }}</mat-label>
+            <input matInput type="text" formControlName="usernameOrEmail" />
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" class="primary-btn" [disabled]="loading()">
+            {{ 'LOGIN_PAGE.FORGOT.SUBMIT' | translate }}
+          </button>
+
+          <p class="success" *ngIf="forgotPasswordSuccess()">{{ forgotPasswordSuccess() }}</p>
+          <p class="error" *ngIf="forgotPasswordError()">{{ forgotPasswordError() }}</p>
         </form>
 
         <div class="alt">
@@ -91,6 +113,13 @@
               <mat-icon>{{ hideRegisterPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
             </button>
           </mat-form-field>
+
+          <mat-checkbox class="legal-consent" formControlName="legalAccepted">
+            {{ 'LOGIN_PAGE.REGISTER.LEGAL_PREFIX' | translate }}
+            <a [routerLink]="termsLink" (click)="$event.stopPropagation()">{{ 'LOGIN_PAGE.LEGAL.TERMS' | translate }}</a>
+            {{ 'LOGIN_PAGE.REGISTER.LEGAL_AND' | translate }}
+            <a [routerLink]="privacyLink" (click)="$event.stopPropagation()">{{ 'LOGIN_PAGE.LEGAL.PRIVACY' | translate }}</a>
+          </mat-checkbox>
 
           <button mat-raised-button color="primary" class="primary-btn" [disabled]="loading()">
             {{ 'LOGIN_PAGE.REGISTER.SUBMIT' | translate }}

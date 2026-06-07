@@ -151,6 +151,17 @@ $danger: #b42318;
   background: $primary;
   border: 1px solid $primary;
   color: #fff;
+  align-items: center;
+  display: inline-flex;
+  gap: 0.45rem;
+  justify-content: center;
+
+  mat-icon {
+    color: #fff;
+    font-size: 1.15rem;
+    height: 1.15rem;
+    width: 1.15rem;
+  }
 }
 
 @media (min-width: 560px) {
@@ -161,5 +172,11 @@ $danger: #b42318;
 
   .actions.confirm-actions {
     grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 860px) {
+  .actions:not(.confirm-actions) {
+    grid-template-columns: repeat(4, 1fr);
   }
 }

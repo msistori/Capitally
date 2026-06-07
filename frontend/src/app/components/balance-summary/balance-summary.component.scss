@@ -1,7 +1,19 @@
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
 .balance-summary {
+  box-sizing: border-box;
   padding: 1.5rem;
   border-radius: 1rem;
   text-align: center;
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  background-color: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(209, 213, 219, 0.5);
 
   h2 {
     margin: 0 0 .5rem 0;
@@ -11,36 +23,153 @@
 
   .balance-total {
     font-size: 2.5rem;
+    line-height: 1;
     font-weight: 800;
     color: #005f73;
     margin: 0 0 .75rem 0;
+    overflow-wrap: anywhere;
   }
 
   .per-currency {
     list-style: none;
     padding: 0;
-    margin: 0;
+    margin: 0 0 1rem 0;
     display: grid;
     gap: .25rem;
 
     li {
-      display: flex;
-      justify-content: center;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) max-content;
+      align-items: center;
+      gap: 1.5rem;
+      width: min(100%, 12rem);
+      margin: 0 auto;
       font-weight: 600;
       color: #005f73;
-      gap: 2rem;
+    }
 
-      .code { opacity: .8; }
-      .amt { white-space: nowrap; }
+    .code {
+      opacity: .8;
+      text-align: left;
+    }
+
+    .amt {
+      white-space: nowrap;
+      text-align: right;
+    }
+  }
+
+  .accounts-breakdown {
+    margin-top: 1rem;
+    text-align: left;
+
+    h3 {
+      margin: 0 0 .5rem 0;
+      color: #005f73;
+      font-size: .85rem;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 auto;
+      display: grid;
+      gap: .4rem;
+      width: min(100%, 30rem);
+    }
+
+    li {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) max-content;
+      align-items: center;
+      gap: 1.5rem;
+      color: #005f73;
+      font-size: .85rem;
+      font-weight: 700;
+    }
+
+    .account-name {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      gap: .4rem;
+
+      mat-icon {
+        width: 1rem;
+        height: 1rem;
+        font-size: 1rem;
+        flex: 0 0 auto;
+      }
+
+      span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+
+    .account-balance {
+      display: flex;
+      align-items: baseline;
+      justify-content: flex-end;
+      white-space: nowrap;
+
+      &.negative {
+        color: #ae2012;
+      }
+    }
+
+    .account-amount {
+      text-align: right;
     }
   }
 
   @media (min-width: 1024px) {
-    -webkit-backdrop-filter: blur(16px);
-    backdrop-filter: blur(16px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: min(100%, 42rem);
+    height: 100%;
+    padding: clamp(1.4rem, 3vh, 2.5rem) clamp(1.5rem, 3vw, 3rem);
     background-color: rgba(255, 255, 255, 0.42);
-    border: 1px solid rgba(209, 213, 219, 0.5);
-    border-radius: 1rem;
-    transform: scale(2);
+
+    h2 {
+      font-size: clamp(3rem, 1.2vw, 1.35rem);
+    }
+
+    .balance-total {
+      font-size: clamp(5rem, 4.5vw, 5rem);
+    }
+
+    .per-currency {
+      li {
+        width: min(100%, 35rem);
+        font-size: clamp(2rem, 1.1vw, 1.2rem);
+      }
+    }
+
+    .accounts-breakdown {
+      h3 {
+        font-size: clamp(1.5rem, 1vw, 1.05rem);
+      }
+
+      ul {
+        width: min(100%, 35rem);
+      }
+
+      li {
+        font-size: clamp(2rem, .95vw, 1rem);
+      }
+
+      .account-name {
+        mat-icon {
+          width: 1.5rem;
+          height: 1.5rem;
+          font-size: 1.5rem;
+        }
+      }
+    }
   }
 }

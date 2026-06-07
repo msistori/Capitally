@@ -1,159 +1,69 @@
 $primary: #005f73;
+$secondary: #caf0f8;
 
-.footer {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: var(--footer-h);
-  background-color: $primary;
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  z-index: 1000;
-  padding: 0 1rem;
+:host {
+  display: block;
 }
 
-.footer-actions {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: space-around;
-  width: 100%;
-  max-width: 900px;
+.legal-footer {
+  box-sizing: border-box;
+  padding: .55rem .55rem;
 }
 
-::ng-deep .footer-action {
-  display: inline-flex;
-  align-items: center;
-  gap: .5rem;
-  border: none;
+:host-context(.welcome-content) .legal-footer {
   background: transparent;
-  color: inherit;
-  cursor: pointer;
-  border-radius: 10px;
-  transition: transform .12s ease, background .12s ease, box-shadow .12s ease;
-  -webkit-tap-highlight-color: transparent;
-  
-  .icon {
-    font-size: 1.6rem;
-    width: 1.6rem;
-    height: 1.6rem;
-    line-height: 1;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .label {
-    display: none;
-    white-space: nowrap;
-    font-size: 0.95rem;
-  }
-  
-  &:active { transform: translateY(1px); }
-  &:hover .icon { box-shadow: 0 0 18px rgba(79, 209, 197, 0.58); }
 }
 
-@media (min-width: 1024px) {
-  .footer {
-    bottom: 0;
-    right: auto;
-    
-    left: 0;
-    top: var(--footer-h);
-    width: calc(var(--footer-h) * 1.5);
-    height: calc(100vh - var(--footer-h));
-    
-    padding: 5rem 0;
-    background: $primary;
-    box-shadow: 2px 0 12px rgba(243, 243, 243, 0);
-    
-    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    
-    border-radius: 0;
-    transform: none;
-    
-    justify-content: flex-start;
-    align-items: normal;
-  }
-  
-  .footer:hover {
-    width: calc(var(--footer-h) * 4);
-  }
-  
-  .footer-actions {
-    flex-direction: column;
-    justify-content: flex-start;
-    width: 100%;
-    max-width: none;
-  }
-  
-  ::ng-deep .footer-action {
-    /* Reset padding per allineamento icone centrali */
-    padding: 14px 0;
-    
-    /* Testo nascosto di default */
-    justify-content: flex-start;
-    position: relative;
-    overflow: hidden;
-    white-space: nowrap;
-    border-radius: 0;
-    
-    transition: all 0.3s ease;
-  }
-  
-  /* Icona centrata quando sidebar è compressa */
-  ::ng-deep .footer-action ::ng-deep .icon {
-    width: 80px; /* Uguale alla larghezza sidebar compressa */
-    flex-shrink: 0;
-    display: flex;
-    justify-content: center;
-  }
-  
-  /* Label nascosta e spostata di default */
-  ::ng-deep .footer-action ::ng-deep .label {
-    display: inline-block;
-    opacity: 0;
-    transform: translateX(-10px);
-    transition: all 0.3s ease;
-    font-size: 0.95rem;
-  }
-  
-  .footer:hover ::ng-deep .footer-action .label {
-    opacity: 1;
-    transform: translateX(0);
-  }
+:host-context(.install-content) .legal-footer {
+  background: transparent;
+}
 
-  ::ng-deep .footer-action.active {
-    color: #ffffff;
-  }
+:host-context(.login-content) .legal-footer {
+  background: transparent;
+}
 
-  .footer:hover ::ng-deep .footer-action.active .icon {
-    box-shadow: 0 0 18px rgba(79, 209, 197, 0.72);
-  }
-  
-  .footer::before {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    margin: 0 auto 2.5rem;
-    background: white;
-    color: $primary;
-    border-radius: 50%;
-    font-size: 22px;
-    font-weight: bold;
-    transition: all 0.3s ease;
-  }
-  
-  .footer:hover::before {
-    width: 100%;
-    border-radius: 0;
+.legal-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: .5rem .9rem;
+  margin: 0;
+  font-size: .84rem;
+
+  a,
+  button {
+    appearance: none;
     background: transparent;
-    color: white;
-    justify-content: flex-start;
-    padding-left: 24px;
-    margin-bottom: 2.5rem;
+    border: 0;
+    color: $primary;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+    padding: .2rem .35rem;
+    border-radius: 6px;
+    text-decoration: underline;
+    text-shadow: var(--text-glow);
+  }
+
+  p {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    color: $primary;
+    font: inherit;
+    font-weight: 700;
+    padding: .2rem .35rem;
+    border-radius: 6px;
+    text-shadow: var(--text-glow);
+    margin: 0;
+  }
+}
+
+:host-context(.install-content) .legal-links {
+  a,
+  button,
+  p {
+    color: #caf0f8;
+    text-shadow: 0 1px 10px rgba(0, 27, 35, 0.48);
   }
 }

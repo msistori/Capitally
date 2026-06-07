@@ -93,6 +93,9 @@ Thumbs.db
 frontend/.angular/
 frontend/dist/
 # local env files
+.env
+.env.*
+!.env.example
 **/src/main/resources/application-local.*
 **/src/main/resources/application-dev.yml
 **/src/main/resources/application-dev.properties

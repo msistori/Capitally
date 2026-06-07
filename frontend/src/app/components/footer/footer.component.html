@@ -1,18 +1,12 @@
-<footer class="footer" role="contentinfo">
-
-  <nav class="footer-actions" aria-label="Footer navigation">
-
-    <app-footer-action [icon]="'home'" [label]="'NAV.HOME' | translate" [active]="!anyDialogOpen && isRoute('/dashboard')" (action)="goToHome()"></app-footer-action>
-
-    <app-footer-action [icon]="'account_balance'" [label]="'NAV.ACCOUNTS' | translate" [active]="!anyDialogOpen && isRoute('/accounts')" (action)="goToAccounts()"></app-footer-action>
-
-    <app-footer-action [icon]="'add'" [label]="'NAV.ADD_TRANSACTION' | translate" (action)="openTransactionModal()"
-      [active]="transactionDialogOpen" [disabled]="transactionDialogOpen"></app-footer-action>
-
-    <app-footer-action [icon]="'list_alt'" [label]="'NAV.SUMMARY' | translate" [active]="!anyDialogOpen && isRoute('/summary')" (action)="goToSummary()"></app-footer-action>
-
-    <app-footer-action [icon]="'settings'" [label]="'NAV.SETTINGS' | translate" (action)="openSettingsModal()"
-      [active]="settingsDialogOpen" [disabled]="settingsDialogOpen"></app-footer-action>
-
+<footer class="legal-footer">
+  <nav class="legal-links" aria-label="Legal Documents">
+    <a [routerLink]="termsLink">{{ 'LOGIN_PAGE.LEGAL.TERMS' | translate }}</a>
+    <a [routerLink]="privacyLink">{{ 'LOGIN_PAGE.LEGAL.PRIVACY' | translate }}</a>
+    <a [routerLink]="cookiesLink">{{ 'LOGIN_PAGE.LEGAL.COOKIES' | translate }}</a>
+    <a [routerLink]="installLink">{{ 'LOGIN_PAGE.LEGAL.INSTALL_APP' | translate }}</a>
+    <button type="button" (click)="openPrivacyPreferences()">
+      {{ 'LOGIN_PAGE.LEGAL.PRIVACY_PREFERENCES' | translate }}
+    </button>
+    <p>© {{year}} Capitally</p>
   </nav>
 </footer>

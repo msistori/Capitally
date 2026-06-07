@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { EMPTY, Observable } from 'rxjs';
 import {
   TransactionModel
 } from '../models/transaction.model';
@@ -11,8 +11,8 @@ export class TransactionService {
 
   constructor(private http: HttpClient) {}
 
-  getTransactions(userId: string, accountId?: number): Observable<TransactionModel[]> {
-    let params = new HttpParams().set('userId', userId);
+  getTransactions(accountId?: number): Observable<TransactionModel[]> {
+    let params = new HttpParams();
 
     if (accountId !== undefined) {
       params = params.set('accountId', accountId);
@@ -22,11 +22,23 @@ export class TransactionService {
   }
 
   postTransaction(transaction: TransactionModel): Observable<TransactionModel> {
-    return this.http.post<TransactionModel>(`${this.apiUrl}`, transaction);
+    const { userId, ...payload } = transaction;
+    return this.http.post<TransactionModel>(`${this.apiUrl}`, payload);
   }
 
   putTransaction(transactionId: number, transaction: TransactionModel): Observable<TransactionModel> {
-    return this.http.put<TransactionModel>(`${this.apiUrl}/${transactionId}`, transaction);
+    const { userId, ...payload } = transaction;
+    return this.http.put<TransactionModel>(`${this.apiUrl}/${transactionId}`, payload);
+  }
+
+  deleteTransaction(transactionId?: number) {
+    let params = new HttpParams();
+
+    if (transactionId !== undefined) {
+      params = params.set('transactionId', transactionId);
+    } else return EMPTY;
+
+    return this.http.delete<void>(`${this.apiUrl}`, { params });
   }
 
   deleteTransactions(accountId?: number) {

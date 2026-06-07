@@ -10,9 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -24,7 +22,11 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping
-    public ResponseEntity<CategoryResponseDTO> postCategory(@RequestBody CategoryRequestDTO input) {
+    public ResponseEntity<CategoryResponseDTO> postCategory(
+            @AuthenticationPrincipal UserPrincipal user,
+            @RequestBody CategoryRequestDTO input
+    ) {
+        input.setUserId(user.getId());
         CategoryResponseDTO response = categoryService.postCategory(input);
         return ResponseEntity.ok(response);
     }
@@ -40,8 +42,13 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CategoryResponseDTO> putCategory(@PathVariable BigInteger id, @RequestBody CategoryRequestDTO dto) {
-        return ResponseEntity.ok(categoryService.putCategory(id, dto));
+    public ResponseEntity<CategoryResponseDTO> putCategory(
+            @AuthenticationPrincipal UserPrincipal user,
+            @PathVariable BigInteger id,
+            @RequestBody CategoryRequestDTO dto
+    ) {
+        dto.setUserId(user.getId());
+        return ResponseEntity.ok(categoryService.putCategory(user.getId(), id, dto));
     }
 
     @DeleteMapping()

@@ -52,8 +52,18 @@ export class MockApiInterceptor implements HttpInterceptor {
       return this.json(this.login(req.body));
     }
 
+    if (req.method === 'POST' && path === '/auth/forgot-password' && this.isEndpointEnabled(config, 'authLogin')) {
+      return this.json(null);
+    }
+
     if (req.method === 'GET' && path === '/auth/me' && this.isEndpointEnabled(config, 'authMe')) {
       return this.json(this.me());
+    }
+
+    if (req.method === 'PUT'
+      && (path === '/users/me/password' || path === '/api/users/me/password')
+      && this.isEndpointEnabled(config, 'authMe')) {
+      return this.json(null);
     }
 
     if (req.method === 'GET' && path === '/dashboard/overview' && this.isEndpointEnabled(config, 'dashboardOverview')) {
@@ -270,16 +280,46 @@ export class MockApiInterceptor implements HttpInterceptor {
       return this.json(updated);
     }
 
+    if (req.method === 'DELETE') {
+      const transferGroupId = decodeURIComponent(path.split('/').pop() ?? '');
+      const index = transfersMock.findIndex(transfer => transfer.transferGroupId === transferGroupId);
+
+      if (index >= 0) {
+        transfersMock.splice(index, 1);
+      }
+
+      return this.json(null);
+    }
+
     return null;
   }
 
   private handleImportExport(req: HttpRequest<any>, path: string): HttpResponse<any> | null {
-    if (req.method === 'POST' && path === '/transactions/import') {
-      return this.json(importTransactionsMock);
+    if (req.method === 'POST' && path.startsWith('/transactions/import')) {
+      const type = path.endsWith('/accounts') ? 'accounts' : path.endsWith('/transfers') ? 'transfers' : 'transactions';
+      return this.json({
+        ...importTransactionsMock,
+        summary: {
+          ...importTransactionsMock.summary,
+          importedTransactions: type === 'transactions' ? 1 : 0,
+          importedTransfers: type === 'transfers' ? 1 : 0,
+          importedAccounts: type === 'accounts' ? 1 : 0,
+          totalRows: 1
+        }
+      });
     }
 
-    if (req.method === 'GET' && (path === '/transactions/template' || path === '/transactions/export')) {
-      const csv = 'date,description,amount,currencyCode,transactionType,account,macroCategory,category\n';
+    if (req.method === 'GET' && path.startsWith('/transactions/template')) {
+      const csv = this.mockImportExportCsv(path, true);
+      return new HttpResponse({
+        status: 200,
+        body: new Blob([csv], { type: 'text/csv' }),
+        headers: req.headers
+      });
+    }
+
+    if (req.method === 'GET' && path.startsWith('/transactions/export')) {
+      const csv = this.mockImportExportCsv(path, false);
       return new HttpResponse({
         status: 200,
         body: new Blob([csv], { type: 'text/csv' }),
@@ -288,6 +328,19 @@ export class MockApiInterceptor implements HttpInterceptor {
     }
 
     return null;
+  }
+
+  private mockImportExportCsv(path: string, template: boolean): string {
+    if (path.endsWith('/accounts')) {
+      return 'account_name;currency;initial_balance;final_balance;include_in_total_balance;icon_name\n';
+    }
+
+    if (path.endsWith('/transfers')) {
+      return 'date;source_account;destination_account;amount;currency;description\n';
+    }
+
+    const header = 'date;macrocategory;category;account_name;amount;currency;description;transaction_type;is_recurring;recurrence_period;recurrence_end_date\n';
+    return template ? header : `${header}`;
   }
 
   private isEndpointEnabled(config: MockApiConfig, endpoint: MockEndpointKey): boolean {

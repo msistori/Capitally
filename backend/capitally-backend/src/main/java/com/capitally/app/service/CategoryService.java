@@ -28,6 +28,7 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final TransactionRepository transactionRepository;
     private final CategoryMapper categoryMapper;
+    private final CategoryVisibilityService categoryVisibilityService;
 
     private final String OTHER_CATEGORY = "Other";
 
@@ -38,13 +39,13 @@ public class CategoryService {
 
     public List<CategoryResponseDTO> getCategories(String macroCategory, String category, String iconName, BigInteger userId) {
         Specification<CategoryEntity> spec = buildSpecification(macroCategory, category, iconName, userId, false);
-        return categoryRepository.findAll(spec).stream()
+        return categoryVisibilityService.visibleCategories(categoryRepository.findAll(spec)).stream()
                 .map(categoryMapper::mapCategoryEntityToDTO)
                 .toList();
     }
 
-    public CategoryResponseDTO putCategory(BigInteger id, CategoryRequestDTO dto) {
-        CategoryEntity existing = categoryRepository.findById(id)
+    public CategoryResponseDTO putCategory(BigInteger userId, BigInteger id, CategoryRequestDTO dto) {
+        CategoryEntity existing = categoryRepository.findByIdAndUser_Id(id, userId)
                 .orElseThrow(() -> new IllegalArgumentException("Category not found"));
 
         existing.setMacroCategory(dto.getMacroCategory());
@@ -58,6 +59,10 @@ public class CategoryService {
         if(categoryId != null) {
             Optional<CategoryEntity> categoryToDelete = categoryRepository.findByIdAndUser_Id(categoryId, userId);
             if(categoryToDelete.isPresent()) {
+                List<CategoryEntity> userCategories = categoryRepository.findByUser_Id(userId);
+                if (categoryVisibilityService.isHiddenTechnicalOther(categoryToDelete.get(), userCategories)) {
+                    return;
+                }
                 moveTransactionsFromCategoryToOther(userId, categoryToDelete.get());
                 categoryRepository.deleteById(categoryId);
             }
@@ -91,8 +96,13 @@ public class CategoryService {
     }
 
     private void moveTransactionsFromCategoryToOther(BigInteger userId, CategoryEntity categoryEntity) {
-        CategoryEntity categoryOther = categoryRepository.findByCategoryAndMacroCategoryAndUser_Id("Other", "Other", userId)
-                                            .orElse(null);
+        CategoryEntity categoryOther = categoryRepository.findByUser_IdAndMacroCategoryAndCategoryAndIconName(
+                        userId, "Other", "Other", "Question-mark"
+                ).stream()
+                .filter(categoryVisibilityService::isTechnicalOther)
+                .filter(category -> !category.getId().equals(categoryEntity.getId()))
+                .min((left, right) -> left.getId().compareTo(right.getId()))
+                .orElse(null);
         if (categoryOther == null) {
             return ;
         }

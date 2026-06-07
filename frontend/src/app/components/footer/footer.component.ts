@@ -1,96 +1,44 @@
-import { Component, ViewChild, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { StorageService } from '../../auth/storage.service';
-import { MatDialogRef, MatDialog } from '@angular/material/dialog';
-import { TransactionModel } from 'src/app/models/transaction.model';
-import { AddTransactionModalComponent } from '../insert-transaction/add-transaction-modal/add-transaction-modal.component';
-import { SettingsModalComponent } from './../../pages/settings/settings-modal/settings-modal.component';
-import { RefreshService } from 'src/app/services/refresh.service';
+import { AnalyticsService } from '../../analytics/analytics.service';
+import { TranslateService } from '@ngx-translate/core';
+import { LOCALIZED_ROUTES, currentOrDefaultLanguage } from '../../routing/localized-routes';
 
 @Component({
   selector: 'app-footer',
   templateUrl: './footer.component.html',
-  styleUrls: ['./footer.component.scss']
+  styleUrl: './footer.component.scss'
 })
 export class FooterComponent {
-  private dialogTransactionModal?: MatDialogRef<AddTransactionModalComponent, TransactionModel>;
-  private dialogSettingsModal?: MatDialogRef<SettingsModalComponent, void>;
-
-  private router = inject(Router);
-  private storage = inject(StorageService);
-
+  year = new Date().getFullYear();
+  
   constructor(
-    private transactionDialog: MatDialog,
-    private settingsDialog: MatDialog,
-    private refreshService: RefreshService
-  ) { }
+    private analytics: AnalyticsService,
+    private router: Router,
+    private translate: TranslateService
+  ) {}
 
-  get showFab(): boolean {
-    const token = this.storage.getAccessToken();
-    const user = this.storage.getUser();
-    const url = this.router.url || '';
-    
-    return (!!token || !!user) && !url.startsWith('/login');
+  get termsLink(): string {
+    return LOCALIZED_ROUTES[this.currentLanguage].legal.terms;
   }
 
-  goToHome(): void {
-    this.router.navigate(['/dashboard']);
+  get privacyLink(): string {
+    return LOCALIZED_ROUTES[this.currentLanguage].legal.privacy;
   }
 
-  goToAccounts(): void {
-    this.router.navigate(['/accounts']);
+  get cookiesLink(): string {
+    return LOCALIZED_ROUTES[this.currentLanguage].legal.cookies;
   }
 
-  goToSummary(): void {
-    this.router.navigate(['/summary']);
+  get installLink(): string {
+    return LOCALIZED_ROUTES[this.currentLanguage].install;
   }
 
-  openSettingsModal(): void {
-    if (this.dialogSettingsModal) return;
-
-    this.dialogSettingsModal = this.settingsDialog.open(SettingsModalComponent, {
-      hasBackdrop: true,
-      disableClose: false,
-      closeOnNavigation: true,
-      panelClass: ['add-transaction-modal-panel', 'settings-modal-panel']
-    });
-
-    this.dialogSettingsModal.afterClosed().subscribe(() => {
-      this.dialogSettingsModal = undefined;
-    });
+  openPrivacyPreferences(): void {
+    this.analytics.reopenConsentPreferences();
   }
 
-  get settingsDialogOpen(): boolean {
-    return !!this.dialogSettingsModal;
-  }
-
-  get anyDialogOpen(): boolean {
-    return this.transactionDialogOpen || this.settingsDialogOpen;
-  }
-
-  openTransactionModal() {
-    if (this.dialogTransactionModal) return;
-
-    this.dialogTransactionModal = this.transactionDialog.open(AddTransactionModalComponent, {
-      hasBackdrop: true,
-      disableClose: false,
-      closeOnNavigation: true,
-      panelClass: 'add-transaction-modal-panel'
-    });
-
-    this.dialogTransactionModal.afterClosed().subscribe((tx) => {
-      this.dialogTransactionModal = undefined;
-      if (tx) {
-        this.refreshService.triggerRefresh();
-      }
-    });
-  }
-
-  get transactionDialogOpen(): boolean {
-    return !!this.dialogTransactionModal;
-  }
-
-  isRoute(path: string): boolean {
-    return this.router.url.startsWith(path);
+  private get currentLanguage() {
+    return currentOrDefaultLanguage(this.router.url, this.translate.currentLang);
   }
 }

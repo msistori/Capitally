@@ -2,9 +2,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 1rem;
+  box-sizing: border-box;
+  padding: var(--safe-top) 1rem 0;
   background-color: #005f73;
-  height: var(--footer-h);
+  flex: 0 0 var(--header-h);
+  height: var(--header-h);
+  position: relative;
+  z-index: 1001;
 
   .logo-container {
     display: flex;
@@ -60,5 +64,6 @@
 }
 
 .login-header {
-  padding: 0 10%;
+  padding-left: 10%;
+  padding-right: 10%;
 }

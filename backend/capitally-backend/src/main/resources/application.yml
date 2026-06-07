@@ -1,9 +1,15 @@
 server:
-  port: 8080
+  port: ${PORT:8080}
   forward-headers-strategy: framework
 
 spring:
+  datasource:
+    url: "${SPRING_DATASOURCE_URL}"
+    username: "${SPRING_DATASOURCE_USERNAME}"
+    password: "${SPRING_DATASOURCE_PASSWORD}"
   jpa:
+    hibernate:
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
     open-in-view: false
     show-sql: false
     properties:
@@ -23,6 +29,21 @@ springdoc:
 jwt:
   secret: ${JWT_SECRET}
   validityMillis: ${JWT_VALIDITY_MILLIS:259200000}
+
+analytics:
+  posthog:
+    api-key: ${POSTHOG_API_KEY:}
+    host: ${POSTHOG_HOST}
+    frontend-enabled: ${POSTHOG_FRONTEND_ENABLED:true}
+    server-enabled: ${POSTHOG_SERVER_ENABLED:true}
+    session-replay-enabled: ${POSTHOG_SESSION_REPLAY_ENABLED:false}
+
+resend:
+  api-key: ${RESEND_API_KEY:}
+  from: ${RESEND_FROM:}
+  host: ${RESEND_HOST:}
+  forgot-password-daily-limit: ${RESEND_FORGOT_PASSWORD_DAILY_LIMIT:50}
+  forgot-password-monthly-limit: ${RESEND_FORGOT_PASSWORD_MONTHLY_LIMIT:500}
 
 logging:
   level:

@@ -1,124 +1,139 @@
 <form *ngIf="form" [formGroup]="form" (ngSubmit)="submit()" class="form">
-
+  
   <div class="amount-currency">
     <input matInput type="number" step="1" inputmode="decimal" formControlName="amount" class="amount-field"
-      placeholder="0" />
-
+    placeholder="0" />
+    
     <mat-select formControlName="currencyCode" panelClass="currency-panel-class" class="currency-panel"
-      (openedChange)="onCurrencyPanelOpenChange($event)">
+    (openedChange)="onCurrencyPanelOpenChange($event)">
+    
+    <input class="search" [value]="currencySearchControl.value"
+    (input)="filterCurrencies($any($event.target).value); currencySearchControl.setValue($any($event.target).value)"
+    placeholder="{{ 'SEARCH' | translate }}" autocomplete="off" />
+    
+    <mat-option *ngFor="let cur of filteredCurrencies; let i = index" [value]="cur.code" class="currency-item"
+    [class.current-hidden]="shouldHideCurrent(cur, i)">
+    <span class="currency-code">{{ cur.code }}</span>
+  </mat-option>
+  
+  <mat-option *ngIf="filteredCurrencies.length === 0" disabled class="no-results">
+    {{ 'FORM.NO_CURRENCIES_FOUND' | translate }}
+  </mat-option>
+</mat-select>
+<button
+  *ngIf="isEditMode"
+  class="remove-transaction"
+  type="button"
+  [attr.aria-label]="'BUTTON_DELETE' | translate"
+  (click)="removeTransaction()">
+  <mat-icon>delete</mat-icon>
+</button>
+</div>
 
-      <input class="search" [value]="currencySearchControl.value"
-        (input)="filterCurrencies($any($event.target).value); currencySearchControl.setValue($any($event.target).value)"
-        placeholder="{{ 'SEARCH' | translate }}" autocomplete="off" />
+<mat-select #accountSel="matSelect" class="account-field" panelClass="account-panel-class" formControlName="accountId"
+placeholder="{{ 'FORM.ACCOUNT' | translate }}" (click)="accountSel.open()">
+<mat-option *ngFor="let acc of accounts" class="account-option" [value]="acc.id">{{ acc.name }}</mat-option>
+</mat-select>
 
-      <mat-option *ngFor="let cur of filteredCurrencies; let i = index" [value]="cur.code" class="currency-item"
-        [class.current-hidden]="shouldHideCurrent(cur, i)">
-        <span class="currency-code">{{ cur.code }}</span>
-      </mat-option>
-
-      <mat-option *ngIf="filteredCurrencies.length === 0" disabled class="no-results">
-        {{ 'FORM.NO_CURRENCIES_FOUND' | translate }}
-      </mat-option>
-    </mat-select>
+<div class="calendar-card">
+  <div class="cal-header">
+    <button type="button" (click)="prevWeek()"><img [src]="utils.getIcon('arrow-left')" alt="<" /></button>
+    <div class="month-label">
+      {{ form.get('date')!.value | date:'MMMM yyyy':undefined:({ it:'it-IT', en:'en-US'
+    }[translateService.currentLang] || 'en-US')| titlecase }}
   </div>
+  <button type="button" (click)="nextWeek()"><img [src]="utils.getIcon('arrow-right')" alt=">" /></button>
+</div>
 
-  <mat-select #accountSel="matSelect" class="account-field" panelClass="account-panel-class" formControlName="accountId"
-    placeholder="{{ 'FORM.ACCOUNT' | translate }}" (click)="accountSel.open()">
-    <mat-option *ngFor="let acc of accounts" class="account-option" [value]="acc.id">{{ acc.name }}</mat-option>
+<div class="weekdays">
+  <span *ngFor="let wd of weekDays">{{ wd }}</span>
+</div>
+
+<div class="week">
+  <span class="day" *ngFor="let d of currentWeekDate" [class.empty]="!d" [class.outside]="isOutsideMonth(d, 'date')"
+  [class.selected]="isSelected(d, 'date')" (click)="selectDay(d, 'date')">
+  {{ d?.getDate() }}
+</span>
+</div>
+</div>
+
+<mat-button-toggle-group formControlName="transactionType" class="type-toggle" appearance="legacy">
+  <mat-button-toggle type="button" value="INCOME">{{ 'FORM.TYPE.INCOME' | translate }}</mat-button-toggle>
+  <mat-button-toggle type="button" value="EXPENSE">{{ 'FORM.TYPE.EXPENSE' | translate }}</mat-button-toggle>
+</mat-button-toggle-group>
+
+<div class="category-selector">
+  <button *ngFor="let cat of recentCategories" class="category-item"
+  [class.active]="selectedCategory === cat.category" (click)="selectCategory(cat)" type="button">
+  <span class="category-item-macro">{{ cat.macroCategory }}</span>
+  <img [src]="utils.getIcon(cat.iconName)" [alt]="cat.category" />
+  <span>{{ cat.category }}</span>
+</button>
+
+<button type="button" class="category-more" (click)="openAllCategories()">
+  <img [src]="plus.icon" [alt]="plus.name" />
+  <span>{{ plus.name | translate }}</span>
+</button>
+</div>
+
+<mat-form-field appearance="fill" class="description-field">
+  <mat-label>{{ 'FORM.DESCRIPTION' | translate }}</mat-label>
+  <input matInput rows="2" formControlName="description" class="description-input"
+    [matAutocomplete]="descriptionAuto" />
+  <mat-autocomplete #descriptionAuto="matAutocomplete" class="description-autocomplete">
+    <mat-option *ngFor="let suggestion of filteredDescriptionSuggestions" [value]="suggestion"
+      class="description-autocomplete-option">
+      {{ suggestion }}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>
+
+<div class="recurring-section">
+  <mat-slide-toggle formControlName="isRecurring" class="recurring-toggle">
+    {{ 'FORM.RECURRING.LABEL' | translate }}
+  </mat-slide-toggle>
+  
+  <div class="recurring-fields" *ngIf="form.get('isRecurring')?.value">
+    <mat-select formControlName="recurringPeriod" class="recurring-period-field"
+    panelClass="recurring-period-panel-class" placeholder="{{ 'FORM.RECURRING.PERIOD' | translate }}">
+    <mat-option *ngFor="let period of recurrencePeriods" [value]="period" class="recurring-period-option">
+      {{ ('FORM.RECURRING.' + period) | translate }}
+    </mat-option>
   </mat-select>
+  
+  <mat-slide-toggle class="recurring-end-date-toggle" [checked]="!!form.get('recurringEndDate')?.value"
+  (change)="recurringEndDateSelected($event)">
+  {{ 'FORM.RECURRING.END_DATE' | translate }}
+</mat-slide-toggle>
 
-  <div class="calendar-card">
-    <div class="cal-header">
-      <button type="button" (click)="prevWeek()"><img [src]="utils.getIcon('arrow-left')" alt="<" /></button>
-      <div class="month-label">
-        {{ form.get('date')!.value | date:'MMMM yyyy':undefined:({ it:'it-IT', en:'en-US'
-        }[translateService.currentLang] || 'en-US')| titlecase }}
-      </div>
-      <button type="button" (click)="nextWeek()"><img [src]="utils.getIcon('arrow-right')" alt=">" /></button>
+<div class="calendar-card" *ngIf="!!form.get('recurringEndDate')?.value">
+  <mat-label class="recurring-end-date-label">{{ 'FORM.RECURRING.END_DATE' | translate }}</mat-label>
+  <div class="cal-header">
+    <button type="button" (click)="prevMonth()"><img [src]="utils.getIcon('arrow-left')" alt="<" /></button>
+    <div class="month-label">
+      {{ viewDate | date:'MMMM yyyy':undefined:({ it:'it-IT', en:'en-US' }[translateService.currentLang] ||
+      'en-US')| titlecase }}
     </div>
-
-    <div class="weekdays">
-      <span *ngFor="let wd of weekDays">{{ wd }}</span>
-    </div>
-
-    <div class="week">
-      <span class="day" *ngFor="let d of currentWeekDate" [class.empty]="!d" [class.outside]="isOutsideMonth(d, 'date')"
-        [class.selected]="isSelected(d, 'date')" (click)="selectDay(d, 'date')">
-        {{ d?.getDate() }}
-      </span>
-    </div>
+    <button type="button" (click)="nextMonth()"><img [src]="utils.getIcon('arrow-right')" alt=">" /></button>
   </div>
-
-  <mat-button-toggle-group formControlName="transactionType" class="type-toggle" appearance="legacy">
-    <mat-button-toggle type="button" value="INCOME">{{ 'FORM.TYPE.INCOME' | translate }}</mat-button-toggle>
-    <mat-button-toggle type="button" value="EXPENSE">{{ 'FORM.TYPE.EXPENSE' | translate }}</mat-button-toggle>
-  </mat-button-toggle-group>
-
-  <div class="category-selector">
-    <button *ngFor="let cat of recentCategories" class="category-item"
-      [class.active]="selectedCategory === cat.category" (click)="selectCategory(cat)" type="button">
-      <span class="category-item-macro">{{ cat.macroCategory }}</span>
-      <img [src]="utils.getIcon(cat.iconName)" [alt]="cat.category" />
-      <span>{{ cat.category }}</span>
-    </button>
-
-    <button type="button" class="category-more" (click)="openAllCategories()">
-      <img [src]="plus.icon" [alt]="plus.name" />
-      <span>{{ plus.name | translate }}</span>
-    </button>
+  
+  <div class="weekdays">
+    <span *ngFor="let wd of weekDays">{{ wd }}</span>
   </div>
-
-  <mat-form-field appearance="fill" class="description-field">
-    <mat-label>{{ 'FORM.DESCRIPTION' | translate }}</mat-label>
-    <input matInput rows="2" formControlName="description" class="description-input" />
-  </mat-form-field>
-
-  <div class="recurring-section">
-    <mat-slide-toggle formControlName="isRecurring" class="recurring-toggle">
-      {{ 'FORM.RECURRING.LABEL' | translate }}
-    </mat-slide-toggle>
-
-    <div class="recurring-fields" *ngIf="form.get('isRecurring')?.value">
-      <mat-select formControlName="recurringPeriod" class="recurring-period-field"
-        panelClass="recurring-period-panel-class" placeholder="{{ 'FORM.RECURRING.PERIOD' | translate }}">
-        <mat-option *ngFor="let period of recurrencePeriods" [value]="period" class="recurring-period-option">
-          {{ ('FORM.RECURRING.' + period) | translate }}
-        </mat-option>
-      </mat-select>
-
-      <mat-slide-toggle class="recurring-end-date-toggle" [checked]="!!form.get('recurringEndDate')?.value"
-        (change)="recurringEndDateSelected($event)">
-        {{ 'FORM.RECURRING.END_DATE' | translate }}
-      </mat-slide-toggle>
-
-      <div class="calendar-card" *ngIf="!!form.get('recurringEndDate')?.value">
-        <mat-label class="recurring-end-date-label">{{ 'FORM.RECURRING.END_DATE' | translate }}</mat-label>
-        <div class="cal-header">
-          <button type="button" (click)="prevMonth()"><img [src]="utils.getIcon('arrow-left')" alt="<" /></button>
-          <div class="month-label">
-            {{ viewDate | date:'MMMM yyyy':undefined:({ it:'it-IT', en:'en-US' }[translateService.currentLang] ||
-            'en-US')| titlecase }}
-          </div>
-          <button type="button" (click)="nextMonth()"><img [src]="utils.getIcon('arrow-right')" alt=">" /></button>
-        </div>
-
-        <div class="weekdays">
-          <span *ngFor="let wd of weekDays">{{ wd }}</span>
-        </div>
-
-        <div class="weeks">
-          <div class="week" *ngFor="let week of matrixRecurringEndDate">
-            <span class="day" *ngFor="let d of week" [class.outside]="isOutside(d)" [class.today]="isToday(d)"
-              [class.selected]="isSelected(d, 'recurringEndDate')" (click)="selectDay(d, 'recurringEndDate')">
-              {{ d?.getDate() }}
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
+  
+  <div class="weeks">
+    <div class="week" *ngFor="let week of matrixRecurringEndDate">
+      <span class="day" *ngFor="let d of week" [class.outside]="isOutside(d)" [class.today]="isToday(d)"
+      [class.selected]="isSelected(d, 'recurringEndDate')" (click)="selectDay(d, 'recurringEndDate')">
+      {{ d?.getDate() }}
+    </span>
   </div>
+</div>
+</div>
+</div>
+</div>
 
-  <button mat-raised-button class="submit-button" type="submit">
-    {{ (isEditMode ? 'TRANSACTION.UPDATE' : 'FORM.SUBMIT') | translate }}
-  </button>
+<button mat-raised-button class="submit-button" type="submit">
+  {{ (isEditMode ? 'TRANSACTION.UPDATE' : 'FORM.SUBMIT') | translate }}
+</button>
 </form>

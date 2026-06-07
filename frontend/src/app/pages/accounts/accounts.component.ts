@@ -16,6 +16,7 @@ import { FxRateService } from '../../services/fx-rate.service';
 import { RefreshService } from '../../services/refresh.service';
 import { TransactionService } from '../../services/transaction.service';
 import { TransferService } from '../../services/transfer.service';
+import { PRIVATE_ROUTES } from '../../routing/localized-routes';
 
 type AccountsView = 'overview' | 'new-account' | 'new-transfer' | 'history';
 type HistoryPeriod = '1m' | '3m' | '12m' | 'all';
@@ -190,19 +191,19 @@ export class AccountsComponent implements OnInit, OnDestroy {
   }
 
   setView(view: AccountsView): void {
-    this.router.navigate(['/accounts'], {
+    this.router.navigate([PRIVATE_ROUTES.accounts], {
       queryParams: view === 'overview' ? {} : { view }
     });
   }
 
   editAccount(summary: AccountSummary): void {
-    this.router.navigate(['/accounts'], {
+    this.router.navigate([PRIVATE_ROUTES.accounts], {
       queryParams: { view: 'new-account', accountId: summary.account.id }
     });
   }
 
   editTransfer(transfer: TransferModel): void {
-    this.router.navigate(['/accounts'], {
+    this.router.navigate([PRIVATE_ROUTES.accounts], {
       queryParams: { view: 'new-transfer', transferGroupId: transfer.transferGroupId }
     });
   }
@@ -317,7 +318,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
     const accountId = this.editingAccountId;
 
-    this.transactionService.getTransactions(this.userId.toString(), accountId).subscribe({
+    this.transactionService.getTransactions(accountId).subscribe({
       next: transactions => {
         if (transactions.length) {
           this.openAccountTransactionsWarning();
@@ -385,8 +386,24 @@ export class AccountsComponent implements OnInit, OnDestroy {
     });
   }
 
+  deleteSelectedTransfer(): void {
+    if (!this.editingTransferGroupId) {
+      return;
+    }
+
+    this.transferService.deleteTransfer(this.editingTransferGroupId).subscribe({
+      next: () => {
+        this.loadAccountsData();
+        this.loadTransfers();
+        this.refreshService.triggerRefresh();
+        this.setView('history');
+      },
+      error: err => console.error('Error deleting transfer', err)
+    });
+  }
+
   loadTransfers(): void {
-    this.transferService.getTransfers(this.userId.toString()).subscribe({
+    this.transferService.getTransfers().subscribe({
       next: transfers => {
         this.allTransfers = transfers;
         this.applyTransferFilters();
@@ -486,8 +503,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   private loadAccountsData(): void {
     forkJoin({
-      accounts: this.accountService.getAccounts(this.userId.toString()),
-      transactions: this.transactionService.getTransactions(this.userId.toString())
+      accounts: this.accountService.getAccounts(),
+      transactions: this.transactionService.getTransactions()
     }).subscribe({
       next: ({ accounts, transactions }) => {
         this.accounts = accounts
@@ -553,6 +570,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
       balancesByAccount.set(transaction.accountId, balances);
     }
 
+    const lastUsageByAccountId = this.getLastUsageByAccountId();
+
     this.accountSummaries = this.accounts.map(account => {
       const balances = balancesByAccount.get(account.id) ?? {};
 
@@ -562,7 +581,53 @@ export class AccountsComponent implements OnInit, OnDestroy {
         balanceItems: this.toBalanceItems(balances),
         convertedBalance: this.convertRecordToDefaultCurrency(balances)
       };
-    });
+    }).sort((a, b) => this.compareAccountSummaries(a, b, lastUsageByAccountId));
+  }
+
+  private compareAccountSummaries(
+    first: AccountSummary,
+    second: AccountSummary,
+    lastUsageByAccountId: Map<number, number>
+  ): number {
+    const balanceDifference = this.roundCurrencyAmount(second.convertedBalance)
+      - this.roundCurrencyAmount(first.convertedBalance);
+
+    if (balanceDifference !== 0) {
+      return balanceDifference;
+    }
+
+    const firstLastUsage = lastUsageByAccountId.get(first.account.id) ?? 0;
+    const secondLastUsage = lastUsageByAccountId.get(second.account.id) ?? 0;
+
+    if (secondLastUsage !== firstLastUsage) {
+      return secondLastUsage - firstLastUsage;
+    }
+
+    return first.account.name.localeCompare(second.account.name);
+  }
+
+  private getLastUsageByAccountId(): Map<number, number> {
+    const lastUsageByAccountId = new Map<number, number>();
+
+    for (const transaction of this.transactions) {
+      const usageOrder = Number(transaction.id ?? 0);
+      this.setAccountLastUsage(lastUsageByAccountId, transaction.accountId, usageOrder);
+      this.setAccountLastUsage(lastUsageByAccountId, transaction.transferCounterpartyAccountId, usageOrder);
+    }
+
+    return lastUsageByAccountId;
+  }
+
+  private setAccountLastUsage(
+    lastUsageByAccountId: Map<number, number>,
+    accountId: number | undefined,
+    usageOrder: number
+  ): void {
+    if (!accountId) {
+      return;
+    }
+
+    lastUsageByAccountId.set(accountId, Math.max(lastUsageByAccountId.get(accountId) ?? 0, usageOrder));
   }
 
   private toBalanceItems(record: Record<string, number>): AccountBalanceItem[] {

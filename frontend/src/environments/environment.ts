@@ -1,5 +1,6 @@
 export const environment = {
   production: false,
+  siteUrl: '',
   apiBase: '/api',
   mockApi: {
     enabled: false,
@@ -18,12 +19,6 @@ export const environment = {
       importExport: true,
       transfers: true
     }
-  },
-  auth: {
-    loginUrl: '/oauth2/authorization/capitally',
-    meUrl: '/auth/me',
-    logoutUrl: '/logout',
-    oidcLogoutUrl: '/logout-oidc'
   },
   demoUser: {
     usernameOrEmail: 'demo',

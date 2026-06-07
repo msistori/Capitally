@@ -30,6 +30,8 @@ public class TransactionImportResponseDTO {
     public static class ImportSummary {
         private int totalRows;
         private int importedTransactions;
+        private int importedTransfers;
+        private int importedAccounts;
         private List<String> newAccounts;
         private Map<String, List<String>> newCategories;
     }

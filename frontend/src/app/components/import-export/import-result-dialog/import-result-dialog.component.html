@@ -8,8 +8,8 @@
     <div *ngIf="!data.failed && data.summary" class="summary-section">
       <p class="success-message">
         {{ 'SETTINGS.IMPORT_EXPORT.RESULT.IMPORTED_PREFIX' | translate }}
-        <strong>{{ data.summary.importedTransactions }}</strong>
-        {{ 'SETTINGS.IMPORT_EXPORT.RESULT.IMPORTED_MIDDLE' | translate }}
+        <strong>{{ getImportedCount() }}</strong>
+        {{ ('SETTINGS.IMPORT_EXPORT.RESULT.IMPORTED_MIDDLE_' + importType.toUpperCase()) | translate }}
         <strong>{{ data.summary.totalRows }}</strong>
         {{ 'SETTINGS.IMPORT_EXPORT.RESULT.IMPORTED_SUFFIX' | translate }}
       </p>

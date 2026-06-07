@@ -48,35 +48,43 @@ public class DashboardService {
     }
 
     public List<CurrentBalanceResponseDTO> getCurrentBalancePerCurrency(BigInteger userId) {
-        List<AccountEntity> userAccounts = accountRepository.findByUserId(userId).stream()
-                .filter(this::isIncludedInTotalBalance)
-                .toList();
+        return toCurrentBalancePerCurrency(getIncludedAccountBalances(userId));
+    }
 
+    public List<AccountBalanceResponseDTO> getCurrentAccountBalances(BigInteger userId) {
+        return toCurrentAccountBalanceResponses(getIncludedAccountBalances(userId));
+    }
+
+    private List<CurrentBalanceResponseDTO> toCurrentBalancePerCurrency(List<AccountBalances> includedAccountBalances) {
         Map<String, BigDecimal> balancePerCurrency = new HashMap<>();
 
-        for (AccountEntity account : userAccounts) {
-            BigDecimal initialBalance = Optional.ofNullable(account.getInitialBalance()).orElse(BigDecimal.ZERO);
-            Optional.ofNullable(account.getCurrencyInitialBalance())
-                    .map(currency -> currency.getCode())
-                    .ifPresent(currency -> balancePerCurrency.merge(currency, initialBalance, BigDecimal::add));
-
-            Map<String, BigDecimal> transactionSumsByCurrency = transactionRepository.findAllByAccountId(account.getId()).stream()
-                    .collect(Collectors.groupingBy(
-                            t -> t.getCurrency().getCode(),
-                            Collectors.reducing(BigDecimal.ZERO, t -> {
-                                BigDecimal amount = t.getAmount();
-                                return TransactionTypeEnum.EXPENSE.equals(t.getTransactionType()) ? amount.negate() : amount;
-                            }, BigDecimal::add)
-                    ));
-
-            for (Map.Entry<String, BigDecimal> entry : transactionSumsByCurrency.entrySet()) {
-                String currency = entry.getKey();
-                balancePerCurrency.merge(currency, entry.getValue(), BigDecimal::add);
+        for (AccountBalances accountBalances : includedAccountBalances) {
+            for (Map.Entry<String, BigDecimal> entry : accountBalances.balances().entrySet()) {
+                balancePerCurrency.merge(entry.getKey(), entry.getValue(), BigDecimal::add);
             }
         }
 
         return balancePerCurrency.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
                 .map(entry -> new CurrentBalanceResponseDTO(entry.getKey(), entry.getValue()))
+                .toList();
+    }
+
+    private List<AccountBalanceResponseDTO> toCurrentAccountBalanceResponses(List<AccountBalances> includedAccountBalances) {
+        return includedAccountBalances.stream()
+                .flatMap(accountBalances -> accountBalances.balances().entrySet().stream()
+                        .filter(entry -> entry.getValue().compareTo(BigDecimal.ZERO) != 0)
+                        .map(entry -> new AccountBalanceResponseDTO(
+                                accountBalances.account().getId(),
+                                accountBalances.account().getName(),
+                                accountBalances.account().getIconName(),
+                                entry.getKey(),
+                                entry.getValue()
+                        ))
+                )
+                .sorted(Comparator
+                        .comparing(AccountBalanceResponseDTO::getAccountName, String.CASE_INSENSITIVE_ORDER)
+                        .thenComparing(AccountBalanceResponseDTO::getCurrency))
                 .toList();
     }
 
@@ -281,7 +289,8 @@ public class DashboardService {
         LocalDate startOfMonth = currentMonth.atDay(1);
         LocalDate endOfMonth = currentMonth.atEndOfMonth();
 
-        List<CurrentBalanceResponseDTO> balances = getCurrentBalancePerCurrency(userId);
+        List<AccountBalances> includedAccountBalances = getIncludedAccountBalances(userId);
+        List<CurrentBalanceResponseDTO> balances = toCurrentBalancePerCurrency(includedAccountBalances);
         Map<String, BigDecimal> totalBalance = balances.stream()
                 .collect(Collectors.toMap(
                         CurrentBalanceResponseDTO::getCurrency,
@@ -307,10 +316,42 @@ public class DashboardService {
 
         return new DashboardOverviewResponseDTO(
                 totalBalance,
+                toCurrentAccountBalanceResponses(includedAccountBalances),
                 totalIncome,
                 totalExpense,
                 recurringCount
         );
+    }
+
+    private List<AccountBalances> getIncludedAccountBalances(BigInteger userId) {
+        return accountRepository.findByUserId(userId).stream()
+                .filter(this::isIncludedInTotalBalance)
+                .map(account -> new AccountBalances(account, calculateAccountBalances(account)))
+                .toList();
+    }
+
+    private Map<String, BigDecimal> calculateAccountBalances(AccountEntity account) {
+        Map<String, BigDecimal> balances = new HashMap<>();
+        BigDecimal initialBalance = Optional.ofNullable(account.getInitialBalance()).orElse(BigDecimal.ZERO);
+
+        Optional.ofNullable(account.getCurrencyInitialBalance())
+                .map(currency -> currency.getCode())
+                .ifPresent(currency -> balances.merge(currency, initialBalance, BigDecimal::add));
+
+        Map<String, BigDecimal> transactionSumsByCurrency = transactionRepository.findAllByAccountId(account.getId()).stream()
+                .collect(Collectors.groupingBy(
+                        t -> t.getCurrency().getCode(),
+                        Collectors.reducing(BigDecimal.ZERO, t -> {
+                            BigDecimal amount = Optional.ofNullable(t.getAmount()).orElse(BigDecimal.ZERO);
+                            return TransactionTypeEnum.EXPENSE.equals(t.getTransactionType()) ? amount.negate() : amount;
+                        }, BigDecimal::add)
+                ));
+
+        for (Map.Entry<String, BigDecimal> entry : transactionSumsByCurrency.entrySet()) {
+            balances.merge(entry.getKey(), entry.getValue(), BigDecimal::add);
+        }
+
+        return balances;
     }
 
     private boolean isIncludedInTotalBalance(AccountEntity account) {
@@ -320,5 +361,7 @@ public class DashboardService {
     private boolean isTransfer(TransactionEntity transaction) {
         return transaction.getTransferGroupId() != null && !transaction.getTransferGroupId().isBlank();
     }
+
+    private record AccountBalances(AccountEntity account, Map<String, BigDecimal> balances) {}
 
 }

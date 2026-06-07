@@ -3,7 +3,7 @@ import { Component, Inject, Optional } from '@angular/core';
 import { Validators, FormBuilder } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { finalize } from 'rxjs';
-import { TransactionExportFilterInputDTO } from 'src/app/models/import-export-transactions.model';
+import { ImportExportCsvType, TransactionExportFilterInputDTO } from 'src/app/models/import-export-transactions.model';
 import { TransactionTypeEnum } from 'src/app/models/transaction.model';
 import { ImportExportTransactionsService } from 'src/app/services/import-export-transactions.service';
 
@@ -20,9 +20,11 @@ export interface ExportCsvDialogData {
 })
 export class ExportCsvDialogComponent {
   exporting = false;
+  exportingType: ImportExportCsvType | null = null;
   
   readonly TransactionTypeEnum = TransactionTypeEnum;
   readonly transactionTypes = [TransactionTypeEnum.INCOME, TransactionTypeEnum.EXPENSE];
+  readonly exportTypes: ImportExportCsvType[] = ['transactions', 'transfers', 'accounts'];
   
   form = this.fb.group(
     {
@@ -67,45 +69,65 @@ export class ExportCsvDialogComponent {
     this.form.markAllAsTouched();
     if (this.form.invalid) return;
     
-    this.exportWithFilter(this.toFilter());
+    this.exportWithFilter(this.toFilter(), 'transactions', false);
   }
 
   exportAll(): void {
-    this.exportWithFilter();
+    this.exportWithFilter(undefined, 'transactions', true);
   }
 
   exportFiltered(): void {
-    this.exportWithFilter(this.data?.initialFilter);
+    this.exportWithFilter(this.data?.initialFilter, 'transactions', true);
   }
 
   exportConfirmedSelection(): void {
     this.hasActiveFilters ? this.exportFiltered() : this.exportAll();
   }
 
-  private exportWithFilter(filter?: TransactionExportFilterInputDTO): void {
+  exportFile(type: ImportExportCsvType): void {
+    if (this.exporting) return;
+
+    this.form.markAllAsTouched();
+    if (this.form.invalid) return;
+
+    const filter = type === 'accounts' ? undefined : this.toFilter();
+    this.exportWithFilter(filter, type, false);
+  }
+
+  private exportWithFilter(
+    filter?: TransactionExportFilterInputDTO,
+    type: ImportExportCsvType = 'transactions',
+    closeAfterDownload = false
+  ): void {
     if (this.exporting) return;
 
     this.exporting = true;
+    this.exportingType = type;
     this.txService
-      .getExportTransactions(filter)
-      .pipe(finalize(() => (this.exporting = false)))
+      .getExportTransactions(filter, type)
+      .pipe(finalize(() => {
+        this.exporting = false;
+        this.exportingType = null;
+      }))
       .subscribe({
-        next: (res: HttpResponse<Blob>) => this.handleDownload(res),
+        next: (res: HttpResponse<Blob>) => this.handleDownload(res, type, closeAfterDownload),
         error: () => {
         }
       });
   }
   
-  private handleDownload(res: HttpResponse<Blob>): void {
+  private handleDownload(res: HttpResponse<Blob>, type: ImportExportCsvType, closeAfterDownload: boolean): void {
     const blob = res.body;
     if (!blob) return;
     
     const filename =
     this.extractFilename(res.headers.get('content-disposition')) ??
-    this.defaultFilename();
+    this.defaultFilename(type);
     
     this.downloadBlob(blob, filename);
-    this.dialogRef.close(true);
+    if (closeAfterDownload) {
+      this.dialogRef.close(true);
+    }
   }
   
   private toFilter(): TransactionExportFilterInputDTO {
@@ -168,12 +190,12 @@ export class ExportCsvDialogComponent {
     window.URL.revokeObjectURL(url);
   }
   
-  private defaultFilename(): string {
+  private defaultFilename(type: ImportExportCsvType): string {
     const d = new Date();
     const yyyy = d.getFullYear();
     const mm = String(d.getMonth() + 1).padStart(2, '0');
     const dd = String(d.getDate()).padStart(2, '0');
-    return `transactions_${yyyy}-${mm}-${dd}.csv`;
+    return `${type}_${yyyy}-${mm}-${dd}.csv`;
   }
   
   private extractFilename(contentDisposition: string | null): string | null {

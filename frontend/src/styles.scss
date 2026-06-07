@@ -94,6 +94,14 @@ html, body {
   font-family: 'Inter', sans-serif;
 }
 
+html {
+  background: #f5fbfd;
+}
+
+body {
+  background: transparent;
+}
+
 body::before {
   content: '';
   position: fixed;
@@ -103,7 +111,37 @@ body::before {
   pointer-events: none;
 }
 
-:root { --footer-h: 3.5rem; }
+html.login-route,
+body.login-route {
+  background:
+    radial-gradient(60% 60% at 0% 0%, rgba(0, 95, 115, .25) 0%, rgba(0, 95, 115, 0) 60%),
+    radial-gradient(60% 60% at 100% 100%, rgba(0, 95, 115, .25) 0%, rgba(0, 95, 115, 0) 60%),
+    linear-gradient(180deg, rgba(255, 255, 255, .82) 0%, rgba(245, 251, 253, .78) 100%),
+    url('/assets/login_bg.jpg') 46% 50% / cover no-repeat;
+}
+
+body.login-route::before {
+  background:
+    radial-gradient(60% 60% at 0% 0%, rgba(0, 95, 115, .25) 0%, rgba(0, 95, 115, 0) 60%),
+    radial-gradient(60% 60% at 100% 100%, rgba(0, 95, 115, .25) 0%, rgba(0, 95, 115, 0) 60%),
+    linear-gradient(180deg, rgba(255, 255, 255, .82) 0%, rgba(245, 251, 253, .78) 100%),
+    url('/assets/login_bg.jpg') 46% 50% / cover no-repeat;
+}
+
+:root {
+  --footer-h: 3.5rem;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --header-h: calc(var(--footer-h) + var(--safe-top));
+  --footer-slot-h: calc(var(--footer-h) + var(--safe-bottom));
+  --legal-footer-h: 2.65rem;
+  --side-nav-w: calc(var(--footer-h) * 1.5);
+  --text-glow: 0 1px 10px rgba(255, 255, 255, 0.92), 0 0 18px rgba(255, 255, 255, 0.72);
+}
+
+app-root :is(h1, h2, h3, .hero-copy, .section-kicker, .field > span, .month-label, .year, .currency, .active-filter-summary) {
+  text-shadow: var(--text-glow);
+}
 
 #app-preloader {
   position: fixed;
@@ -133,12 +171,16 @@ body::before {
 @media (max-width: 1023px) {
   .cdk-overlay-pane.add-transaction-modal-panel {
     position: fixed !important;
+    top: var(--header-h);
     left: 0;
     right: 0;
-    bottom: var(--footer-h);
-    max-height: calc(100vh - (var(--footer-h) * 2));
+    bottom: var(--footer-slot-h);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    max-height: calc(100dvh - var(--header-h) - var(--footer-slot-h));
     margin-inline: auto;
-    overflow: visible;
+    overflow: hidden;
   }
 
   .cdk-overlay-pane.settings-modal-panel {
@@ -148,13 +190,26 @@ body::before {
 
   .cdk-overlay-pane.view-all-categories-modal-panel {
     position: fixed !important;
+    top: var(--header-h);
     left: 0;
     right: 0;
-    bottom: var(--footer-h);
-    max-height: 72vh;
-    height: 72vh;
+    bottom: var(--footer-slot-h);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    max-height: calc(100dvh - var(--header-h) - var(--footer-slot-h));
+    height: auto;
     margin-inline: auto;
-    overflow: visible;
+    overflow: hidden;
+  }
+
+  .cdk-overlay-pane.add-transaction-modal-panel
+    .mat-mdc-dialog-container,
+  .cdk-overlay-pane.add-transaction-modal-panel
+    .mat-mdc-dialog-container
+    .mat-mdc-dialog-surface {
+    max-height: 100%;
+    overflow-y: auto;
   }
 }
 

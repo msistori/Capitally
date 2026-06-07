@@ -13,6 +13,8 @@ import java.util.Optional;
 @Repository
 public interface CategoryRepository extends JpaRepository<CategoryEntity, BigInteger>, JpaSpecificationExecutor<CategoryEntity> {
 
+    List<CategoryEntity> findByUser_Id(BigInteger userId);
+
     List<CategoryProjection> findByUser_IdAndMacroCategoryIn(BigInteger userId, Collection<String> macros);
 
     public interface CategoryProjection {
@@ -23,5 +25,10 @@ public interface CategoryRepository extends JpaRepository<CategoryEntity, BigInt
     Optional<CategoryEntity> findByCategoryAndMacroCategoryAndUser_Id(
             String category, String macroCategory, BigInteger userId);
 
+    List<CategoryEntity> findByUser_IdAndMacroCategoryAndCategoryAndIconName(
+            BigInteger userId, String macroCategory, String category, String iconName);
+
     Optional<CategoryEntity> findByIdAndUser_Id(BigInteger id, BigInteger userId);
+
+    void deleteByUser_Id(BigInteger userId);
 }

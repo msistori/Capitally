@@ -1,12 +1,24 @@
 <div class="layout">
   <app-header></app-header>
 
-  <main class="content" [ngClass]="showFooter ? '' : 'login-content'">
-    <div [class.no-scroll]="disableScroll" class="app-shell" [class.dimmed]="loading()" [attr.inert]="loading() ? '' : null">
+  <main
+    #contentScrollContainer
+    class="content"
+    [ngClass]="{ 'login-content': disableScroll, 'public-content': legalRoute && !showNavbar, 'legal-route-content': legalRoute, 'dashboard-content': dashboardRoute, 'welcome-content': welcomeRoute, 'install-content': installRoute, 'with-navbar': showNavbar, 'with-legal-footer': showLegalFooter }"
+  >
+    <div
+      class="app-shell"
+      [class.no-scroll]="disableScroll"
+      [class.public-shell]="legalRoute && !showNavbar"
+      [class.dimmed]="loading()"
+      [attr.inert]="loading() ? '' : null"
+    >
       <router-outlet></router-outlet>
     </div>
+    <app-footer *ngIf="showLegalFooter"></app-footer>
     <app-loading-overlay></app-loading-overlay>
   </main>
 
-  <app-footer *ngIf="showFooter"></app-footer>
+  <app-navbar *ngIf="showNavbar"></app-navbar>
+  <app-cookie-consent [class.with-navbar]="showNavbar"></app-cookie-consent>
 </div>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://capitally.app/it/</loc>
+    <xhtml:link rel="alternate" hreflang="it" href="https://capitally.app/it/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://capitally.app/en/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://capitally.app/en/" />
+  </url>
+  <url>
+    <loc>https://capitally.app/en/</loc>
+    <xhtml:link rel="alternate" hreflang="it" href="https://capitally.app/it/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://capitally.app/en/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://capitally.app/en/" />
+  </url>
+  <url>
+    <loc>https://capitally.app/it/privacy</loc>
+    <xhtml:link rel="alternate" hreflang="it" href="https://capitally.app/it/privacy" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://capitally.app/en/privacy" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://capitally.app/en/privacy" />
+  </url>
+  <url>
+    <loc>https://capitally.app/en/privacy</loc>
+    <xhtml:link rel="alternate" hreflang="it" href="https://capitally.app/it/privacy" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://capitally.app/en/privacy" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://capitally.app/en/privacy" />
+  </url>
+  <url>
+    <loc>https://capitally.app/it/cookie-policy</loc>
+    <xhtml:link rel="alternate" hreflang="it" href="https://capitally.app/it/cookie-policy" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://capitally.app/en/cookie-policy" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://capitally.app/en/cookie-policy" />
+  </url>
+  <url>
+    <loc>https://capitally.app/en/cookie-policy</loc>
+    <xhtml:link rel="alternate" hreflang="it" href="https://capitally.app/it/cookie-policy" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://capitally.app/en/cookie-policy" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://capitally.app/en/cookie-policy" />
+  </url>
+  <url>
+    <loc>https://capitally.app/it/termini-condizioni</loc>
+    <xhtml:link rel="alternate" hreflang="it" href="https://capitally.app/it/termini-condizioni" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://capitally.app/en/terms-and-conditions" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://capitally.app/en/terms-and-conditions" />
+  </url>
+  <url>
+    <loc>https://capitally.app/en/terms-and-conditions</loc>
+    <xhtml:link rel="alternate" hreflang="it" href="https://capitally.app/it/termini-condizioni" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://capitally.app/en/terms-and-conditions" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://capitally.app/en/terms-and-conditions" />
+  </url>
+  <url>
+    <loc>https://capitally.app/it/installazione-app</loc>
+    <xhtml:link rel="alternate" hreflang="it" href="https://capitally.app/it/installazione-app" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://capitally.app/en/install-app" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://capitally.app/en/install-app" />
+  </url>
+  <url>
+    <loc>https://capitally.app/en/install-app</loc>
+    <xhtml:link rel="alternate" hreflang="it" href="https://capitally.app/it/installazione-app" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://capitally.app/en/install-app" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://capitally.app/en/install-app" />
+  </url>
+</urlset>

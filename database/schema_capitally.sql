@@ -1,139 +1,115 @@
+-- Capitally database schema aligned with the current Spring Boot entities.
+-- Target database: PostgreSQL.
 
--- ======================================
--- CAPITALLY DATABASE SCHEMA - FINAL VERSION
--- ======================================
+CREATE SEQUENCE IF NOT EXISTS user_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS account_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS categories_id_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS transaction_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS password_reset_email_log_seq START WITH 1 INCREMENT BY 1;
 
--- Currencies
-CREATE TABLE t_currency (
+CREATE TABLE IF NOT EXISTS t_currency (
     code VARCHAR(3) PRIMARY KEY,
-    name VARCHAR(50) NOT NULL
+    name VARCHAR(100) NOT NULL
 );
 
--- Users
-CREATE TABLE t_user (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(150) UNIQUE NOT NULL,
+CREATE TABLE IF NOT EXISTS t_user (
+    id BIGINT PRIMARY KEY DEFAULT nextval('user_seq'),
+    username VARCHAR(100) NOT NULL,
+    email VARCHAR(320) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    roles VARCHAR(255),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uk_user_username UNIQUE (username),
+    CONSTRAINT uk_user_email UNIQUE (email)
 );
 
--- Accounts
-CREATE TABLE t_account (
-    id SERIAL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS t_account (
+    id BIGINT PRIMARY KEY DEFAULT nextval('account_seq'),
     name VARCHAR(100) NOT NULL,
-    initial_balance DECIMAL(15,2) DEFAULT 0.00,
-    currency_initial_balance VARCHAR(3) REFERENCES t_currency(code),
+    initial_balance NUMERIC(15, 2) DEFAULT 0.00,
+    currency_initial_balance VARCHAR(3),
     icon_name VARCHAR(80) DEFAULT 'account_balance_wallet',
     include_in_total_balance BOOLEAN DEFAULT TRUE,
+    user_id BIGINT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_account_user FOREIGN KEY (user_id) REFERENCES t_user(id) ON DELETE CASCADE,
+    CONSTRAINT fk_account_currency_initial_balance FOREIGN KEY (currency_initial_balance) REFERENCES t_currency(code),
     CONSTRAINT chk_account_currency_initial_balance_requires_balance
-        CHECK (initial_balance IS NOT NULL OR currency_initial_balance IS NULL),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        CHECK (initial_balance IS NOT NULL OR currency_initial_balance IS NULL)
 );
 
--- User-Account relation
-CREATE TABLE t_user_account (
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    account_id INTEGER REFERENCES accounts(id) ON DELETE CASCADE,
-    PRIMARY KEY (user_id, account_id)
-);
-
--- Categories
-CREATE TABLE t_category (
-    id SERIAL PRIMARY KEY,
-    category_type VARCHAR(20) CHECK (category_type IN ('INCOME', 'EXPENSE')) NOT NULL,
-    macrocategory VARCHAR(100) NOT NULL,
+CREATE TABLE IF NOT EXISTS t_category (
+    id BIGINT PRIMARY KEY DEFAULT nextval('categories_id_seq'),
+    macro_category VARCHAR(100) NOT NULL,
     category VARCHAR(100) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    icon_name VARCHAR(80),
+    user_id BIGINT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_category_user FOREIGN KEY (user_id) REFERENCES t_user(id) ON DELETE CASCADE
 );
 
--- Transactions
-CREATE TABLE t_transaction (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    account_id INTEGER REFERENCES accounts(id) ON DELETE CASCADE,
-    amount DECIMAL(12,2) NOT NULL,
-    currency VARCHAR(3) REFERENCES currencies(code),
+CREATE TABLE IF NOT EXISTS t_transaction (
+    id BIGINT PRIMARY KEY DEFAULT nextval('transaction_seq'),
+    user_id BIGINT NOT NULL,
+    account_id BIGINT NOT NULL,
+    amount NUMERIC(12, 2) NOT NULL,
+    currency VARCHAR(3),
     date DATE NOT NULL,
     description VARCHAR(255),
-    category_id INTEGER REFERENCES categories(id),
-    is_recurring BOOLEAN,
+    category_id BIGINT,
+    transaction_type VARCHAR(20) NOT NULL,
+    is_recurring BOOLEAN DEFAULT FALSE,
     recurrence_period VARCHAR(20),
-    recurrence_interval INTEGER,
     recurrence_end_date DATE,
     transfer_group_id VARCHAR(36),
-    transfer_counterparty_account_id INTEGER REFERENCES accounts(id) ON DELETE SET NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    transfer_counterparty_account_id BIGINT,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_transaction_user FOREIGN KEY (user_id) REFERENCES t_user(id) ON DELETE CASCADE,
+    CONSTRAINT fk_transaction_account FOREIGN KEY (account_id) REFERENCES t_account(id) ON DELETE CASCADE,
+    CONSTRAINT fk_transaction_currency FOREIGN KEY (currency) REFERENCES t_currency(code),
+    CONSTRAINT fk_transaction_category FOREIGN KEY (category_id) REFERENCES t_category(id) ON DELETE SET NULL,
+    CONSTRAINT fk_transaction_transfer_counterparty_account
+        FOREIGN KEY (transfer_counterparty_account_id) REFERENCES t_account(id) ON DELETE SET NULL,
+    CONSTRAINT chk_transaction_type CHECK (transaction_type IN ('INCOME', 'EXPENSE')),
+    CONSTRAINT chk_transaction_recurrence_period
+        CHECK (recurrence_period IS NULL OR recurrence_period IN (
+            'DAILY',
+            'WEEKLY',
+            'MONTHLY',
+            'YEARLY',
+            'TWO_DAYS',
+            'TEN_DAYS',
+            'TWELVE_DAYS',
+            'FIFTEEN_DAYS',
+            'THIRTY_DAYS',
+            'THIRTY_ONE_DAYS',
+            'TWO_WEEKS',
+            'FOUR_WEEKS',
+            'TWO_MONTHS',
+            'THREE_MONTHS',
+            'FOUR_MONTHS',
+            'SIX_MONTHS',
+            'TWO_YEARS'
+        ))
 );
 
--- Budgets
-CREATE TABLE t_budget (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    category_id INTEGER REFERENCES categories(id),
-    monthly_amount DECIMAL(12,2) NOT NULL,
-    month INTEGER CHECK (month BETWEEN 1 AND 12) NOT NULL,
-    year INTEGER CHECK (year >= 2000) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE IF NOT EXISTS t_password_reset_email_log (
+    id BIGINT PRIMARY KEY DEFAULT nextval('password_reset_email_log_seq'),
+    user_id BIGINT NOT NULL,
+    recipient_email VARCHAR(320) NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    CONSTRAINT fk_password_reset_email_log_user FOREIGN KEY (user_id) REFERENCES t_user(id) ON DELETE CASCADE
 );
 
--- Investment Instruments
-CREATE TABLE t_investment_instrument (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(150) NOT NULL,
-    type VARCHAR(50),
-    exchange VARCHAR(50),
-    symbol VARCHAR(50)
-);
-
--- Investments
-CREATE TABLE t_investment (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    instrument_id INTEGER REFERENCES investment_instruments(id),
-    operation_type VARCHAR(20) CHECK (operation_type IN ('Buy', 'Sell')),
-    quantity DECIMAL(12,4),
-    unit_price DECIMAL(15,4),
-    fees DECIMAL(12,2),
-    currency VARCHAR(3) REFERENCES currencies(code),
-    operation_date DATE NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Investment Values
-CREATE TABLE t_investment_value (
-    id SERIAL PRIMARY KEY,
-    instrument_id INTEGER REFERENCES investment_instruments(id) ON DELETE CASCADE,
-    value DECIMAL(15,4) NOT NULL,
-    valuation_date DATE NOT NULL
-);
-
--- Assets
-CREATE TABLE t_asset (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    name VARCHAR(100),
-    type VARCHAR(50),
-    purchase_value DECIMAL(15,2),
-    current_value DECIMAL(15,2),
-    currency VARCHAR(3) REFERENCES currencies(code),
-    purchase_date DATE,
-    description TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Exchange Rates
-CREATE TABLE t_exchange_rate (
-    from_currency VARCHAR(3) REFERENCES currencies(code),
-    to_currency VARCHAR(3) REFERENCES currencies(code),
-    rate DECIMAL(18,8),
-    rate_date DATE,
-    PRIMARY KEY (from_currency, to_currency, rate_date)
-);
+CREATE INDEX IF NOT EXISTS idx_account_user ON t_account(user_id);
+CREATE INDEX IF NOT EXISTS idx_category_user ON t_category(user_id);
+CREATE INDEX IF NOT EXISTS idx_transaction_user_date ON t_transaction(user_id, date);
+CREATE INDEX IF NOT EXISTS idx_transaction_account ON t_transaction(account_id);
+CREATE INDEX IF NOT EXISTS idx_transaction_category ON t_transaction(category_id);
+CREATE INDEX IF NOT EXISTS idx_transaction_transfer_group ON t_transaction(transfer_group_id);
+CREATE INDEX IF NOT EXISTS idx_password_reset_email_log_created_at ON t_password_reset_email_log(created_at);

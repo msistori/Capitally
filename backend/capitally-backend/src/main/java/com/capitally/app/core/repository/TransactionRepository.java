@@ -16,6 +16,8 @@ public interface TransactionRepository extends JpaRepository<TransactionEntity, 
 
     List<TransactionEntity> findAllByAccountId(BigInteger accountId);
 
+    List<TransactionEntity> findByUser_Id(BigInteger userId);
+
     List<TransactionEntity> findByUserIdAndDateBetween(BigInteger userId, LocalDate start, LocalDate end);
 
     List<TransactionEntity> findByUserIdAndIsRecurringTrue(BigInteger userId);
@@ -35,4 +37,6 @@ public interface TransactionRepository extends JpaRepository<TransactionEntity, 
     boolean existsByUser_IdAndAccount_IdIn(BigInteger userId, Collection<BigInteger> accountIds);
 
     boolean existsByUser_IdAndTransferCounterpartyAccount_IdIn(BigInteger userId, Collection<BigInteger> accountIds);
+
+    void deleteByUser_Id(BigInteger userId);
 }

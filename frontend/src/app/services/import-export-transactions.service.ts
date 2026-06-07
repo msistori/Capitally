@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
-import { ImportExportTransactionsModel, TransactionExportFilterInputDTO } from '../models/import-export-transactions.model';
+import { ImportExportCsvType, ImportExportTransactionsModel, TransactionExportFilterInputDTO } from '../models/import-export-transactions.model';
 
 @Injectable({ providedIn: 'root' })
 export class ImportExportTransactionsService {
@@ -9,21 +9,21 @@ export class ImportExportTransactionsService {
 
   constructor(private http: HttpClient) {}
 
-  getTemplateTransactions(): Observable<HttpResponse<Blob>> {
-    return this.http.get(`${this.apiUrl}/template`, {
+  getTemplateTransactions(type: ImportExportCsvType = 'transactions'): Observable<HttpResponse<Blob>> {
+    return this.http.get(this.templateUrl(type), {
       responseType: 'blob',
       observe: 'response'
     });
   }
 
-  postImportTransactions(file: File): Observable<ImportExportTransactionsModel> {
+  postImportTransactions(file: File, type: ImportExportCsvType = 'transactions'): Observable<ImportExportTransactionsModel> {
     const formData = new FormData();
     formData.append('file', file);
     
-    return this.http.post<ImportExportTransactionsModel>(`${this.apiUrl}/import`, formData);
+    return this.http.post<ImportExportTransactionsModel>(this.importUrl(type), formData);
   }
 
-  getExportTransactions(filter?: TransactionExportFilterInputDTO): Observable<HttpResponse<Blob>> {
+  getExportTransactions(filter?: TransactionExportFilterInputDTO, type: ImportExportCsvType = 'transactions'): Observable<HttpResponse<Blob>> {
     let params = new HttpParams();
 
     if (filter) {
@@ -34,10 +34,22 @@ export class ImportExportTransactionsService {
       });
     }
 
-    return this.http.get(`${this.apiUrl}/export`, {
+    return this.http.get(this.exportUrl(type), {
       params,
       responseType: 'blob',
       observe: 'response'
     });
+  }
+
+  private templateUrl(type: ImportExportCsvType): string {
+    return type === 'transactions' ? `${this.apiUrl}/template` : `${this.apiUrl}/template/${type}`;
+  }
+
+  private importUrl(type: ImportExportCsvType): string {
+    return type === 'transactions' ? `${this.apiUrl}/import` : `${this.apiUrl}/import/${type}`;
+  }
+
+  private exportUrl(type: ImportExportCsvType): string {
+    return type === 'transactions' ? `${this.apiUrl}/export` : `${this.apiUrl}/export/${type}`;
   }
 }

@@ -23,6 +23,7 @@ public class TransactionExportSpecifications {
 
             var p = cb.conjunction();
             p = cb.and(p, cb.equal(root.get("user").get("id"), userId));
+            p = cb.and(p, cb.isNull(root.get("transferGroupId")));
 
             if (f == null) return p;
 

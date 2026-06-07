@@ -14,6 +14,8 @@ export enum ImportResult {
 export interface ImportSummary {
   totalRows: number;
   importedTransactions: number;
+  importedTransfers?: number;
+  importedAccounts?: number;
   newAccounts: string[];
   newCategories: { [key: string]: string[] };
 }
@@ -61,4 +63,11 @@ export interface TransactionExportFilterInputDTO {
   category?: string;
   currency?: string;
   transactionType?: TransactionTypeEnum;
+}
+
+export type ImportExportCsvType = 'transactions' | 'transfers' | 'accounts';
+
+export interface ImportCsvDialogResult {
+  file: File;
+  type: ImportExportCsvType;
 }

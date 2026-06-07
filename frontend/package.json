@@ -2,12 +2,13 @@
   "name": "frontend",
   "version": "0.0.0",
   "scripts": {
-    "start": "ng serve -c local --proxy-config proxy.conf.json",
+    "start": "ng serve -c local --proxy-config proxy.conf.json --host 0.0.0.0",
     "build": "ng build",
     "build:prod": "ng build -c production"
   },
   "private": true,
   "dependencies": {
+    "@angular/service-worker": "^17.3.12",
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
     "chart.js": "^4.5.0",

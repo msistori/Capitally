@@ -20,4 +20,6 @@ public interface AccountRepository extends JpaRepository<AccountEntity, BigInteg
     Optional<AccountEntity> findByNameAndUser_Id(String name, BigInteger userId);
 
     Optional<AccountEntity> findByIdAndUser_Id(BigInteger id, BigInteger userId);
+
+    void deleteByUser_Id(BigInteger userId);
 }

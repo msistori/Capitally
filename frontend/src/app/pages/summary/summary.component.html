@@ -313,8 +313,16 @@
             </span>
 
             <span class="transaction-copy">
-              <strong>{{ row.description }}</strong>
-              <small>{{ row.categoryName }} &middot; {{ row.accountName }} &middot; {{ row.date | date:'dd/MM/yyyy' }}</small>
+              <strong class="transaction-description">{{ row.description }}</strong>
+              <small class="transaction-meta">
+                <span class="transaction-category-line">
+                  <strong class="transaction-macro-category" *ngIf="row.macroCategoryName">{{ row.macroCategoryName }}</strong>
+                  <span class="transaction-category-separator" *ngIf="row.macroCategoryName">&middot;</span>
+                  <span class="transaction-category-name">{{ row.categoryName }}</span>
+                </span>
+                <span class="transaction-account">{{ row.accountName }}</span>
+                <span class="transaction-date">{{ row.date | date:'dd/MM/yyyy' }}</span>
+              </small>
             </span>
 
             <strong class="transaction-amount" [class.positive]="row.type === TransactionTypeEnum.INCOME" [class.negative]="row.type === TransactionTypeEnum.EXPENSE">
