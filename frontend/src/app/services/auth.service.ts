@@ -9,8 +9,8 @@ import { AnalyticsEvent } from '../analytics/analytics.events';
 import { AnalyticsService } from '../analytics/analytics.service';
 import { MatDialog } from '@angular/material/dialog';
 
-type BackendLoginResponse = { token: string; tokenType: string; username: string; email: string; roles: string[] };
-type BackendMeResponse = { id: string | number; username: string; email: string; roles: string[] };
+type BackendLoginResponse = { token: string; tokenType: string; username: string; email: string; roles: string[]; passwordChangeRequired?: boolean };
+type BackendMeResponse = { id: string | number; username: string; email: string; roles: string[]; passwordChangeRequired?: boolean };
 
 const API = '/auth';
 const USERS_API = `${environment.apiBase ?? ''}/users`;
@@ -66,7 +66,12 @@ export class AuthService {
 
   me(): Observable<AuthUser> {
     return this.http.get<BackendMeResponse>(`${API}/me`).pipe(
-      map(r => ({ id: String(r.id), email: r.email, name: r.username } as AuthUser))
+      map(r => ({
+        id: String(r.id),
+        email: r.email,
+        name: r.username,
+        passwordChangeRequired: !!r.passwordChangeRequired
+      } as AuthUser))
     );
   }
 

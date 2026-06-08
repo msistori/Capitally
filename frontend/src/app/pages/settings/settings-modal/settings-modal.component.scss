@@ -50,6 +50,38 @@ $border: rgba(0, 95, 115, 0.18);
   background: rgba(255, 255, 255, 0.78);
 }
 
+.password-required-banner {
+  align-items: flex-start;
+  background: #e9f7f5;
+  border: 1px solid #bfe3df;
+  border-radius: 0.9rem;
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.95rem;
+
+  mat-icon {
+    color: $primary;
+    flex: 0 0 auto;
+  }
+
+  h3,
+  p {
+    margin: 0;
+  }
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  p {
+    color: rgba(0, 95, 115, 0.82);
+    font-size: 0.92rem;
+    line-height: 1.35;
+    margin-top: 0.25rem;
+  }
+}
+
 .section-heading {
   display: flex;
   flex-direction: column;
@@ -129,7 +161,7 @@ $border: rgba(0, 95, 115, 0.18);
   .password-form {
     display: grid;
     gap: 0.75rem;
-    
+
     mat-form-field {
       mat-label,
       input {
@@ -141,6 +173,10 @@ $border: rgba(0, 95, 115, 0.18);
   .password-actions {
     display: grid;
     gap: 0.6rem;
+
+    &.required {
+      grid-template-columns: 1fr;
+    }
   }
 
   .password-toggle,
@@ -426,6 +462,10 @@ $border: rgba(0, 95, 115, 0.18);
   .security-section {
     .password-actions {
       grid-template-columns: 1fr 1fr;
+
+      &.required {
+        grid-template-columns: 1fr;
+      }
     }
   }
 }

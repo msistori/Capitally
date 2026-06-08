@@ -63,7 +63,7 @@ Production can set `siteUrl` in:
 
 - `frontend/src/environments/environment.prod.ts`
 
-`robots.txt` and `sitemap.xml` are static and currently use `https://capitally.app`. If the production domain changes, update:
+`robots.txt` and `sitemap.xml` are static and currently use `https://capital-ly.com`. If the production domain changes, update:
 
 - `frontend/src/robots.txt`
 - `frontend/src/sitemap.xml`
@@ -93,7 +93,7 @@ The Angular app also writes `noindex,nofollow` on private routes and non-indexab
 
 ## Sitemap
 
-`frontend/src/sitemap.xml` includes only indexable public routes and their `hreflang` alternates. It intentionally excludes login, registration, 404 and every private route.
+`frontend/src/sitemap.xml` includes only indexable public routes, their `lastmod` dates and their `hreflang` alternates. It intentionally excludes login, registration, 404 and every private route.
 
 ## Multilingual Routing
 

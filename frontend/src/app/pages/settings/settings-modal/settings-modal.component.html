@@ -1,12 +1,20 @@
 <div class="settings">
   <header class="modal-header">
     <h2 class="title">{{ 'SETTINGS.TITLE' | translate }}</h2>
-    <button mat-icon-button (click)="close()" class="close-btn" [attr.aria-label]="'BUTTON_CLOSE' | translate" disableRipple>
+    <button mat-icon-button *ngIf="!passwordChangeRequired" (click)="close()" class="close-btn" [attr.aria-label]="'BUTTON_CLOSE' | translate" disableRipple>
       <mat-icon>close</mat-icon>
     </button>
   </header>
 
-  <section class="settings-section danger-section">
+  <section class="password-required-banner" *ngIf="passwordChangeRequired">
+    <mat-icon>admin_panel_settings</mat-icon>
+    <div>
+      <h3>{{ 'SETTINGS.PASSWORD.REQUIRED_TITLE' | translate }}</h3>
+      <p>{{ 'SETTINGS.PASSWORD.REQUIRED_MESSAGE' | translate }}</p>
+    </div>
+  </section>
+
+  <section class="settings-section danger-section" *ngIf="!passwordChangeRequired">
     <div class="section-heading">
       <span class="section-kicker">{{ 'SETTINGS.SECTIONS.DATA' | translate }}</span>
       <h3>{{ 'SETTINGS.SECTIONS.RESET_TITLE' | translate }}</h3>
@@ -30,7 +38,7 @@
     </div>
   </section>
 
-  <section class="settings-section">
+  <section class="settings-section" *ngIf="!passwordChangeRequired">
     <div class="section-heading">
       <span class="section-kicker">{{ 'SETTINGS.SECTIONS.CSV' | translate }}</span>
       <h3>{{ 'SETTINGS.SECTIONS.IMPORT_EXPORT_TITLE' | translate }}</h3>
@@ -39,7 +47,7 @@
     <app-import-export-transactions [parentDialogRef]="dialogRef"></app-import-export-transactions>
   </section>
 
-  <section class="settings-section preferences-section">
+  <section class="settings-section preferences-section" *ngIf="!passwordChangeRequired">
     <div class="section-heading">
       <span class="section-kicker">{{ 'SETTINGS.SECTIONS.PREFERENCES' | translate }}</span>
       <h3>{{ 'SETTINGS.SECTIONS.DISPLAY_TITLE' | translate }}</h3>
@@ -109,8 +117,8 @@
         <input matInput type="password" formControlName="confirmPassword" autocomplete="new-password" />
       </mat-form-field>
 
-      <div class="password-actions">
-        <button class="settings-action password-cancel" type="button" (click)="cancelPasswordChange()" [disabled]="passwordSaving">
+      <div class="password-actions" [class.required]="passwordChangeRequired">
+        <button class="settings-action password-cancel" type="button" *ngIf="!passwordChangeRequired" (click)="cancelPasswordChange()" [disabled]="passwordSaving">
           <mat-icon>close</mat-icon>
           <span>{{ 'BUTTON_CANCEL' | translate }}</span>
         </button>
@@ -128,7 +136,7 @@
     <p class="settings-message success" *ngIf="!showPasswordForm && passwordMessage">{{ passwordMessage }}</p>
   </section>
 
-  <button class="logout-btn" type="button" (click)="logout()">
+  <button class="logout-btn" type="button" *ngIf="!passwordChangeRequired" (click)="logout()">
     <mat-icon>logout</mat-icon>
     {{ 'SETTINGS.LOGOUT' | translate }}
   </button>

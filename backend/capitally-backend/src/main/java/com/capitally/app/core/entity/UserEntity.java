@@ -28,6 +28,8 @@ public class UserEntity extends AuditableEntity {
     private String email;
     private String password;
     private boolean enabled;
+    @Column(name = "password_change_required", nullable = false)
+    private boolean passwordChangeRequired;
 
     @Convert(converter = UserRoleEnumListConverter.class)
     private List<UserRoleEnum> roles;

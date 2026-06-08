@@ -66,7 +66,7 @@
       "USERNAME_EMAIL": "Email o Username",
       "SUBMIT": "Invia nuova password",
       "REQUIRED": "Inserisci email o username",
-      "SUCCESS": "Se l'account esiste, riceverai una mail con una password temporanea. Dopo l'accesso potrai cambiarla in Impostazioni.",
+      "SUCCESS": "Se l'account esiste, riceverai una mail con una password temporanea. Al primo accesso dovrai impostare subito una nuova password.",
       "ERROR": "Impossibile inviare la nuova password. Riprova piu tardi.",
       "DAILY_LIMIT_ERROR": "Abbiamo raggiunto il limite giornaliero di email per il recupero password. Riprova domani.",
       "MONTHLY_LIMIT_ERROR": "Abbiamo raggiunto il limite mensile di email per il recupero password. Riprova piu avanti o contatta il supporto."
@@ -551,6 +551,8 @@
     "PASSWORD": {
       "TITLE": "Cambio password",
       "ACTION": "Cambia password",
+      "REQUIRED_TITLE": "Cambio password richiesto",
+      "REQUIRED_MESSAGE": "Per proteggere il tuo account, prima di continuare devi sostituire la password temporanea ricevuta via email.",
       "CURRENT": "Password attuale",
       "NEW": "Nuova password",
       "CONFIRM": "Ripeti nuova password",

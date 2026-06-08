@@ -2,63 +2,73 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://capitally.app/it/</loc>
-    <xhtml:link rel="alternate" hreflang="it" href="https://capitally.app/it/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://capitally.app/en/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://capitally.app/en/" />
+    <loc>https://capital-ly.com/it/</loc>
+    <lastmod>2026-06-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="it" href="https://capital-ly.com/it/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://capital-ly.com/en/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://capital-ly.com/en/" />
   </url>
   <url>
-    <loc>https://capitally.app/en/</loc>
-    <xhtml:link rel="alternate" hreflang="it" href="https://capitally.app/it/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://capitally.app/en/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://capitally.app/en/" />
+    <loc>https://capital-ly.com/en/</loc>
+    <lastmod>2026-06-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="it" href="https://capital-ly.com/it/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://capital-ly.com/en/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://capital-ly.com/en/" />
   </url>
   <url>
-    <loc>https://capitally.app/it/privacy</loc>
-    <xhtml:link rel="alternate" hreflang="it" href="https://capitally.app/it/privacy" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://capitally.app/en/privacy" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://capitally.app/en/privacy" />
+    <loc>https://capital-ly.com/it/privacy</loc>
+    <lastmod>2026-06-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="it" href="https://capital-ly.com/it/privacy" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://capital-ly.com/en/privacy" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://capital-ly.com/en/privacy" />
   </url>
   <url>
-    <loc>https://capitally.app/en/privacy</loc>
-    <xhtml:link rel="alternate" hreflang="it" href="https://capitally.app/it/privacy" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://capitally.app/en/privacy" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://capitally.app/en/privacy" />
+    <loc>https://capital-ly.com/en/privacy</loc>
+    <lastmod>2026-06-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="it" href="https://capital-ly.com/it/privacy" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://capital-ly.com/en/privacy" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://capital-ly.com/en/privacy" />
   </url>
   <url>
-    <loc>https://capitally.app/it/cookie-policy</loc>
-    <xhtml:link rel="alternate" hreflang="it" href="https://capitally.app/it/cookie-policy" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://capitally.app/en/cookie-policy" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://capitally.app/en/cookie-policy" />
+    <loc>https://capital-ly.com/it/cookie-policy</loc>
+    <lastmod>2026-06-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="it" href="https://capital-ly.com/it/cookie-policy" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://capital-ly.com/en/cookie-policy" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://capital-ly.com/en/cookie-policy" />
   </url>
   <url>
-    <loc>https://capitally.app/en/cookie-policy</loc>
-    <xhtml:link rel="alternate" hreflang="it" href="https://capitally.app/it/cookie-policy" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://capitally.app/en/cookie-policy" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://capitally.app/en/cookie-policy" />
+    <loc>https://capital-ly.com/en/cookie-policy</loc>
+    <lastmod>2026-06-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="it" href="https://capital-ly.com/it/cookie-policy" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://capital-ly.com/en/cookie-policy" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://capital-ly.com/en/cookie-policy" />
   </url>
   <url>
-    <loc>https://capitally.app/it/termini-condizioni</loc>
-    <xhtml:link rel="alternate" hreflang="it" href="https://capitally.app/it/termini-condizioni" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://capitally.app/en/terms-and-conditions" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://capitally.app/en/terms-and-conditions" />
+    <loc>https://capital-ly.com/it/termini-condizioni</loc>
+    <lastmod>2026-06-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="it" href="https://capital-ly.com/it/termini-condizioni" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://capital-ly.com/en/terms-and-conditions" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://capital-ly.com/en/terms-and-conditions" />
   </url>
   <url>
-    <loc>https://capitally.app/en/terms-and-conditions</loc>
-    <xhtml:link rel="alternate" hreflang="it" href="https://capitally.app/it/termini-condizioni" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://capitally.app/en/terms-and-conditions" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://capitally.app/en/terms-and-conditions" />
+    <loc>https://capital-ly.com/en/terms-and-conditions</loc>
+    <lastmod>2026-06-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="it" href="https://capital-ly.com/it/termini-condizioni" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://capital-ly.com/en/terms-and-conditions" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://capital-ly.com/en/terms-and-conditions" />
   </url>
   <url>
-    <loc>https://capitally.app/it/installazione-app</loc>
-    <xhtml:link rel="alternate" hreflang="it" href="https://capitally.app/it/installazione-app" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://capitally.app/en/install-app" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://capitally.app/en/install-app" />
+    <loc>https://capital-ly.com/it/installazione-app</loc>
+    <lastmod>2026-06-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="it" href="https://capital-ly.com/it/installazione-app" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://capital-ly.com/en/install-app" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://capital-ly.com/en/install-app" />
   </url>
   <url>
-    <loc>https://capitally.app/en/install-app</loc>
-    <xhtml:link rel="alternate" hreflang="it" href="https://capitally.app/it/installazione-app" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://capitally.app/en/install-app" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://capitally.app/en/install-app" />
+    <loc>https://capital-ly.com/en/install-app</loc>
+    <lastmod>2026-06-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="it" href="https://capital-ly.com/it/installazione-app" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://capital-ly.com/en/install-app" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://capital-ly.com/en/install-app" />
   </url>
 </urlset>

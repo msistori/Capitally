@@ -11,6 +11,7 @@ import { LegalNavigationService } from './services/legal-navigation.service';
 import { AppUpdateService } from './pwa/app-update.service';
 import { SeoService } from './seo/seo.service';
 import { APP_LANGUAGES, currentOrDefaultLanguage, isAppLanguage, languageFromUrl, routePath } from './routing/localized-routes';
+import { PasswordChangeEnforcementService } from './services/password-change-enforcement.service';
 
 @Component({
   selector: 'app-root',
@@ -29,6 +30,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private legalNavigation = inject(LegalNavigationService);
   private appUpdate = inject(AppUpdateService);
   private seo = inject(SeoService);
+  private passwordChangeEnforcement = inject(PasswordChangeEnforcementService);
   loading = computed(() => this.loader.isLoading());
   disableScroll = false;
   legalRoute = false;
@@ -39,7 +41,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private touchStartY = 0;
   private removeTouchStartListener?: () => void;
   private removeTouchMoveListener?: () => void;
-  
+
   constructor(private translate: TranslateService) {}
 
   ngOnInit(): void {
@@ -47,6 +49,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.seo.initialize();
     this.appUpdate.initialize();
     this.setRouteLayout(this.router.url || '/');
+    queueMicrotask(() => this.passwordChangeEnforcement.enforceIfRequired());
 
     this.translate.addLangs(this.availableLanguages);
     const saved = localStorage.getItem('lang');
@@ -70,6 +73,7 @@ export class AppComponent implements OnInit, OnDestroy {
         }
         this.setRouteLayout(url);
         this.scrollToPageTop();
+        this.passwordChangeEnforcement.enforceIfRequired();
         this.analytics.track(AnalyticsEvent.PAGE_VIEWED, {
           page: this.routeName(url)
         });

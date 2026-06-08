@@ -62,6 +62,7 @@ public class AuthService {
                 .email(req.email())
                 .password(pe.encode(req.password()))
                 .enabled(true)
+                .passwordChangeRequired(false)
                 .roles(java.util.List.of(UserRoleEnum.USER))
                 .build();
         repo.save(u);
@@ -69,7 +70,7 @@ public class AuthService {
         defaultCategoryService.createForUser(u, req.lang());
 
         String token = jwt.generate(u.getId(), u.getUsername(), u.getRoles().stream().map(Enum::name).collect(Collectors.toSet()));
-        return new AuthResponseDTO(token, "Bearer", u.getUsername(), u.getEmail(), u.getRoles().stream().map(Enum::name).collect(Collectors.toSet()));
+        return new AuthResponseDTO(token, "Bearer", u.getUsername(), u.getEmail(), u.getRoles().stream().map(Enum::name).collect(Collectors.toSet()), u.isPasswordChangeRequired());
     }
 
     public AuthResponseDTO login(LoginRequestDTO req) {
@@ -101,7 +102,7 @@ public class AuthService {
             demoDataRefreshService.refreshIfNeeded(u);
         }
         String token = jwt.generate(u.getId(), u.getUsername(), u.getRoles().stream().map(Enum::name).collect(Collectors.toSet()));
-        return new AuthResponseDTO(token, "Bearer", u.getUsername(), u.getEmail(), u.getRoles().stream().map(Enum::name).collect(Collectors.toSet()));
+        return new AuthResponseDTO(token, "Bearer", u.getUsername(), u.getEmail(), u.getRoles().stream().map(Enum::name).collect(Collectors.toSet()), u.isPasswordChangeRequired());
     }
 
     @Transactional
@@ -117,6 +118,7 @@ public class AuthService {
                     forgotPasswordEmailQuotaService.reserve(user);
                     String temporaryPassword = generateTemporaryPassword();
                     user.setPassword(pe.encode(temporaryPassword));
+                    user.setPasswordChangeRequired(true);
                     repo.save(user);
                     resendEmailService.sendTemporaryPassword(user.getEmail(), temporaryPassword, req.lang());
                 });
@@ -126,7 +128,7 @@ public class AuthService {
         Claims c = jwt.parse(token);
         String username = c.getSubject();
         UserEntity u = repo.findByUsername(username).orElseThrow();
-        return new MeResponseDTO(u.getId(), u.getUsername(), u.getEmail(), u.getRoles().stream().map(Enum::name).collect(Collectors.toSet()));
+        return new MeResponseDTO(u.getId(), u.getUsername(), u.getEmail(), u.getRoles().stream().map(Enum::name).collect(Collectors.toSet()), u.isPasswordChangeRequired());
     }
 
     private String generateTemporaryPassword() {

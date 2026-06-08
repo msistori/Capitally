@@ -83,6 +83,7 @@ public class UserService {
         UserEntity u = repo.findByUsername(auth.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         if (!passwordEncoder.matches(req.currentPassword(), u.getPassword())) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid_current_password");
         u.setPassword(passwordEncoder.encode(req.newPassword()));
+        u.setPasswordChangeRequired(false);
         repo.save(u);
     }
 
@@ -118,6 +119,6 @@ public class UserService {
 
     private UserResponseDTO toResponse(UserEntity u) {
         Set<String> roles = u.getRoles() == null ? Set.of() : u.getRoles().stream().map(Enum::name).collect(Collectors.toSet());
-        return new UserResponseDTO(u.getId(), u.getUsername(), u.getEmail(), roles, u.isEnabled());
+        return new UserResponseDTO(u.getId(), u.getUsername(), u.getEmail(), roles, u.isEnabled(), u.isPasswordChangeRequired());
     }
 }
