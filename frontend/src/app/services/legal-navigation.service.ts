@@ -34,7 +34,11 @@ export class LegalNavigationService {
 
     const previousUrl = this.normalizeInternalUrl(sessionStorage.getItem(PREVIOUS_INTERNAL_URL_KEY));
 
-    if (previousUrl && this.pathOf(previousUrl) !== this.pathOf(currentUrl)) {
+    if (
+      previousUrl
+      && !this.isBackNavigationUrl(previousUrl)
+      && this.pathOf(previousUrl) !== this.pathOf(currentUrl)
+    ) {
       return previousUrl;
     }
 

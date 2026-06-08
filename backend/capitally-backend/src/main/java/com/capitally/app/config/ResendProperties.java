@@ -11,6 +11,7 @@ public class ResendProperties {
     private String apiKey;
     private String from;
     private String host = "https://api.resend.com";
+    private String logoUrl = "https://capital-ly.com/assets/pwa/icon-192.png";
     private int forgotPasswordDailyLimit = 50;
     private int forgotPasswordMonthlyLimit = 500;
 }

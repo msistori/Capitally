@@ -1,7 +1,7 @@
-import { Component, DestroyRef, TemplateRef, ViewChild, inject } from '@angular/core';
+import { Component, DestroyRef, Inject, Optional, TemplateRef, ViewChild, inject } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
@@ -20,6 +20,7 @@ import { AnalyticsService } from 'src/app/analytics/analytics.service';
 import { AppLanguage, LOCALIZED_ROUTES, isAppLanguage } from 'src/app/routing/localized-routes';
 
 type Currency = { code: string; name?: string };
+type SettingsModalData = { passwordChangeRequired?: boolean };
 
 @Component({
   selector: 'app-settings-modal',
@@ -51,6 +52,7 @@ export class SettingsModalComponent {
     confirmPassword: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] })
   }, { validators: passwordMatchValidator });
   showPasswordForm = false;
+  passwordChangeRequired = false;
   passwordSaving = false;
   passwordMessage: string | null = null;
   passwordError: string | null = null;
@@ -74,8 +76,11 @@ export class SettingsModalComponent {
     private refreshService: RefreshService,
     private authService: AuthService,
     private translateService: TranslateService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    @Optional() @Inject(MAT_DIALOG_DATA) data?: SettingsModalData
   ) {
+    this.passwordChangeRequired = !!data?.passwordChangeRequired;
+    this.showPasswordForm = this.passwordChangeRequired;
     this.filteredCurrencies = [...this.currencies];
     this.translateService.addLangs(this.availableLanguages);
     const saved = localStorage.getItem('lang');
@@ -110,6 +115,7 @@ export class SettingsModalComponent {
   }
 
   close(): void {
+    if (this.passwordChangeRequired) return;
     this.dialogRef.close();
   }
 
@@ -167,6 +173,7 @@ export class SettingsModalComponent {
   }
 
   cancelPasswordChange(): void {
+    if (this.passwordChangeRequired) return;
     this.resetPasswordForm();
     this.showPasswordForm = false;
   }
@@ -191,10 +198,17 @@ export class SettingsModalComponent {
       newPassword: value.newPassword
     }).subscribe({
       next: () => {
+        const wasPasswordChangeRequired = this.passwordChangeRequired;
         this.passwordSaving = false;
         this.resetPasswordForm();
+        this.passwordChangeRequired = false;
         this.showPasswordForm = false;
         this.passwordMessage = this.translateService.instant('SETTINGS.PASSWORD.SUCCESS') as string;
+        this.markStoredPasswordAsChanged();
+
+        if (wasPasswordChangeRequired) {
+          this.close();
+        }
       },
       error: err => {
         this.passwordSaving = false;
@@ -242,6 +256,13 @@ export class SettingsModalComponent {
     this.passwordForm.reset();
     this.passwordForm.markAsPristine();
     this.passwordForm.markAsUntouched();
+  }
+
+  private markStoredPasswordAsChanged(): void {
+    const user = this.storage.getUser();
+    if (!user) return;
+
+    this.storage.setUser({ ...user, passwordChangeRequired: false });
   }
 
   private openConfirmDeleteDialog(config: { title: string; message: string; action: () => Observable<any> }): void {

@@ -66,7 +66,7 @@
       "USERNAME_EMAIL": "Email or Username",
       "SUBMIT": "Send new password",
       "REQUIRED": "Enter email or username",
-      "SUCCESS": "If the account exists, you will receive an email with a temporary password. After signing in, you can change it in Settings.",
+      "SUCCESS": "If the account exists, you will receive an email with a temporary password. On your first sign-in you must immediately set a new password.",
       "ERROR": "Unable to send the new password. Try again later.",
       "DAILY_LIMIT_ERROR": "We have reached the daily email limit for password recovery. Try again tomorrow.",
       "MONTHLY_LIMIT_ERROR": "We have reached the monthly email limit for password recovery. Try again later or contact support."
@@ -553,6 +553,8 @@
     "PASSWORD": {
       "TITLE": "Change password",
       "ACTION": "Change password",
+      "REQUIRED_TITLE": "Password change required",
+      "REQUIRED_MESSAGE": "To protect your account, you must replace the temporary password received by email before continuing.",
       "CURRENT": "Current password",
       "NEW": "New password",
       "CONFIRM": "Repeat new password",

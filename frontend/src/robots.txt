@@ -25,4 +25,4 @@ Disallow: /users/
 Disallow: /v3/
 Disallow: /swagger-ui/
 
-Sitemap: https://capitally.app/sitemap.xml
+Sitemap: https://capital-ly.com/sitemap.xml

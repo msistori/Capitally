@@ -42,6 +42,7 @@ resend:
   api-key: ${RESEND_API_KEY:}
   from: ${RESEND_FROM:}
   host: ${RESEND_HOST:}
+  logo-url: ${RESEND_LOGO_URL:https://capital-ly.com/assets/pwa/icon-192.png}
   forgot-password-daily-limit: ${RESEND_FORGOT_PASSWORD_DAILY_LIMIT:50}
   forgot-password-monthly-limit: ${RESEND_FORGOT_PASSWORD_MONTHLY_LIMIT:500}
 

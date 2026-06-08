@@ -7,14 +7,16 @@ export const guestLoginResponse = {
   tokenType: 'Bearer',
   username: 'demo',
   email: 'demo@capitally.local',
-  roles: ['USER', 'DEMO']
+  roles: ['USER', 'DEMO'],
+  passwordChangeRequired: false
 };
 
 export const guestMeResponse = {
   id: 1,
   username: 'demo',
   email: 'demo@capitally.local',
-  roles: ['USER', 'DEMO']
+  roles: ['USER', 'DEMO'],
+  passwordChangeRequired: false
 };
 
 export const accountLoginResponse = {
@@ -22,13 +24,14 @@ export const accountLoginResponse = {
   tokenType: 'Bearer',
   username: 'Mattia',
   email: 'mattiasistori@gmail.com',
-  roles: ['USER']
+  roles: ['USER'],
+  passwordChangeRequired: false
 };
 
 export const accountMeResponse = {
   id: 9,
   username: 'Mattia',
   email: 'mattiasistori@gmail.com',
-  roles: ['USER']
+  roles: ['USER'],
+  passwordChangeRequired: false
 };
-
