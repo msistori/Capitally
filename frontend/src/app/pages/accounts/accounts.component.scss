@@ -190,6 +190,12 @@ $glass-strong: rgba(255, 255, 255, 0.78);
   }
 }
 
+.hidden-balance {
+  color: $primary;
+  display: inline-block;
+  min-width: 5ch;
+}
+
 .overview-actions {
   display: grid;
   gap: 0.85rem;
