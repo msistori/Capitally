@@ -29,6 +29,9 @@ export class BalanceSummaryComponent {
   readonly defaultCurrencySig = toSignal(this.storage.defaultCurrency$, {
     initialValue: this.storage.getDefaultCurrency()
   });
+  readonly balancesVisibleSig = toSignal(this.storage.balanceVisibility$, {
+    initialValue: this.storage.areBalancesVisible()
+  });
 
   constructor() {
     effect((onCleanup) => {
@@ -98,5 +101,9 @@ export class BalanceSummaryComponent {
 
   trackByAccountBalance(_: number, item: AccountBalanceResponseDTO): string {
     return `${item.accountId}-${item.currency}`;
+  }
+
+  toggleBalancesVisibility(): void {
+    this.storage.setBalancesVisible(!this.balancesVisibleSig());
   }
 }

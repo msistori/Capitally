@@ -13,7 +13,9 @@ type Prefs = Record<string, string>;
 @Injectable({ providedIn: 'root' })
 export class StorageService {
   private readonly defaultCurrencySubject = new BehaviorSubject<string>(this.readDefaultCurrency());
+  private readonly balanceVisibilitySubject = new BehaviorSubject<boolean>(this.readBalanceVisibility());
   readonly defaultCurrency$ = this.defaultCurrencySubject.asObservable();
+  readonly balanceVisibility$ = this.balanceVisibilitySubject.asObservable();
 
   setAccessToken(token: string): void {
     localStorage.setItem(KEYS.accessToken, token);
@@ -26,10 +28,12 @@ export class StorageService {
   clearAuth(): void {
     localStorage.removeItem(KEYS.accessToken);
     localStorage.removeItem(KEYS.user);
+    this.balanceVisibilitySubject.next(false);
   }
 
   setUser(user: AuthUser): void {
     localStorage.setItem(KEYS.user, JSON.stringify(user));
+    this.balanceVisibilitySubject.next(this.readBalanceVisibility());
   }
 
   getUser(): AuthUser | null {
@@ -65,6 +69,21 @@ export class StorageService {
     this.setPreference('defaultCurrency', code);
   }
 
+  areBalancesVisible(): boolean {
+    return this.balanceVisibilitySubject.value;
+  }
+
+  setBalancesVisible(visible: boolean): void {
+    const key = this.balanceVisibilityPreferenceKey();
+    if (!key) {
+      this.balanceVisibilitySubject.next(false);
+      return;
+    }
+
+    this.setPreference(key, visible ? 'true' : 'false');
+    this.balanceVisibilitySubject.next(visible);
+  }
+
   private readPrefs(): Prefs {
     const v = localStorage.getItem(KEYS.prefs);
     return v ? (JSON.parse(v) as Prefs) : {};
@@ -74,5 +93,15 @@ export class StorageService {
     const v = localStorage.getItem(KEYS.prefs);
     const obj = v ? (JSON.parse(v) as Prefs) : {};
     return obj['defaultCurrency'] ?? 'EUR';
+  }
+
+  private readBalanceVisibility(): boolean {
+    const key = this.balanceVisibilityPreferenceKey();
+    return key ? this.getPreference(key) === 'true' : false;
+  }
+
+  private balanceVisibilityPreferenceKey(): string | null {
+    const user = this.getUser();
+    return user?.id ? `balancesVisible:${user.id}` : null;
   }
 }

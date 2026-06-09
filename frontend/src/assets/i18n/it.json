@@ -350,7 +350,9 @@
   },
   "BALANCE": {
     "BALANCE_TITLE": "Saldo Totale",
-    "ACCOUNTS_TITLE": "Conti con saldo"
+    "ACCOUNTS_TITLE": "Conti con saldo",
+    "SHOW_BALANCES": "Mostra saldi",
+    "HIDE_BALANCES": "Nascondi saldi"
   },
   "RECURRING": {
     "UPCOMING_TITLE": "Ricorrenti in arrivo",
