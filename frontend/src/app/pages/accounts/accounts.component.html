@@ -13,7 +13,12 @@
     <section *ngSwitchCase="'overview'" class="accounts-overview">
       <div class="total-block">
         <span>{{ 'ACCOUNTS.TOTAL_LABEL' | translate }}</span>
-        <strong>{{ totalIncludedBalance | currency: defaultCurrency:'symbol-narrow':'1.2-2' }}</strong>
+        <strong *ngIf="balancesVisible; else hiddenIncludedBalance">
+          {{ totalIncludedBalance | currency: defaultCurrency:'symbol-narrow':'1.2-2' }}
+        </strong>
+        <ng-template #hiddenIncludedBalance>
+          <strong class="hidden-balance" aria-hidden="true">*****</strong>
+        </ng-template>
       </div>
 
       <div class="overview-actions">
@@ -58,8 +63,13 @@
             <strong
               class="account-balance"
               *ngFor="let item of summary.balanceItems; trackBy: trackByBalance"
-              [class.negative]="item.amount < 0">
-              {{ item.amount | currency: item.currency:'symbol-narrow':'1.2-2' }}
+              [class.negative]="balancesVisible && item.amount < 0">
+              <ng-container *ngIf="balancesVisible; else hiddenAccountBalance">
+                {{ item.amount | currency: item.currency:'symbol-narrow':'1.2-2' }}
+              </ng-container>
+              <ng-template #hiddenAccountBalance>
+                <span class="hidden-balance" aria-hidden="true">*****</span>
+              </ng-template>
             </strong>
           </div>
         </article>

@@ -86,6 +86,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
   currencies: CurrencyModel[] = [];
   accountSummaries: AccountSummary[] = [];
   rates: Record<string, number> = {};
+  balancesVisible = this.storage.areBalancesVisible();
   editingAccountId: number | null = null;
   editingTransferGroupId: string | null = null;
   transferWeekDays: string[] = [];
@@ -145,6 +146,10 @@ export class AccountsComponent implements OnInit, OnDestroy {
       this.accountForm.controls.currencyInitialBalanceCode.setValue(code);
       this.transferForm.controls.currencyCode.setValue(code);
       this.loadRates();
+    }));
+
+    this.sub.add(this.storage.balanceVisibility$.subscribe(visible => {
+      this.balancesVisible = visible;
     }));
 
     this.sub.add(this.refreshService.onRefresh$.subscribe(() => {

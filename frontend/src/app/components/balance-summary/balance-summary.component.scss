@@ -15,10 +15,52 @@
   background-color: rgba(255, 255, 255, 0.86);
   border: 1px solid rgba(209, 213, 219, 0.5);
 
-  h2 {
+  .balance-heading {
+    align-items: center;
+    display: grid;
+    gap: .5rem;
+    grid-template-columns: 2.3rem minmax(0, 1fr) 2.3rem;
     margin: 0 0 .5rem 0;
+
+    &::before {
+      content: '';
+      display: block;
+    }
+  }
+
+  h2 {
+    grid-column: 2;
+    margin: 0;
     font-size: 1rem;
     color: #005f73;
+  }
+
+  .balance-visibility-toggle {
+    align-items: center;
+    background: #005f73;
+    border: 1px solid #005f73;
+    border-radius: .5rem;
+    color: #fff;
+    cursor: pointer;
+    display: inline-flex;
+    flex: 0 0 auto;
+    grid-column: 3;
+    height: 2.3rem;
+    justify-content: center;
+    justify-self: end;
+    padding: 0;
+    width: 2.3rem;
+
+    mat-icon {
+      font-size: 1.25rem;
+      height: 1.25rem;
+      width: 1.25rem;
+    }
+
+    &:focus-visible {
+      outline: 2px solid #caf0f8;
+      outline-offset: 2px;
+    }
   }
 
   .balance-total {
@@ -28,6 +70,12 @@
     color: #005f73;
     margin: 0 0 .75rem 0;
     overflow-wrap: anywhere;
+  }
+
+  .balance-hidden {
+    color: #005f73;
+    display: inline-block;
+    min-width: 5ch;
   }
 
   .per-currency {
@@ -135,8 +183,23 @@
     padding: clamp(1.4rem, 3vh, 2.5rem) clamp(1.5rem, 3vw, 3rem);
     background-color: rgba(255, 255, 255, 0.42);
 
+    .balance-heading {
+      grid-template-columns: 3.15rem minmax(0, 1fr) 3.15rem;
+    }
+
     h2 {
       font-size: clamp(3rem, 1.2vw, 1.35rem);
+    }
+
+    .balance-visibility-toggle {
+      height: 3.15rem;
+      width: 3.15rem;
+
+      mat-icon {
+        font-size: 1.8rem;
+        height: 1.8rem;
+        width: 1.8rem;
+      }
     }
 
     .balance-total {

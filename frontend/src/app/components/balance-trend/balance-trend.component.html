@@ -2,7 +2,7 @@
   <header class="header">
     <h3 class="title">{{ 'YEARLY_BALANCE_TREND.TITLE' | translate }}</h3>
 
-    <div class="filters">
+    <div class="filters" *ngIf="currencies.length > 1">
       <button type="button"
               class="chip"
               [class.active]="selectedCurrency === 'ALL'"

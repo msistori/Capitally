@@ -35,8 +35,10 @@
   }
 
   .header-options {
-    display: flex;
-    gap: 0.5rem;
+    div {
+      display: flex;
+      gap: 0.5rem;
+    }
 
     button {
       background: none;
@@ -61,9 +63,4 @@
       display: flex;
     }
   }
-}
-
-.login-header {
-  padding-left: 10%;
-  padding-right: 10%;
 }
