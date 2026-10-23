@@ -168,26 +168,42 @@ app-root :is(h1, h2, h3, .hero-copy, .section-kicker, .field > span, .month-labe
   .cdk-overlay-pane { pointer-events: all; }
 }
 
+.cdk-overlay-pane.add-transaction-modal-panel {
+  --panel-bottom: var(--footer-slot-h);
+  position: fixed !important;
+  top: var(--header-h);
+  bottom: var(--panel-bottom);
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-width: 560px !important;
+  height: calc(100dvh - var(--header-h) - var(--panel-bottom));
+  max-height: calc(100dvh - var(--header-h) - var(--panel-bottom));
+  margin-inline: auto;
+  overflow: hidden;
+
+  .mat-mdc-dialog-container,
+  .mdc-dialog__container {
+    height: 100%;
+    min-height: 0;
+    max-height: 100%;
+  }
+
+  .mat-mdc-dialog-surface {
+    height: 100%;
+    min-height: 0;
+    max-height: 100%;
+    overflow-y: auto;
+    scroll-padding-bottom: 5rem;
+    border-radius: 2rem 2rem 0 0;
+  }
+
+  @media (min-width: 1024px) {
+    --panel-bottom: 0px;
+  }
+}
+
 @media (max-width: 1023px) {
-  .cdk-overlay-pane.add-transaction-modal-panel {
-    position: fixed !important;
-    top: var(--header-h);
-    left: 0;
-    right: 0;
-    bottom: var(--footer-slot-h);
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    max-height: calc(100dvh - var(--header-h) - var(--footer-slot-h));
-    margin-inline: auto;
-    overflow: hidden;
-  }
-
-  .cdk-overlay-pane.settings-modal-panel {
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-
   .cdk-overlay-pane.view-all-categories-modal-panel {
     position: fixed !important;
     top: var(--header-h);
@@ -203,35 +219,9 @@ app-root :is(h1, h2, h3, .hero-copy, .section-kicker, .field > span, .month-labe
     overflow: hidden;
   }
 
-  .cdk-overlay-pane.add-transaction-modal-panel
-    .mat-mdc-dialog-container,
-  .cdk-overlay-pane.add-transaction-modal-panel
-    .mat-mdc-dialog-container
-    .mat-mdc-dialog-surface {
-    max-height: 100%;
-    overflow-y: auto;
-  }
 }
 
 @media (min-width: 1024px) {
-  .cdk-overlay-pane.add-transaction-modal-panel {
-    position: fixed !important;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    max-height: calc(100vh - var(--footer-h));
-    margin-inline: auto;
-    overflow: visible;
-  }
-
-  .cdk-overlay-pane.settings-modal-panel {
-    left: 50% !important;
-    right: auto !important;
-    transform: translateX(-50%) !important;
-    width: 40vw !important;
-    max-width: 40vw !important;
-  }
-
   .cdk-overlay-pane.view-all-categories-modal-panel {
     position: fixed !important;
     left: 0;

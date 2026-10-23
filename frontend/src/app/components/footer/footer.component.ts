@@ -11,12 +11,16 @@ import { LOCALIZED_ROUTES, currentOrDefaultLanguage } from '../../routing/locali
 })
 export class FooterComponent {
   year = new Date().getFullYear();
-  
+
   constructor(
     private analytics: AnalyticsService,
     private router: Router,
     private translate: TranslateService
   ) {}
+
+  get welcomeLink(): string {
+    return LOCALIZED_ROUTES[this.currentLanguage].home;
+  }
 
   get termsLink(): string {
     return LOCALIZED_ROUTES[this.currentLanguage].legal.terms;

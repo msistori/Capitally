@@ -5,11 +5,16 @@ import com.capitally.app.core.repository.*;
 import com.capitally.app.mapper.TransactionMapper;
 import com.capitally.app.model.request.TransactionRequestDTO;
 import com.capitally.app.model.response.TransactionResponseDTO;
+import com.capitally.app.model.response.RecentTransactionsResponseDTO;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -38,16 +43,16 @@ public class TransactionService {
 
         if (input.getCategoryId() != null) {
             transactionEntity.setCategory(categoryRepository.findByIdAndUser_Id(input.getCategoryId(), input.getUserId())
-                    .orElseThrow(() -> new IllegalArgumentException("Category not found")));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found")));
         }
         transactionEntity.setAccount(accountRepository.findByIdAndUser_Id(input.getAccountId(), input.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("Account not found")));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found")));
         transactionEntity.setUser(userRepository.getReferenceById(input.getUserId()));
         transactionEntity.setCurrency(currencyRepository.getReferenceById(input.getCurrencyCode()));
         if (input.getTransferCounterpartyAccountId() != null) {
             transactionEntity.setTransferCounterpartyAccount(
                     accountRepository.findByIdAndUser_Id(input.getTransferCounterpartyAccountId(), input.getUserId())
-                            .orElseThrow(() -> new IllegalArgumentException("Counterparty account not found"))
+                            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Counterparty account not found"))
             );
         }
 
@@ -65,19 +70,33 @@ public class TransactionService {
                 .toList();
     }
 
+    public RecentTransactionsResponseDTO getRecentTransactions(BigInteger userId, int page) {
+        Specification<TransactionEntity> spec = (root, query, cb) -> cb.and(
+                cb.equal(root.get("user").get("id"), userId),
+                cb.isNull(root.get("transferCounterpartyAccount")),
+                cb.or(cb.isNull(root.get("transferGroupId")),
+                        cb.notLike(cb.trim(root.get("transferGroupId")), "TRF-%"))
+        );
+        var transactions = transactionRepository.findAll(spec,
+                PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "date", "id")));
+        return new RecentTransactionsResponseDTO(
+                transactions.getContent().stream().map(transactionMapper::mapTransactionEntityToDTO).toList(),
+                transactions.isLast());
+    }
+
     public TransactionResponseDTO putTransaction(BigInteger userId, BigInteger id, TransactionRequestDTO dto) {
         TransactionEntity existing = transactionRepository.findByIdAndUser_Id(id, userId)
-                .orElseThrow(() -> new IllegalArgumentException("Transaction not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Transaction not found"));
 
         existing.setAmount(dto.getAmount());
         existing.setAccount(accountRepository.findByIdAndUser_Id(dto.getAccountId(), userId)
-                .orElseThrow(() -> new IllegalArgumentException("Account not found")));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found")));
         existing.setCurrency(currencyRepository.getReferenceById(dto.getCurrencyCode()));
         existing.setDate(dto.getDate());
         existing.setDescription(dto.getDescription());
         existing.setCategory(dto.getCategoryId() != null
                 ? categoryRepository.findByIdAndUser_Id(dto.getCategoryId(), userId)
-                        .orElseThrow(() -> new IllegalArgumentException("Category not found"))
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"))
                 : null);
         existing.setTransactionType(dto.getTransactionType());
         existing.setIsRecurring(dto.getIsRecurring());
@@ -85,7 +104,7 @@ public class TransactionService {
         existing.setRecurrenceEndDate(dto.getRecurrenceEndDate());
         if (dto.getTransferCounterpartyAccountId() != null) {
             existing.setTransferCounterpartyAccount(accountRepository.findByIdAndUser_Id(dto.getTransferCounterpartyAccountId(), userId)
-                    .orElseThrow(() -> new IllegalArgumentException("Counterparty account not found")));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Counterparty account not found")));
         }
 
         return transactionMapper.mapTransactionEntityToDTO(transactionRepository.save(existing));

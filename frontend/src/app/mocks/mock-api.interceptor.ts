@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import {
+  HttpErrorResponse,
   HttpEvent,
   HttpHandler,
   HttpInterceptor,
   HttpRequest,
   HttpResponse
 } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { accountsMock } from './accounts.mock';
@@ -20,13 +21,7 @@ import {
 } from './auth.mock';
 import { categoriesMock } from './categories.mock';
 import { currenciesMock } from './currencies.mock';
-import {
-  annualIncomeExpenseMock,
-  balanceTrendMock,
-  dashboardOverviewMock,
-  incomeExpenseBreakdownMock,
-  upcomingRecurringMock
-} from './dashboard.mock';
+import { upcomingRecurringMock } from './dashboard.mock';
 import { importTransactionsMock } from './import-export.mock';
 import { MockApiConfig, MockEndpointKey } from './mock-api.types';
 import { transactionsMock } from './transactions.mock';
@@ -41,6 +36,18 @@ export class MockApiInterceptor implements HttpInterceptor {
       return next.handle(req);
     }
 
+    const path = this.getPathname(req.urlWithParams);
+    if (req.method === 'POST' && this.isEndpointEnabled(config, 'authLogin')) {
+      if (path === '/auth/logout') {
+        localStorage.removeItem(MOCK_AUTH_STORAGE_KEY);
+        return of(this.json(null));
+      }
+      if (path === '/auth/refresh') {
+        return localStorage.getItem(MOCK_AUTH_STORAGE_KEY) === 'account'
+          ? of(this.json(accountLoginResponse))
+          : throwError(() => new HttpErrorResponse({ status: 401 }));
+      }
+    }
     const response = this.getMockResponse(req, config);
     return response ? of(response) : next.handle(req);
   }
@@ -68,22 +75,6 @@ export class MockApiInterceptor implements HttpInterceptor {
       && (path === '/users/me/password' || path === '/api/users/me/password')
       && this.isEndpointEnabled(config, 'authMe')) {
       return this.json(null);
-    }
-
-    if (req.method === 'GET' && path === '/dashboard/overview' && this.isEndpointEnabled(config, 'dashboardOverview')) {
-      return this.json(dashboardOverviewMock);
-    }
-
-    if (req.method === 'GET' && path === '/dashboard/balance-trend' && this.isEndpointEnabled(config, 'dashboardBalanceTrend')) {
-      return this.json(balanceTrendMock);
-    }
-
-    if (req.method === 'GET' && path === '/dashboard/income-expense-breakdown' && this.isEndpointEnabled(config, 'dashboardIncomeExpenseBreakdown')) {
-      return this.json(incomeExpenseBreakdownMock);
-    }
-
-    if (req.method === 'GET' && path === '/dashboard/annual-income-expense' && this.isEndpointEnabled(config, 'dashboardAnnualIncomeExpense')) {
-      return this.json(annualIncomeExpenseMock);
     }
 
     if (req.method === 'GET' && path === '/dashboard/upcoming-recurring' && this.isEndpointEnabled(config, 'dashboardUpcomingRecurring')) {
@@ -148,6 +139,16 @@ export class MockApiInterceptor implements HttpInterceptor {
           || Number(item.transferCounterpartyAccountId) === accountId;
         return matchesUser && matchesAccount;
       });
+
+      if (path === '/transaction/recent') {
+        const page = Math.max(0, Number(req.params.get('page')) || 0);
+        const recent = transactions.filter(transaction => {
+          const item = transaction as any;
+          return !item.transferCounterpartyAccountId && !item.transferGroupId?.trim().startsWith('TRF-');
+        }).sort((a, b) => String(b.date).localeCompare(String(a.date)) || Number(b.id) - Number(a.id));
+        const start = page * 10;
+        return this.json({ content: recent.slice(start, start + 10), last: start + 10 >= recent.length });
+      }
 
       return this.json(transactions);
     }

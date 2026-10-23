@@ -25,7 +25,7 @@
 
 | Area | Base path | Purpose |
 | --- | --- | --- |
-| Auth | `/auth` | login, registration, forgot password, current user |
+| Auth | `/auth` | login, registration, refresh, logout, forgot password, current user |
 | Users | `/users`, `/api/users` | profile, password change, export, delete account |
 | Accounts | `/account` | account CRUD and balance fields |
 | Categories | `/category` | user-scoped category CRUD |
@@ -38,11 +38,12 @@
 
 ## Authentication
 
-The backend is stateless. `SecurityConfig` registers `JwtAuthenticationFilter` before `UsernamePasswordAuthenticationFilter`. Public routes are explicitly listed; all other requests require a valid JWT.
+Spring Security uses no HTTP session. JWT authentication checks the associated database session on every protected request for immediate revocation. AuthRequestFilter validates authentication request origins/custom headers and applies per-instance IP limits. See [Security](security.md) for the complete session lifecycle.
 
 JWT claims include:
 
-- `jti`: user id.
+- `jti`: user id (existing claim convention).
+- `sid`: database session UUID.
 - `sub`: username.
 - `roles`: comma-separated role names.
 - `iat`: issued-at.
@@ -67,7 +68,9 @@ Backend configuration lives in `application.yml` and is environment-driven:
 - `SPRING_DATASOURCE_PASSWORD`
 - `SPRING_JPA_HIBERNATE_DDL_AUTO`
 - `JWT_SECRET`
-- `JWT_VALIDITY_MILLIS`
+- `JWT_VALIDITY_MILLIS` (maximum 900000)
+- `AUTH_SECURE_COOKIE`
+- `AUTH_ALLOWED_ORIGINS`
 - PostHog variables
 - Resend variables
 

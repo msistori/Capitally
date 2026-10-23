@@ -21,7 +21,7 @@ $bg: #caf0f8;
     background-color: #ffffff6a;
     border: 1px solid rgba(209, 213, 219, .5);
     border-radius: 1rem;
-    overflow: hidden;
+    overflow: auto;
 
     .header {
         display: flex;
@@ -38,7 +38,7 @@ $bg: #caf0f8;
         .filters {
             display: flex;
             gap: 0.5rem;
-            overflow-x: auto;
+            flex-wrap: wrap;
             padding: 0.25rem;
             justify-content: center;
 
@@ -67,14 +67,14 @@ $bg: #caf0f8;
     .chart-card {
         position: relative;
         flex: 1 1 auto;
-        min-height: 0;
+        min-height: 10rem;
         border-radius: 1rem;
         padding: .35rem .5rem 0;
 
         .chart-wrapper {
             position: relative;
             height: 100%;
-            min-height: 0;
+            min-height: 10rem;
         }
 
         .overlay {
@@ -99,10 +99,35 @@ $bg: #caf0f8;
 
 @media (max-width: 1023px) {
     :host {
-        height: 320px;
+        height: auto;
     }
 
     .balance-trend {
-        height: 100%;
+        height: auto;
+        .chart-card .chart-wrapper { height: 15rem; }
     }
 }
+
+.year-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: .75rem;
+
+  .year { font-weight: 700; min-width: 4ch; text-align: center; }
+  button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba($primary, .25);
+    border-radius: .5rem;
+    background: rgba(255, 255, 255, .75);
+    cursor: pointer;
+    img { width: 16px; height: 16px; }
+    &:disabled { cursor: default; opacity: .35; }
+  }
+}
+
+.empty { padding: 2rem .5rem; text-align: center; }

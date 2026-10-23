@@ -56,13 +56,20 @@ export class HeaderComponent {
       this.translate.use(lang);
       this.currentLang = lang;
       localStorage.setItem('lang', lang);
-      this.router.navigateByUrl(equivalentLocalizedPath(this.router.url, lang));
+      const target = equivalentLocalizedPath(this.router.url, lang);
+      const targetTree = this.router.parseUrl(target);
+      if (this.router.parseUrl(this.router.url).queryParams['welcome'] === '1') {
+        targetTree.queryParams['welcome'] = '1';
+      }
+      this.router.navigateByUrl(targetTree);
     }
   }
 
   logout(): void {
-    this.authService.logout();
-    this.router.navigate([LOCALIZED_ROUTES[this.currentLang].login]);
+    this.authService.logout().subscribe({
+      next: () => this.router.navigate([LOCALIZED_ROUTES[this.currentLang].login]),
+      error: () => this.router.navigate(['/session-unavailable'])
+    });
   }
 
   get logoLink(): string {

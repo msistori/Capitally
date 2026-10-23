@@ -82,7 +82,8 @@ export class LegalNavigationService {
 
   isPublicUrl(url: string): boolean {
     const path = this.pathOf(url);
-    return path === ''
+    return path === '/session-unavailable'
+      || path === ''
       || path === '/'
       || path === LOCALIZED_ROUTES.it.home
       || path === LOCALIZED_ROUTES.en.home

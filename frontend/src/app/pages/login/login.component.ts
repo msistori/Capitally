@@ -13,7 +13,9 @@ import { switchMap } from 'rxjs';
 import { GuestService } from 'src/app/services/guest.service';
 import { AnalyticsEvent } from 'src/app/analytics/analytics.events';
 import { AnalyticsService } from 'src/app/analytics/analytics.service';
-import { AppLanguage, LOCALIZED_ROUTES, PRIVATE_ROUTES, currentOrDefaultLanguage } from 'src/app/routing/localized-routes';
+import { AppLanguage, LOCALIZED_ROUTES, currentOrDefaultLanguage } from 'src/app/routing/localized-routes';
+
+import { privateReturnUrl } from '../../auth/auth.guard';
 
 @Component({
   selector: 'app-login',
@@ -42,7 +44,6 @@ export class LoginComponent {
   private analytics = inject(AnalyticsService);
 
   constructor(private translate: TranslateService, private guestService: GuestService) {
-    this.guestService.clearGuestLogin();
     this.translate.addLangs(this.availableLanguages);
     const saved = localStorage.getItem('lang');
     const browser = this.translate.getBrowserLang();
@@ -156,7 +157,7 @@ export class LoginComponent {
       this.auth.login({ usernameOrEmail: usernameOrEmail.trim(), password }).subscribe({
         next: () => {
           this.loading.set(false);
-          this.router.navigate([PRIVATE_ROUTES.dashboard]);
+          this.router.navigateByUrl(privateReturnUrl(this.route.snapshot.queryParamMap.get('returnUrl')));
         },
         error: e => {
           this.loading.set(false);
@@ -182,7 +183,7 @@ export class LoginComponent {
       }
 
       this.loading.set(true);
-      
+
       const { password } = this.registerForm.getRawValue();
       this.auth.register({ username, email, password, lang: this.currentLang }).pipe(
         switchMap(() =>
@@ -196,7 +197,7 @@ export class LoginComponent {
           this.analytics.track(AnalyticsEvent.AUTH_REGISTRATION_COMPLETED);
           this.guestService.clearGuestLogin();
           this.loading.set(false);
-          this.router.navigate([PRIVATE_ROUTES.dashboard]);
+          this.router.navigateByUrl(privateReturnUrl(this.route.snapshot.queryParamMap.get('returnUrl')));
         },
         error: e => {
           this.loading.set(false);
@@ -222,7 +223,7 @@ export class LoginComponent {
       next: () => {
         this.guestService.setGuestLogin();
         this.loading.set(false);
-        this.router.navigate([PRIVATE_ROUTES.dashboard]);
+        this.router.navigateByUrl(privateReturnUrl(this.route.snapshot.queryParamMap.get('returnUrl')));
       },
       error: e => {
         this.loading.set(false);

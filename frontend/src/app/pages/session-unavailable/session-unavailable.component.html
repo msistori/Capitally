@@ -1,0 +1,16 @@
+<main class="session-unavailable-page">
+  <section class="session-unavailable-panel" role="status" aria-labelledby="session-unavailable-title">
+    <h1 id="session-unavailable-title">{{ 'SESSION.UNAVAILABLE_TITLE' | translate }}</h1>
+    <p>{{ 'SESSION.UNAVAILABLE_MESSAGE' | translate }}</p>
+    <div class="session-actions">
+      <a mat-raised-button color="primary" class="primary-action" [routerLink]="returnUrl">
+        <mat-icon aria-hidden="true">refresh</mat-icon>
+        {{ 'SESSION.RETRY' | translate }}
+      </a>
+      <a mat-stroked-button color="primary" class="secondary-action" [routerLink]="welcomeUrl" [queryParams]="{ welcome: '1' }">
+        <mat-icon aria-hidden="true">home</mat-icon>
+        {{ 'SESSION.DISCOVER' | translate }}
+      </a>
+    </div>
+  </section>
+</main>

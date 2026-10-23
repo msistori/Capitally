@@ -109,7 +109,8 @@ export class NavbarComponent {
       hasBackdrop: true,
       disableClose: false,
       closeOnNavigation: true,
-      autoFocus: false,
+      autoFocus: '.amount-field',
+      delayFocusTrap: false,
       restoreFocus: false,
       panelClass: 'add-transaction-modal-panel'
     });

@@ -1,5 +1,6 @@
 <footer class="legal-footer">
   <nav class="legal-links" aria-label="Legal Documents">
+    <a [routerLink]="welcomeLink" [queryParams]="{ welcome: '1' }">{{ 'SESSION.DISCOVER' | translate }}</a>
     <a [routerLink]="termsLink">{{ 'LOGIN_PAGE.LEGAL.TERMS' | translate }}</a>
     <a [routerLink]="privacyLink">{{ 'LOGIN_PAGE.LEGAL.PRIVACY' | translate }}</a>
     <a [routerLink]="cookiesLink">{{ 'LOGIN_PAGE.LEGAL.COOKIES' | translate }}</a>

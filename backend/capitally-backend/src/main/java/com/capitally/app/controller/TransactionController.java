@@ -6,6 +6,9 @@ import com.capitally.app.analytics.PostHogAnalyticsService;
 import com.capitally.app.core.security.UserPrincipal;
 import com.capitally.app.model.request.TransactionRequestDTO;
 import com.capitally.app.model.response.TransactionResponseDTO;
+import com.capitally.app.model.response.RecentTransactionsResponseDTO;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import com.capitally.app.service.TransactionService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +47,17 @@ public class TransactionController {
                 transactionProperties(response)
         );
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/recent")
+    public ResponseEntity<RecentTransactionsResponseDTO> getRecentTransactions(
+            @AuthenticationPrincipal UserPrincipal user,
+            @RequestParam(defaultValue = "0") int page
+    ) {
+        if (page < 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Page must not be negative");
+        }
+        return ResponseEntity.ok(transactionService.getRecentTransactions(user.getId(), page));
     }
 
     @GetMapping

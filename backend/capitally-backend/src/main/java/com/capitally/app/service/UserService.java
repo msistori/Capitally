@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
     private final UserRepository repo;
+    private final AuthSessionService sessions;
     private final AccountRepository accountRepository;
     private final CategoryRepository categoryRepository;
     private final TransactionRepository transactionRepository;
@@ -38,6 +39,7 @@ public class UserService {
 
     public UserService(
             UserRepository repo,
+            AuthSessionService sessions,
             AccountRepository accountRepository,
             CategoryRepository categoryRepository,
             TransactionRepository transactionRepository,
@@ -48,6 +50,7 @@ public class UserService {
             CategoryVisibilityService categoryVisibilityService
     ) {
         this.repo = repo;
+        this.sessions = sessions;
         this.accountRepository = accountRepository;
         this.categoryRepository = categoryRepository;
         this.transactionRepository = transactionRepository;
@@ -85,6 +88,7 @@ public class UserService {
         u.setPassword(passwordEncoder.encode(req.newPassword()));
         u.setPasswordChangeRequired(false);
         repo.save(u);
+        sessions.revokeAll(u.getId());
     }
 
     @Transactional(readOnly = true)
@@ -110,6 +114,7 @@ public class UserService {
         transactionRepository.deleteByUser_Id(userId);
         accountRepository.deleteByUser_Id(userId);
         categoryRepository.deleteByUser_Id(userId);
+        sessions.deleteForUser(userId);
         repo.delete(user);
     }
 

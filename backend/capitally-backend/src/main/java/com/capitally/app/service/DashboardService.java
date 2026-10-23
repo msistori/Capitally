@@ -89,34 +89,40 @@ public class DashboardService {
     }
 
     public List<BalanceTrendPerCurrencyResponseDTO> getBalanceTrendPerCurrency(BigInteger userId, LocalDate startDate, LocalDate endDate) {
+        if (startDate.isAfter(endDate)) return List.of();
+
         List<AccountEntity> userAccounts = accountRepository.findByUserId(userId).stream()
                 .filter(this::isIncludedInTotalBalance)
                 .toList();
 
         Map<String, Map<String, BigDecimal>> monthlyCurrencyMovements = new TreeMap<>();
+        Map<String, BigDecimal> runningPerCurrency = new HashMap<>();
 
         for (AccountEntity account : userAccounts) {
             BigDecimal initialBalance = Optional.ofNullable(account.getInitialBalance()).orElse(BigDecimal.ZERO);
-            LocalDate createdAt = Optional.ofNullable(account.getCreatedAt()).map(LocalDateTime::toLocalDate).orElse(startDate);
-            String creationMonth = YearMonth.from(createdAt).toString();
 
             List<TransactionEntity> transactions = transactionRepository.findAllByAccountId(account.getId());
 
             Optional.ofNullable(account.getCurrencyInitialBalance())
                     .map(currency -> currency.getCode())
-                    .ifPresent(currency -> monthlyCurrencyMovements
-                            .computeIfAbsent(creationMonth, m -> new HashMap<>())
-                            .merge(currency, initialBalance, BigDecimal::add));
+                    .ifPresent(currency -> runningPerCurrency.merge(currency, initialBalance, BigDecimal::add));
 
             for (TransactionEntity t : transactions) {
                 LocalDate date = t.getDate();
-                if (date == null || date.isBefore(startDate) || date.isAfter(endDate)) continue;
+                if (date == null || date.isAfter(endDate)) continue;
 
                 String currency = t.getCurrency().getCode();
                 String month = YearMonth.from(date).toString();
+                BigDecimal amount = Optional.ofNullable(t.getAmount()).orElse(BigDecimal.ZERO);
                 BigDecimal signedAmount = TransactionTypeEnum.EXPENSE.equals(t.getTransactionType())
-                        ? t.getAmount().negate()
-                        : t.getAmount();
+                        ? amount.negate()
+                        : amount;
+
+                // Carry the full opening balance into the requested period, including imported history.
+                if (date.isBefore(startDate)) {
+                    runningPerCurrency.merge(currency, signedAmount, BigDecimal::add);
+                    continue;
+                }
 
                 monthlyCurrencyMovements
                         .computeIfAbsent(month, m -> new HashMap<>())
@@ -124,15 +130,13 @@ public class DashboardService {
             }
         }
 
-        LocalDate today = LocalDate.now();
-        LocalDate maxEnd = endDate.isAfter(today) ? today : endDate;
-        List<String> allMonths = getAllMonthsBetween(startDate, maxEnd);
+        List<String> allMonths = getAllMonthsBetween(startDate, endDate);
 
         Set<String> allCurrencies = monthlyCurrencyMovements.values().stream()
                 .flatMap(m -> m.keySet().stream())
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(TreeSet::new));
+        allCurrencies.addAll(runningPerCurrency.keySet());
 
-        Map<String, BigDecimal> runningPerCurrency = new HashMap<>();
         List<BalanceTrendPerCurrencyResponseDTO> result = new ArrayList<>();
 
         for (String month : allMonths) {

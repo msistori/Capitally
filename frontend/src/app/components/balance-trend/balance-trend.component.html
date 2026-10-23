@@ -2,6 +2,15 @@
   <header class="header">
     <h3 class="title">{{ 'YEARLY_BALANCE_TREND.TITLE' | translate }}</h3>
 
+    <div class="year-nav">
+      <button type="button" (click)="previousYear()" [disabled]="year <= 1" [attr.aria-label]="'SUMMARY.CALENDAR.PREV_YEAR' | translate">
+        <img src="assets/icons/arrow-left.svg" alt="" />
+      </button>
+      <span class="year" aria-live="polite">{{ year }}</span>
+      <button type="button" (click)="nextYear()" [disabled]="year >= maxYear" [attr.aria-label]="'SUMMARY.CALENDAR.NEXT_YEAR' | translate">
+        <img src="assets/icons/arrow-right.svg" alt="" />
+      </button>
+    </div>
     <div class="filters" *ngIf="currencies.length > 1">
       <button type="button"
               class="chip"
@@ -17,10 +26,11 @@
   </header>
 
   <div class="chart-card">
-    <div class="overlay" *ngIf="loading()">Loading...</div>
-    <div class="error" *ngIf="error()">{{ error() }}</div>
+    <div class="overlay" *ngIf="loading">{{ 'YEARLY_BALANCE_TREND.LOADING' | translate }}</div>
+    <div class="error" *ngIf="error">{{ 'YEARLY_BALANCE_TREND.ERROR' | translate }}</div>
+    <div class="empty" *ngIf="!loading && !error && !datasets.length">{{ 'YEARLY_BALANCE_TREND.NO_DATA' | translate }}</div>
 
-    <div class="chart-wrapper" *ngIf="!loading() && !error()">
+    <div class="chart-wrapper" *ngIf="!loading && !error && datasets.length">
       <canvas baseChart
               [type]="'line'"
               [data]="{ labels: labels, datasets: datasets }"

@@ -3,13 +3,11 @@ package com.capitally.app.service;
 import com.capitally.app.core.entity.UserEntity;
 import com.capitally.app.core.enums.UserRoleEnum;
 import com.capitally.app.core.repository.UserRepository;
-import com.capitally.app.core.security.JwtTokenProvider;
+import com.capitally.app.core.security.UserPrincipal;
 import com.capitally.app.model.request.ForgotPasswordRequestDTO;
 import com.capitally.app.model.request.LoginRequestDTO;
 import com.capitally.app.model.request.RegisterRequestDTO;
-import com.capitally.app.model.response.AuthResponseDTO;
 import com.capitally.app.model.response.MeResponseDTO;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -39,7 +37,7 @@ public class AuthService {
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     private final AuthenticationManager am;
-    private final JwtTokenProvider jwt;
+    private final AuthSessionService sessions;
     private final PasswordEncoder pe;
     private final UserRepository repo;
     private final DefaultCategoryService defaultCategoryService;
@@ -54,7 +52,7 @@ public class AuthService {
     private String guestLoginUsername;
 
     @Transactional
-    public AuthResponseDTO register(RegisterRequestDTO req) {
+    public void register(RegisterRequestDTO req) {
         if (repo.findByUsername(req.username()).isPresent()) throw new ResponseStatusException(CONFLICT, AUTH_USER_TAKEN_ERROR);
         if (repo.findByEmail(req.email()).isPresent()) throw new ResponseStatusException(CONFLICT, AUTH_EMAIL_TAKEN_ERROR);
         UserEntity u = UserEntity.builder()
@@ -68,21 +66,22 @@ public class AuthService {
         repo.save(u);
 
         defaultCategoryService.createForUser(u, req.lang());
-
-        String token = jwt.generate(u.getId(), u.getUsername(), u.getRoles().stream().map(Enum::name).collect(Collectors.toSet()));
-        return new AuthResponseDTO(token, "Bearer", u.getUsername(), u.getEmail(), u.getRoles().stream().map(Enum::name).collect(Collectors.toSet()), u.isPasswordChangeRequired());
     }
 
-    public AuthResponseDTO login(LoginRequestDTO req) {
+    public AuthSessionService.IssuedSession login(LoginRequestDTO req) {
         String usernameOrEmail = req.usernameOrEmail() == null ? "" : req.usernameOrEmail().trim();
         Authentication auth = am.authenticate(new UsernamePasswordAuthenticationToken(usernameOrEmail, req.password()));
         SecurityContextHolder.getContext().setAuthentication(auth);
         String username = auth.getName();
         UserEntity u = repo.findByUsername(username).orElseThrow();
+        // Recheck the freshly loaded credentials in case a reset raced with authentication.
+        if (!u.isEnabled() || !pe.matches(req.password(), u.getPassword())) {
+            throw new org.springframework.security.authentication.BadCredentialsException("invalid_credentials");
+        }
         return issueToken(u);
     }
 
-    public AuthResponseDTO guestLogin() {
+    public AuthSessionService.IssuedSession guestLogin() {
         if (!guestLoginEnabled) {
             throw new ResponseStatusException(NOT_FOUND);
         }
@@ -97,12 +96,11 @@ public class AuthService {
         return issueToken(u);
     }
 
-    private AuthResponseDTO issueToken(UserEntity u) {
+    private AuthSessionService.IssuedSession issueToken(UserEntity u) {
         if (u.getRoles() != null && u.getRoles().contains(UserRoleEnum.DEMO)) {
             demoDataRefreshService.refreshIfNeeded(u);
         }
-        String token = jwt.generate(u.getId(), u.getUsername(), u.getRoles().stream().map(Enum::name).collect(Collectors.toSet()));
-        return new AuthResponseDTO(token, "Bearer", u.getUsername(), u.getEmail(), u.getRoles().stream().map(Enum::name).collect(Collectors.toSet()), u.isPasswordChangeRequired());
+        return sessions.start(u, !u.getRoles().contains(UserRoleEnum.DEMO));
     }
 
     @Transactional
@@ -120,14 +118,13 @@ public class AuthService {
                     user.setPassword(pe.encode(temporaryPassword));
                     user.setPasswordChangeRequired(true);
                     repo.save(user);
+                    sessions.revokeAll(user.getId());
                     resendEmailService.sendTemporaryPassword(user.getEmail(), temporaryPassword, req.lang());
                 });
     }
 
-    public MeResponseDTO me(String token) {
-        Claims c = jwt.parse(token);
-        String username = c.getSubject();
-        UserEntity u = repo.findByUsername(username).orElseThrow();
+    public MeResponseDTO me(UserPrincipal principal) {
+        UserEntity u = repo.findById(principal.getId()).orElseThrow();
         return new MeResponseDTO(u.getId(), u.getUsername(), u.getEmail(), u.getRoles().stream().map(Enum::name).collect(Collectors.toSet()), u.isPasswordChangeRequired());
     }
 

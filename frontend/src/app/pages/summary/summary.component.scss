@@ -801,3 +801,46 @@ input {
     overflow-y: auto;
   }
 }
+
+.filter-row {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: minmax(0, 1fr) 44px;
+  align-items: end;
+  gap: .65rem;
+  min-width: 0;
+  padding: .75rem;
+  border: 1px solid $border;
+  border-radius: .75rem;
+  background: $glass-soft;
+
+  .filter-type-field { grid-column: 1; }
+  .selected-filter { grid-column: 1 / -1; }
+  .remove-filter { grid-column: 2; grid-row: 1; align-self: end; }
+}
+
+.filter-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid $border;
+  border-radius: .65rem;
+  background: #fff;
+  color: $primary;
+  cursor: pointer;
+
+  &:focus-visible { outline: 2px solid $primary; outline-offset: 2px; }
+  &.remove-filter { color: $danger; }
+  &.add-filter { grid-column: 1 / -1; justify-self: center; background: $secondary; }
+}
+
+@media (min-width: 640px) {
+  .filter-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 44px;
+    .selected-filter { grid-column: 2; }
+    .remove-filter { grid-column: 3; grid-row: 1; align-self: end; }
+  }
+}
