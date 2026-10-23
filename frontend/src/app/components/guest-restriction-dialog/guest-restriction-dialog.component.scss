@@ -6,7 +6,8 @@ $secondary: #caf0f8;
   color: $primary;
   display: flex;
   flex-direction: column;
-  min-width: min(78vw, 360px);
+  min-width: 0;
+  width: 100%;
   text-align: center;
 }
 

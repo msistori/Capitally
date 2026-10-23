@@ -1,4 +1,10 @@
 {
+  "SESSION": {
+    "UNAVAILABLE_TITLE": "Session temporarily unavailable",
+    "UNAVAILABLE_MESSAGE": "The service could not be reached. Check your connection and try again. If you were signing out, automatic sign-in is suspended until sign-out completes.",
+    "RETRY": "Try again",
+    "DISCOVER": "Discover Capitally"
+  },
   "APP": {
     "TITLE": "Capitally"
   },
@@ -272,6 +278,16 @@
     "DATE": "Date",
     "TODAY": "Today",
     "YESTERDAY": "Yesterday",
+    "LAST_DATE": "Last entered date",
+    "CALENDAR": "Calendar",
+    "CHOOSE_MONTH": "Choose month",
+    "CHOOSE_YEAR": "Choose year",
+    "PREVIOUS_WEEK": "Previous week",
+    "NEXT_WEEK": "Next week",
+    "PREVIOUS_MONTH": "Previous month",
+    "NEXT_MONTH": "Next month",
+    "PREVIOUS_YEARS": "Previous years",
+    "NEXT_YEARS": "Next years",
     "DESCRIPTION": "Description",
     "NO_CURRENCIES_FOUND": "No currencies found",
     "WEEK_DAYS": [
@@ -347,6 +363,10 @@
     "TITLE": "New Transaction",
     "EDIT_TITLE": "Edit Transaction",
     "UPDATE": "Update",
+    "RECENT_LOAD_MORE": "Load more transactions",
+    "RECENT_LOADING": "Loading…",
+    "RECENT_RETRY": "Retry",
+    "RECENT_LOAD_ERROR": "Unable to load transactions.",
     "RECENT_TRANSACTIONS_TITLE": "Recent Transactions"
   },
   "BALANCE": {
@@ -438,6 +458,8 @@
       "ALL_CATEGORIES": "All categories",
       "ALL_SUBCATEGORIES": "All subcategories",
       "ACTIVE_COUNT": "Active filters: {{count}}",
+      "ADD": "Add filter",
+      "REMOVE": "Remove filter",
       "RESET": "Clear filters"
     },
     "EXPORT": {
@@ -515,6 +537,9 @@
     "NO_DATA": "No yearly data"
   },
   "YEARLY_BALANCE_TREND": {
+    "LOADING": "Loading…",
+    "ERROR": "Unable to load the yearly balance.",
+    "NO_DATA": "No balance available for this year.",
     "MONTH_NAMES": [
       "JAN",
       "FEB",

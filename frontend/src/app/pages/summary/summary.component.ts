@@ -110,7 +110,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
   readonly userId = this.storage.getUserId() || '1';
   readonly TransactionTypeEnum = TransactionTypeEnum;
 
-  filterTypeControl = new FormControl<SummaryFilterType>('period', { nonNullable: true });
+  filterRows: SummaryFilterType[] = ['period'];
+  readonly filterTypes = Object.keys(SUMMARY_FILTER_TRANSLATION_KEYS) as SummaryFilterType[];
   periodControl = new FormControl<PeriodPreset>('all', { nonNullable: true });
   customStartControl = new FormControl(this.formatDateInput(this.startOfMonth(new Date())), { nonNullable: true });
   customEndControl = new FormControl(this.formatDateInput(new Date()), { nonNullable: true });
@@ -166,12 +167,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
     this.rebuildSummaryCalendar();
     this.rebuildSummary();
     this.loadData();
-
-    this.sub.add(this.filterTypeControl.valueChanges.subscribe(value => {
-      if (value !== 'period') {
-        this.closeCustomRangePopup();
-      }
-    }));
 
     this.sub.add(this.periodControl.valueChanges.subscribe(value => {
       this.visibleCount = DEFAULT_VISIBLE_TRANSACTIONS;
@@ -270,7 +265,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
   }
 
   resetSummaryFilters(): void {
-    this.filterTypeControl.setValue('period', { emitEvent: false });
+    this.filterRows = ['period'];
     this.periodControl.setValue('all', { emitEvent: false });
     this.accountFilterControl.setValue('all', { emitEvent: false });
     this.macroCategoryFilterControl.setValue('all', { emitEvent: false });
@@ -300,8 +295,46 @@ export class SummaryComponent implements OnInit, OnDestroy {
     return category.id ?? `${category.macroCategory}-${category.category}`;
   }
 
-  filterTypeSelectLabel(): string {
-    return this.translateService.instant(SUMMARY_FILTER_TRANSLATION_KEYS[this.filterTypeControl.value]);
+  filterTypeSelectLabel(type: SummaryFilterType): string {
+    return this.translateService.instant(SUMMARY_FILTER_TRANSLATION_KEYS[type]);
+  }
+
+  availableFilterTypes(current: SummaryFilterType): SummaryFilterType[] {
+    return this.filterTypes.filter(type => type === current || !this.filterRows.includes(type));
+  }
+
+  addSummaryFilter(): void {
+    const type = this.filterTypes.find(candidate => !this.filterRows.includes(candidate));
+    if (type) this.filterRows = [...this.filterRows, type];
+  }
+
+  changeSummaryFilter(index: number, type: SummaryFilterType): void {
+    const previous = this.filterRows[index];
+    if (previous === type || this.filterRows.includes(type)) return;
+    this.clearSummaryFilter(previous);
+    this.filterRows = this.filterRows.map((value, row) => row === index ? type : value);
+    this.onSummaryFilterChange();
+  }
+
+  removeSummaryFilter(index: number): void {
+    this.clearSummaryFilter(this.filterRows[index]);
+    this.filterRows = this.filterRows.filter((_, row) => row !== index);
+    if (!this.filterRows.length) this.filterRows = ['period'];
+    this.onSummaryFilterChange();
+  }
+
+  private clearSummaryFilter(type: SummaryFilterType): void {
+    switch (type) {
+      case 'period':
+        this.periodControl.setValue('all', { emitEvent: false });
+        this.closeCustomRangePopup();
+        break;
+      case 'account': this.accountFilterControl.setValue('all', { emitEvent: false }); break;
+      case 'category': this.macroCategoryFilterControl.setValue('all', { emitEvent: false }); break;
+      case 'subcategory': this.categoryFilterControl.setValue('all', { emitEvent: false }); break;
+      case 'minAmount': this.minAmountFilterControl.setValue(null, { emitEvent: false }); break;
+      case 'maxAmount': this.maxAmountFilterControl.setValue(null, { emitEvent: false }); break;
+    }
   }
 
   periodSelectLabel(): string {
@@ -603,7 +636,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
       hasBackdrop: true,
       disableClose: false,
       closeOnNavigation: true,
-      autoFocus: false,
+      autoFocus: '.amount-field',
+      delayFocusTrap: false,
       restoreFocus: false,
       panelClass: 'add-transaction-modal-panel',
       data: transaction ? { transaction } : undefined

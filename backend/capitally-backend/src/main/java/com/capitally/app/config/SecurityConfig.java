@@ -3,6 +3,9 @@ package com.capitally.app.config;
 import com.capitally.app.core.security.JwtAuthenticationFilter;
 import com.capitally.app.core.security.DemoWriteGuardFilter;
 import com.capitally.app.core.security.JwtTokenProvider;
+import com.capitally.app.core.security.AuthRequestFilter;
+import com.capitally.app.service.AuthSessionService;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,16 +26,35 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.*;
 
 import java.util.List;
+import java.net.URI;
+import jakarta.annotation.PostConstruct;
 
 @Configuration
+@EnableScheduling
 public class SecurityConfig {
+
+    @Value("${auth.allowed-origins}")
+    private List<String> allowedOrigins;
+
+    @PostConstruct
+    void validateAllowedOrigins() {
+        if (allowedOrigins.isEmpty()) throw new IllegalArgumentException("At least one authentication origin is required");
+        for (String origin : allowedOrigins) {
+            URI uri = URI.create(origin);
+            if (!("https".equals(uri.getScheme()) || "http".equals(uri.getScheme()))
+                    || uri.getHost() == null || uri.getRawUserInfo() != null
+                    || !uri.getRawPath().isEmpty() || uri.getRawQuery() != null || uri.getRawFragment() != null) {
+                throw new IllegalArgumentException("Authentication origins must be exact HTTP(S) origins without paths");
+            }
+        }
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
 
     @Bean
     public JwtTokenProvider jwtTokenProvider(@Value("${jwt.secret}") String secret,
-                                             @Value("${jwt.validityMillis:259200000}") long validity) {
+                                             @Value("${jwt.validityMillis:900000}") long validity) {
         return new JwtTokenProvider(secret, validity);
     }
 
@@ -45,7 +67,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, JwtTokenProvider jwt, UserDetailsService uds) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtTokenProvider jwt, AuthSessionService sessions) throws Exception {
+        // Bearer APIs do not use cookies; AuthRequestFilter protects every cookie/auth mutation.
         http.csrf(csrf -> csrf.disable());
         http.cors(Customizer.withDefaults());
         http.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
@@ -58,7 +81,8 @@ public class SecurityConfig {
                 .dispatcherTypeMatchers(DispatcherType.ASYNC, DispatcherType.ERROR).permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers(
-                        "/auth/**",
+                        "/auth/login", "/auth/register", "/auth/guest-login", "/auth/forgot-password",
+                        "/auth/refresh", "/auth/logout",
                         "/analytics/config",
                         "/api/analytics/config",
                         "/v3/api-docs/**",
@@ -89,8 +113,9 @@ public class SecurityConfig {
                 ).permitAll()
                 .anyRequest().authenticated()
         );
-        http.addFilterBefore(new JwtAuthenticationFilter(jwt),
+        http.addFilterBefore(new JwtAuthenticationFilter(jwt, sessions),
                 UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new AuthRequestFilter(allowedOrigins), JwtAuthenticationFilter.class);
         http.addFilterAfter(new DemoWriteGuardFilter(), JwtAuthenticationFilter.class);
         return http.build();
     }
@@ -98,9 +123,9 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration c = new CorsConfiguration();
-        c.setAllowedOrigins(List.of("*"));
+        c.setAllowedOrigins(allowedOrigins);
         c.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS","HEAD"));
-        c.setAllowedHeaders(List.of("Authorization","Content-Type","Accept","Accept-Language","X-Analytics-Consent"));
+        c.setAllowedHeaders(List.of("Authorization","Content-Type","Accept","Accept-Language","X-Analytics-Consent","X-Capitally-Request"));
         UrlBasedCorsConfigurationSource src = new UrlBasedCorsConfigurationSource();
         src.registerCorsConfiguration("/**", c);
         return src;

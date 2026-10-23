@@ -9,20 +9,16 @@
   </section>
 
   <section class="summary-filters glass-card" [attr.aria-label]="'SUMMARY.FILTERS.TITLE' | translate">
+    <div class="filter-row" *ngFor="let filterType of filterRows; let rowIndex = index">
     <label class="field filter-type-field">
       <span>{{ 'SUMMARY.FILTERS.TYPE' | translate }}</span>
-      <mat-select class="select-control" panelClass="summary-select-panel" [disableOptionCentering]="true" [formControl]="filterTypeControl">
-        <mat-select-trigger>{{ filterTypeSelectLabel() }}</mat-select-trigger>
-        <mat-option value="period">{{ 'SUMMARY.FILTERS.PERIOD' | translate }}</mat-option>
-        <mat-option value="account">{{ 'SUMMARY.FILTERS.ACCOUNT' | translate }}</mat-option>
-        <mat-option value="category">{{ 'SUMMARY.FILTERS.CATEGORY' | translate }}</mat-option>
-        <mat-option value="subcategory">{{ 'SUMMARY.FILTERS.SUBCATEGORY' | translate }}</mat-option>
-        <mat-option value="minAmount">{{ 'SUMMARY.FILTERS.MIN_AMOUNT' | translate }}</mat-option>
-        <mat-option value="maxAmount">{{ 'SUMMARY.FILTERS.MAX_AMOUNT' | translate }}</mat-option>
+      <mat-select class="select-control" panelClass="summary-select-panel" [disableOptionCentering]="true" [value]="filterType" (selectionChange)="changeSummaryFilter(rowIndex, $event.value)">
+        <mat-select-trigger>{{ filterTypeSelectLabel(filterType) }}</mat-select-trigger>
+        <mat-option *ngFor="let type of availableFilterTypes(filterType)" [value]="type">{{ filterTypeSelectLabel(type) }}</mat-option>
       </mat-select>
     </label>
 
-    <div class="selected-filter" [ngSwitch]="filterTypeControl.value">
+    <div class="selected-filter" [ngSwitch]="filterType">
       <ng-container *ngSwitchCase="'period'">
     <label class="field period-field selected-filter-field">
       <span class="period-field-span">{{ 'SUMMARY.FILTERS.PERIOD' | translate }}</span>
@@ -165,6 +161,17 @@
         <input type="number" min="0" inputmode="decimal" [formControl]="maxAmountFilterControl" placeholder="0,00" />
       </label>
     </div>
+
+    <button type="button" class="filter-icon-button remove-filter" (click)="removeSummaryFilter(rowIndex)"
+      [attr.aria-label]="('SUMMARY.FILTERS.REMOVE' | translate) + ': ' + filterTypeSelectLabel(filterType)">
+      <mat-icon>delete</mat-icon>
+    </button>
+    </div>
+
+    <button *ngIf="activeSummaryFilterCount > 0 && filterRows.length < filterTypes.length" type="button"
+      class="filter-icon-button add-filter" (click)="addSummaryFilter()" [attr.aria-label]="'SUMMARY.FILTERS.ADD' | translate">
+      <mat-icon>add</mat-icon>
+    </button>
 
     <div class="active-filter-summary" *ngIf="activeSummaryFilterCount > 0">
       {{ 'SUMMARY.FILTERS.ACTIVE_COUNT' | translate:{ count: activeSummaryFilterCount } }}

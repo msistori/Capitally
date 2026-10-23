@@ -3,7 +3,6 @@ import { Subscription } from 'rxjs';
 import { TransactionService } from './../../services/transaction.service';
 import { RefreshService } from './../../services/refresh.service';
 import { TransactionModel, TransactionTypeEnum } from './../../models/transaction.model';
-import { StorageService } from './../../auth/storage.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { AddTransactionModalComponent } from '../insert-transaction/add-transaction-modal/add-transaction-modal.component';
 
@@ -13,11 +12,14 @@ import { AddTransactionModalComponent } from '../insert-transaction/add-transact
   styleUrls: ['./recent-transactions.component.scss']
 })
 export class RecentTransactionsComponent implements OnInit, OnDestroy {
-  private storage = inject(StorageService);
   private dialog = inject(MatDialog);
-  readonly userId = this.storage.getUserId() || '1';
   TransactionTypeEnum = TransactionTypeEnum;
   transactions: TransactionModel[] = [];
+  loading = false;
+  loadFailed = false;
+  hasMore = true;
+  private nextPage = 0;
+  private request?: Subscription;
   private sub = new Subscription();
   private transactionDialogRef?: MatDialogRef<AddTransactionModalComponent, TransactionModel>;
 
@@ -32,38 +34,49 @@ export class RecentTransactionsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.request?.unsubscribe();
     this.sub.unsubscribe();
   }
 
   private loadTransactions(): void {
-    this.transactionService.getTransactions().subscribe(res => {
-      this.transactions = res
-        .filter(transaction => !this.isTransferTransaction(transaction))
-        .slice(0, 5);
+    this.request?.unsubscribe();
+    this.transactions = [];
+    this.nextPage = 0;
+    this.hasMore = true;
+    this.loading = false;
+    this.loadMoreTransactions();
+  }
+
+  loadMoreTransactions(): void {
+    if (this.loading || !this.hasMore) return;
+    this.loading = true;
+    this.loadFailed = false;
+    this.request = this.transactionService.getRecentTransactions(this.nextPage).subscribe({
+      next: page => {
+        this.transactions = [...this.transactions, ...page.content];
+        this.hasMore = !page.last;
+        this.nextPage++;
+        this.loading = false;
+      },
+      error: () => {
+        this.loadFailed = true;
+        this.loading = false;
+      }
     });
   }
 
-  private isTransferTransaction(transaction: TransactionModel): boolean {
-    const transferGroupId = transaction.transferGroupId?.trim();
-    return Boolean(transaction.transferCounterpartyAccountId)
-      || Boolean(transferGroupId?.startsWith('TRF-'));
-  }  
-
   openEditTransaction(transaction: TransactionModel): void {
-    this.openTransactionModal(transaction);
-  }
-
-  private openTransactionModal(transaction?: TransactionModel): void {
     if (this.transactionDialogRef) return;
 
     this.transactionDialogRef = this.dialog.open(AddTransactionModalComponent, {
       hasBackdrop: true,
       disableClose: false,
       closeOnNavigation: true,
-      autoFocus: false,
+      autoFocus: '.amount-field',
+      delayFocusTrap: false,
       restoreFocus: false,
       panelClass: 'add-transaction-modal-panel',
-      data: transaction ? { transaction } : undefined
+      data: { transaction }
     });
 
     this.transactionDialogRef.afterClosed().subscribe(tx => {

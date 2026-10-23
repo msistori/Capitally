@@ -29,7 +29,8 @@ The manifest defines:
 
 - `name`: `Capitally`
 - `short_name`: `Capitally`
-- `start_url`: `/it/`
+- `id`: `/it/` (preserves the original installed app identity)
+- `start_url`: `/app/dashboard`
 - `scope`: `/`
 - `display`: `standalone`
 - `orientation`: `portrait-primary`
@@ -45,6 +46,12 @@ Icons:
 - `assets/pwa/icon-maskable-512.png`
 
 The maskable icons include padding so Android launchers can crop them safely.
+
+## Session On Launch
+
+The PWA opens the dashboard and restores the session before fetching private data. If restoration succeeds, no welcome or login screen is shown. An expired/revoked session opens login directly. Temporary service failures open a retry screen without discarding credentials. The welcome remains available through the footer. Existing installations may need a browser-managed manifest update before the new launch URL takes effect.
+
+Personal sessions last at most 30 days from login; refreshing never moves that deadline. Browser and PWA storage may be separate depending on the platform. See [Security](security.md).
 
 ## HTML Meta Tags
 

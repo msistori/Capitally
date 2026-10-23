@@ -2,14 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { StorageService } from '../auth/storage.service';
 import { AuthTokens, AuthUser, ChangePasswordPayload, Credentials, RegisterPayload } from '../auth/auth.model';
-import { map, Observable, of, switchMap, tap } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
+import { SessionService } from '../auth/session.service';
 import { environment } from '../../environments/environment';
 import { GuestService } from './guest.service';
 import { AnalyticsEvent } from '../analytics/analytics.events';
 import { AnalyticsService } from '../analytics/analytics.service';
 import { MatDialog } from '@angular/material/dialog';
 
-type BackendLoginResponse = { token: string; tokenType: string; username: string; email: string; roles: string[]; passwordChangeRequired?: boolean };
 type BackendMeResponse = { id: string | number; username: string; email: string; roles: string[]; passwordChangeRequired?: boolean };
 
 const API = '/auth';
@@ -18,6 +18,7 @@ const USERS_API = `${environment.apiBase ?? ''}/users`;
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http = inject(HttpClient);
+  private session = inject(SessionService);
   private storage = inject(StorageService);
   private analytics = inject(AnalyticsService);
   private dialog = inject(MatDialog);
@@ -25,14 +26,8 @@ export class AuthService {
   private constructor(private guestService: GuestService) {}
 
   login(payload: Credentials, method: 'credentials' | 'guest' = 'credentials'): Observable<AuthUser> {
-    if (method === 'credentials') {
-      this.guestService.clearGuestLogin();
-    }
-
     const body = { usernameOrEmail: payload.usernameOrEmail, password: payload.password };
-    return this.http.post<BackendLoginResponse>(`${API}/login`, body).pipe(
-      tap(res => this.storage.setAccessToken(res.token)),
-      switchMap(() => this.me()),
+    return this.session.authenticate('/auth/login', body).pipe(
       tap(user => {
         this.afterLogin(user, { accessToken: this.storage.getAccessToken() || '' });
         this.analytics.track(AnalyticsEvent.AUTH_LOGIN_SUCCEEDED, { method });
@@ -54,9 +49,7 @@ export class AuthService {
   }
 
   loginAsGuest(): Observable<AuthUser> {
-    return this.http.post<BackendLoginResponse>(`${API}/guest-login`, {}).pipe(
-      tap(res => this.storage.setAccessToken(res.token)),
-      switchMap(() => this.me()),
+    return this.session.authenticate('/auth/guest-login', {}).pipe(
       tap(user => {
         this.afterLogin(user, { accessToken: this.storage.getAccessToken() || '' });
         this.analytics.track(AnalyticsEvent.AUTH_LOGIN_SUCCEEDED, { method: 'guest' });
@@ -79,8 +72,7 @@ export class AuthService {
     this.analytics.track(AnalyticsEvent.AUTH_LOGOUT_COMPLETED);
     this.dialog.closeAll();
     this.guestService.clearGuestLogin();
-    this.storage.clearAuth();
-    return of(void 0);
+    return this.session.logout();
   }
 
   private afterLogin(user: AuthUser, tokens?: AuthTokens) {

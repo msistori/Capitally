@@ -40,6 +40,8 @@ Legacy internal redirects are kept for `/login`, `/legal/*`, `/dashboard`, `/acc
 
 Back links on public utility pages use internal session storage instead of visible `returnTo` query parameters. This keeps URLs clean while allowing the app to return to the last meaningful page in the currently selected language.
 
+Returning users can bypass the welcome through session-aware client routing. New visitors and crawlers still receive the public welcome. The explicit welcome query parameter does not change its clean canonical URL. The session recovery page is non-indexable.
+
 ## Metadata
 
 `frontend/src/app/seo/seo.service.ts` applies metadata on every Angular navigation:

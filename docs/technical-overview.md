@@ -15,7 +15,7 @@ The Docker Compose setup builds the frontend and backend images, starts PostgreS
 1. Browser loads the Angular SPA from the frontend service.
 2. Angular calls relative API paths such as `/auth/login`, `/dashboard/overview` or `/transactions/export`.
 3. Nginx proxies API paths to the backend through `BACKEND_URL`.
-4. Spring Security validates JWTs on protected endpoints.
+4. Spring Security validates JWTs and their database-backed sessions on protected endpoints.
 5. Controllers delegate to services, services use repositories, repositories read/write PostgreSQL.
 6. DTOs and MapStruct mappers isolate API payloads from entity objects.
 

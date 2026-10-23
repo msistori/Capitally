@@ -198,7 +198,6 @@ export class SettingsModalComponent {
       newPassword: value.newPassword
     }).subscribe({
       next: () => {
-        const wasPasswordChangeRequired = this.passwordChangeRequired;
         this.passwordSaving = false;
         this.resetPasswordForm();
         this.passwordChangeRequired = false;
@@ -206,9 +205,7 @@ export class SettingsModalComponent {
         this.passwordMessage = this.translateService.instant('SETTINGS.PASSWORD.SUCCESS') as string;
         this.markStoredPasswordAsChanged();
 
-        if (wasPasswordChangeRequired) {
-          this.close();
-        }
+        this.logout();
       },
       error: err => {
         this.passwordSaving = false;
@@ -300,9 +297,10 @@ export class SettingsModalComponent {
   }
 
   logout(): void {
-    this.authService.logout();
-    this.close();
-    this.router.navigate([LOCALIZED_ROUTES[this.currentLang].login]);
+    this.authService.logout().subscribe({
+      next: () => this.router.navigate([LOCALIZED_ROUTES[this.currentLang].login]),
+      error: () => this.router.navigate(['/session-unavailable'])
+    });
   }
 
   onCurrencyPanelOpenChange(opened: boolean): void {

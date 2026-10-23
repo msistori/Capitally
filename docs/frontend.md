@@ -21,7 +21,17 @@
 
 ## Routing And Auth
 
-The Angular guard protects authenticated areas. The auth interceptor attaches `Authorization: Bearer <token>` to internal API calls and skips external URLs plus login/register flows.
+SessionService restores the cookie-backed session before navigation; access JWTs and user identity live only in memory. The interceptor adds bearer tokens only to same-origin resource APIs and retries once after a successful refresh. It adds the required custom header to authentication writes.
+
+- Root / leads to the localized entry flow. First-time visitors see welcome; authenticated visitors go to /app/dashboard; returning personal users with an expired session go directly to login.
+- Login/registration routes skip to the requested private destination when a personal session is already active. Demo users can still open login and registration.
+- /it?welcome=1 and /en?welcome=1 always show the presentation. The footer provides a Discover Capitally link from public and private screens.
+- Private routes wait for restoration and preserve a known private return destination. /session-unavailable offers retry after temporary connection or service failures.
+- Reloading or directly opening a temporary session-error or explicit 404 URL leaves that stale page: new visitors go to the welcome, returning users go to login (or their private destination if the session restores successfully). Unknown URLs still display a 404 on first navigation. Login remains available if session restoration fails, preventing an error-page redirect loop.
+- The returning-user flag is a navigation preference, never authorization. Demo access does not set it.
+- Logout now requires a server request. Password change signs the user out because it revokes every session.
+
+See [Security](security.md) for token rotation, concurrency, expiry, deployment and verification details.
 
 ## API Base
 

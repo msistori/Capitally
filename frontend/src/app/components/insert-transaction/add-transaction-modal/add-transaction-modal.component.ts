@@ -21,16 +21,8 @@ export class AddTransactionModalComponent implements AfterViewInit {
   public isReady = true;
 
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      const host = this.elementRef.nativeElement;
-      const activeElement = document.activeElement as HTMLElement | null;
-      if (activeElement && host.contains(activeElement)) {
-        activeElement.blur();
-      }
-
-      host.closest<HTMLElement>('.mat-mdc-dialog-container')?.scrollTo({ top: 0, left: 0 });
-      host.closest<HTMLElement>('.mat-mdc-dialog-surface')?.scrollTo({ top: 0, left: 0 });
-    });
+    const host = this.elementRef.nativeElement;
+    host.querySelector<HTMLInputElement>('.amount-field')?.focus({ preventScroll: true });
   }
 
   get isEditMode(): boolean {

@@ -1,28 +1,50 @@
-@use '@angular/material' as mat;
-@use 'src/styles' as styles;
-
 $form-primary: #005f73;
 $form-secondary: #caf0f8;
 
+:host {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+}
+
 .form {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 1.7rem;
   padding: 0.8rem;
+  min-width: 0;
+
+  > * { min-width: 0; }
 
   .amount-currency {
-    display: inline-flex;
-    align-items: flex-end;
-    gap: 1rem;
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    justify-content: center;
+    gap: .75rem;
+    position: relative;
 
     .amount-field {
-      max-width: calc(50% - 1rem);
+      flex: 0 1 auto;
+      width: clamp(3ch, calc(var(--amount-characters, 1) * 1ch + 1ch), 60%);
+      max-width: 60%;
+      min-width: 0;
       font-size: 2.5rem;
       font-weight: 600;
-      text-align: end;
+      text-align: center;
       color: $form-primary;
       border: 0;
       outline: none;
+      appearance: textfield;
+
+      &:placeholder-shown {
+        width: 1.5ch;
+        text-align: right;
+      }
+
+      &::-webkit-inner-spin-button,
+      &::-webkit-outer-spin-button { appearance: none; margin: 0; }
 
       &::placeholder {
         color: $form-primary;
@@ -30,13 +52,14 @@ $form-secondary: #caf0f8;
     }
 
     .currency-panel {
-      width: fit-content;
-      max-width: calc(50% - 1rem);
+      width: 5rem;
+      flex: 0 0 5rem;
+      min-width: 0;
       font-size: 1.5rem;
       font-weight: 600;
       text-align: center;
       align-self: center;
-      padding-right: 3rem;
+      padding-right: 0;
 
       .currency-item {
         padding: 1rem;
@@ -51,7 +74,9 @@ $form-secondary: #caf0f8;
     text-align: center;
     border: 1px solid;
     padding: .7rem;
-    max-width: -webkit-fill-available;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
     border-radius: .5rem;
   }
 
@@ -68,81 +93,201 @@ $form-secondary: #caf0f8;
     pointer-events: auto;
   }
 
-  .calendar-card {
+  .calendar-card,
+  .date-card {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
     background: #fff;
-    border-radius: 0.5rem;
-    box-shadow: 0px 2px 8px $form-primary;
-    padding: 1rem;
-    max-width: 80%;
-    width: 80%;
-    margin: 1rem auto;
+    border: 1px solid rgba($form-primary, .3);
+    border-radius: .75rem;
+    padding: .5rem;
     text-align: center;
+  }
 
-    .recurring-end-date-label {
-      font-weight: bold;
-      font-size: 1.5rem;
-      margin: .5rem;
-    }
+  .recurring-end-date-label {
+    display: block;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+}
 
-    .cal-header {
-      display: flex;
-      justify-content: space-between;
+.date-shortcuts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: .4rem;
+
+  button {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: .2rem;
+    min-width: 0;
+    min-height: 44px;
+    padding: .5rem .25rem;
+    background: #fff;
+    color: $form-primary;
+    border: 1px solid $form-primary;
+    border-radius: .5rem;
+    font: inherit;
+    font-size: .85rem;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+
+    span { max-width: 100%; }
+    .date-value { font-size: .75rem; }
+    &.active { background: $form-secondary; font-weight: 600; }
+  }
+}
+
+.calendar-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  margin: .75rem auto .5rem;
+  padding: .15rem .6rem;
+  max-width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba($form-primary, .35);
+  border-radius: .75rem;
+  background: rgba($form-secondary, .35);
+  box-shadow: 0 2px 6px rgba($form-primary, .08);
+
+  .selected-date { min-width: 0; overflow-wrap: anywhere; }
+}
+
+.calendar-button,
+.calendar-arrow,
+.period-button,
+.day {
+  border: 0;
+  background: transparent;
+  color: $form-primary;
+  font: inherit;
+  cursor: pointer;
+
+  &:focus-visible { outline: 2px solid $form-primary; outline-offset: -2px; }
+}
+
+.calendar-button,
+.calendar-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  padding: .5rem;
+  border-radius: .5rem;
+
+  img { width: 1.2rem; height: 1.2rem; }
+}
+
+.cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .25rem;
+  margin-bottom: .5rem;
+
+  .month-label {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    min-width: 0;
+  }
+
+  .period-button {
+    min-width: 0;
+    min-height: 44px;
+    padding: .25rem;
+    border-radius: .4rem;
+    font-weight: bold;
+    overflow-wrap: anywhere;
+
+    &:hover { background: $form-secondary; }
+  }
+}
+
+.weekdays,
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  text-align: center;
+}
+
+.weekdays {
+  margin-bottom: .25rem;
+  color: $form-primary;
+  font-size: .8rem;
+}
+
+.day {
+  width: 100%;
+  max-width: 44px;
+  min-width: 0;
+  height: 44px;
+  margin-inline: auto;
+  padding: 0;
+  border-radius: 50%;
+
+  &.outside { opacity: .45; }
+  &:hover { background: $form-secondary; }
+  &.selected { background: $form-primary; color: #fff; opacity: 1; }
+}
+
+::ng-deep .transaction-calendar-menu.mat-mdc-menu-panel {
+  min-width: 0;
+  width: min(320px, calc(100vw - 32px));
+  max-width: calc(100vw - 32px);
+  background: #fff;
+  color: $form-primary;
+  border: 1px solid rgba($form-primary, .4);
+  border-radius: .75rem;
+  box-shadow: 0 8px 24px rgba($form-primary, .2);
+
+  .mat-mdc-menu-content { padding: .5rem; }
+  .calendar-choice-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .25rem; }
+  .year-choices { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+  .mat-mdc-menu-item {
+    min-width: 0;
+    min-height: 44px;
+    padding: .25rem;
+    justify-content: center;
+    text-align: center;
+    color: $form-primary;
+    border-radius: .4rem;
+    cursor: pointer;
+
+    .mat-mdc-menu-item-text { font-size: .85rem; overflow-wrap: anywhere; }
+    border: 1px solid rgba($form-primary, .18);
+    &.active { background: $form-secondary; border-color: $form-primary; font-weight: bold; }
+  }
+
+  .year-page-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .25rem;
+    margin-bottom: .5rem;
+
+    span { min-width: 0; overflow-wrap: anywhere; }
+    button {
+      display: inline-flex;
       align-items: center;
-      margin-bottom: 1rem;
-
-      button {
-        background: none;
-        border: none;
-        cursor: pointer;
-
-        img {
-          width: 1.2rem;
-          height: 1.2rem;
-        }
-      }
-
-      .month-label {
-        font-weight: bold;
-      }
-    }
-
-    .weekdays {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      text-align: center;
-      font-size: 0.8rem;
+      justify-content: center;
+      flex: 0 0 44px;
+      height: 44px;
+      padding: 0;
+      border: 0;
+      background: transparent;
       color: $form-primary;
-      margin-bottom: 0.25rem;
-    }
+      cursor: pointer;
 
-    .week {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      text-align: center;
-
-      .day {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 2rem;
-        height: 2rem;
-        margin: 0.25rem auto;
-        cursor: pointer;
-
-        &.empty {
-          visibility: hidden;
-        }
-
-        &.selected {
-          background: $form-primary;
-          color: #fff;
-          border-radius: 50%;
-        }
-
-        &.outside {
-          opacity: .35;
-        }
-      }
+      &:disabled { opacity: .35; cursor: default; }
     }
   }
 }
@@ -156,7 +301,8 @@ $form-secondary: #caf0f8;
   .mat-button-toggle {
     flex: 1;
     text-align: center;
-    padding: .9rem;
+    min-width: 0;
+    padding: .4rem 0;
     border-radius: .5rem;
     border: 0.5px solid currentColor;
 
@@ -169,73 +315,53 @@ $form-secondary: #caf0f8;
 }
 
 .category-selector {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
-  align-items: stretch;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .4rem;
 
-  .category-item-macro {
-    font-weight: bold;
-  }
-
-  .category-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #ffff;
-    border: 0.5px solid $form-primary;
-    color: $form-primary;
-    border-radius: 0.75rem;
-    margin-bottom: 0.25rem;
-    padding: 0.3rem 0.1rem;
-    text-align: center;
-    cursor: pointer;
-    justify-content: center;
-    width: calc(25% - 0.25rem);
-    min-height: calc(50% - 0.25rem);
-    min-width: calc(25% - 0.25rem);
-    max-height: calc(50% - 0.25rem);
-    max-width: calc(25% - 0.25rem);
-    word-break: break-word;
-
-    img {
-      width: 24px;
-      height: 24px;
-    }
-  }
-
+  .category-item,
   .category-more {
-    height: auto;
-    justify-content: center;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    background-color: #ffff;
-    border: 0.5px solid $form-primary;
+    justify-content: center;
+    gap: .25rem;
+    min-width: 0;
+    min-height: 44px;
+    padding: .5rem .25rem;
+    background: #fff;
+    border: 1px solid $form-primary;
     color: $form-primary;
-    border-radius: 0.75rem;
-    margin-bottom: 0.25rem;
-    padding: 0.3rem 0.1rem;
+    border-radius: .75rem;
     text-align: center;
     cursor: pointer;
-    width: calc(25% - 0.25rem);
-    min-height: calc(50% - 0.25rem);
-    min-width: calc(25% - 0.25rem);
-    max-height: calc(50% - 0.25rem);
-    max-width: calc(25% - 0.25rem);
-    font-weight: bold;
+    overflow-wrap: anywhere;
 
-    img {
-      width: 24px;
-      height: 24px;
-    }
+    span { max-width: 100%; }
+    img { width: 24px; height: 24px; flex-shrink: 0; }
   }
 
-  .active {
-    background-color: $form-secondary;
-    font-weight: bold;
-    border: 2px solid $form-primary;
+  .category-item { flex-direction: column; }
+  .category-item-macro { font-weight: bold; }
+  .category-more { grid-column: 1 / -1; font-weight: bold; }
+  .active { background: $form-secondary; font-weight: bold; box-shadow: inset 0 0 0 1px $form-primary; }
+}
+
+:host ::ng-deep {
+  .type-toggle .mat-button-toggle-label-content {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.4;
+    padding: .5rem;
   }
+
+  .description-field .mat-mdc-form-field-infix { min-width: 0; width: auto; }
+  .recurring-section .mdc-label { overflow-wrap: anywhere; }
+}
+
+::ng-deep .account-panel-class .mdc-list-item__primary-text,
+::ng-deep .recurring-period-panel-class .mdc-list-item__primary-text,
+::ng-deep .description-autocomplete .mdc-list-item__primary-text {
+  overflow-wrap: anywhere;
 }
 
 .description-input {
@@ -281,6 +407,7 @@ $form-secondary: #caf0f8;
   height: 3.35rem;
   justify-content: center;
   width: 3.35rem;
+  flex-shrink: 0;
 }
 
 .recurring-section {
@@ -309,16 +436,31 @@ $form-secondary: #caf0f8;
 }
 
 .submit-button {
+  position: sticky;
+  bottom: .5rem;
+  margin-top: auto;
+  z-index: 102;
+  flex-shrink: 0;
   border: 2px solid $form-primary;
-  width: 50%;
-  padding: 1.5rem;
+  width: 100%;
+  max-width: 18rem;
+  align-self: center;
+  min-height: 44px;
+  height: auto;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  padding: .65rem 1.25rem;
   font-size: 1rem;
   border-radius: 5rem;
-  left: 50%;
-  bottom: 0;
-  translate: -50% 0%;
+  background-color: #fff !important;
   color: $form-primary !important;
   font-weight: bold;
+  opacity: .95;
+  transition: opacity .2s ease;
+
+  &:disabled {
+    opacity: .45;
+  }
 }
 
 .search {
@@ -469,4 +611,14 @@ $form-secondary: #caf0f8;
   @media (min-width: 1200px) {
     max-width: 40vw !important;
   }
+}
+
+.amount-currency:has(.remove-transaction) {
+  padding-inline: 3.5rem;
+
+  .remove-transaction { position: absolute; right: 0; width: 44px; height: 44px; }
+}
+
+@media (max-width: 359px) {
+  .amount-currency:has(.remove-transaction) { padding-inline: 2.75rem; gap: .35rem; }
 }
