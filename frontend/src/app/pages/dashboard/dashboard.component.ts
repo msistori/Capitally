@@ -28,6 +28,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   incomeExpenseBreakdownData: IncomeExpenseBreakdownResponseDTO[] = [];
 
   currentYear = new Date().getFullYear();
+  yearlyBalanceLoading = false;
+  yearlyBalanceError = false;
+  private yearlyBalanceSub?: Subscription;
   annualIncomeExpenseYear = new Date().getFullYear();
   private selectedYear = new Date().getFullYear();
   private selectedMonth = new Date().getMonth();
@@ -48,21 +51,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.sub.unsubscribe();
+    this.yearlyBalanceSub?.unsubscribe();
   }
 
   refresh(): void {
-    const yearStart = `${this.currentYear}-01-01`;
-    const yearEnd = this.endOfRange(this.currentYear);
-
     this.dashboardService.getDashboardOverview().subscribe({
       next: res => this.overviewData = res,
       error: err => console.error('Error loading dashboard', err)
     });
 
-    this.dashboardService.getYearlyBalanceTrend(yearStart, yearEnd).subscribe({
-      next: data => this.yearlyBalance = [...data].sort((a, b) => a.month.localeCompare(b.month)),
-      error: err => console.error('Error loading yearly balance trend', err)
-    });
+    this.loadYearlyBalance(this.currentYear);
 
     this.loadAnnualIncomeExpense(this.annualIncomeExpenseYear);
 
@@ -84,6 +82,32 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  onBalanceYearChange(year: number): void {
+    if (year < 1 || year > new Date().getFullYear()) return;
+    this.currentYear = year;
+    this.loadYearlyBalance(year);
+  }
+
+  private loadYearlyBalance(year: number): void {
+    this.yearlyBalanceSub?.unsubscribe();
+    this.yearlyBalanceLoading = true;
+    this.yearlyBalanceError = false;
+    this.yearlyBalance = [];
+    this.yearlyBalanceSub = this.dashboardService.getYearlyBalanceTrend(
+      String(year).padStart(4, '0') + '-01-01', this.endOfRange(year)
+    ).subscribe({
+      next: data => {
+        this.yearlyBalance = [...data].sort((a, b) => a.month.localeCompare(b.month));
+        this.yearlyBalanceLoading = false;
+      },
+      error: err => {
+        this.yearlyBalanceLoading = false;
+        this.yearlyBalanceError = true;
+        console.error('Error loading yearly balance trend', err);
+      }
+    });
+  }
+
   onAnnualIncomeExpenseYearChange(year: number): void {
     this.annualIncomeExpenseYear = year;
     this.loadAnnualIncomeExpense(year);
@@ -97,13 +121,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private endOfRange(year: number): string {
-    const now = new Date();
-    if (now.getFullYear() === year) {
-      const mm = String(now.getMonth() + 1).padStart(2, '0');
-      const dd = String(now.getDate()).padStart(2, '0');
-      return `${year}-${mm}-${dd}`;
-    }
-    return `${year}-12-31`;
+    return String(year).padStart(4, '0') + '-12-31';
   }
 
   private monthRange(year: number, month0: number): { startDate: string; endDate: string } {

@@ -16,7 +16,9 @@
   <app-recent-transactions></app-recent-transactions>
 
   <!-- balance trend -->
-  <app-balance-trend [items]="yearlyBalance"></app-balance-trend>
+  <app-balance-trend [items]="yearlyBalance" [year]="currentYear"
+    [loading]="yearlyBalanceLoading" [error]="yearlyBalanceError"
+    (yearChange)="onBalanceYearChange($event)"></app-balance-trend>
 
   <!-- income - expense breakdown -->
    <app-income-expense-breakdown [items]="incomeExpenseBreakdownData" (monthChange)="onMonthChange($event)"></app-income-expense-breakdown>

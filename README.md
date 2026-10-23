@@ -27,7 +27,7 @@ Languages: [English](README.md) | [Italian](README_it.md)
 | Runtime | Docker Compose, Nginx frontend proxy, Spring Boot API |
 | External services | PostHog, Resend |
 
-At runtime, the frontend is served by Nginx and proxies API calls to the Spring Boot backend. The backend stores data in PostgreSQL and protects non-public API routes with stateless JWT authentication.
+At runtime, the frontend is served by Nginx and proxies API calls to the Spring Boot backend. The backend stores data in PostgreSQL and protects non-public API routes with short-lived JWTs backed by revocable persistent sessions.
 
 ## Documentation
 

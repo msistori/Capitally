@@ -28,7 +28,7 @@ springdoc:
 
 jwt:
   secret: ${JWT_SECRET}
-  validityMillis: ${JWT_VALIDITY_MILLIS:259200000}
+  validityMillis: ${JWT_VALIDITY_MILLIS:900000}
 
 analytics:
   posthog:
@@ -52,3 +52,16 @@ logging:
     org.hibernate.SQL: WARN
     org.hibernate.orm.jdbc.bind: WARN
     com.capitally: INFO
+
+auth:
+  secure-cookie: ${AUTH_SECURE_COOKIE:true}
+  allowed-origins: ${AUTH_ALLOWED_ORIGINS:https://capital-ly.com,https://www.capital-ly.com}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+auth:
+  secure-cookie: ${AUTH_SECURE_COOKIE:false}
+  allowed-origins: ${AUTH_ALLOWED_ORIGINS:http://localhost:4200,http://127.0.0.1:4200}

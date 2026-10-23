@@ -1,9 +1,10 @@
 {
+  "id": "/it/",
   "name": "Capitally",
   "short_name": "Capitally",
   "description": "Personal finance web app for accounts, transactions, budgets and financial summaries.",
   "lang": "it",
-  "start_url": "/it/",
+  "start_url": "/app/dashboard",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",

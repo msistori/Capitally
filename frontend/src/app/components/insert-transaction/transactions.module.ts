@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -53,6 +54,7 @@ export const MY_DATE_FORMATS = {
     MatNativeDateModule,
     MatButtonToggleModule,
     MatSelectModule,
+    MatMenuModule,
     FormsModule,
     MatSlideToggleModule,
     TranslateModule,

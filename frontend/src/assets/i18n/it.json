@@ -1,4 +1,10 @@
 {
+  "SESSION": {
+    "UNAVAILABLE_TITLE": "Sessione momentaneamente non disponibile",
+    "UNAVAILABLE_MESSAGE": "Non è stato possibile contattare il servizio. Controlla la connessione e riprova. Se stavi uscendo, l’accesso automatico è sospeso finché il logout non viene completato.",
+    "RETRY": "Riprova",
+    "DISCOVER": "Scopri Capitally"
+  },
   "APP": {
     "TITLE": "Capitally"
   },
@@ -272,6 +278,16 @@
     "DATE": "Data",
     "TODAY": "Oggi",
     "YESTERDAY": "Ieri",
+    "LAST_DATE": "Ultima data inserita",
+    "CALENDAR": "Calendario",
+    "CHOOSE_MONTH": "Scegli mese",
+    "CHOOSE_YEAR": "Scegli anno",
+    "PREVIOUS_WEEK": "Settimana precedente",
+    "NEXT_WEEK": "Settimana successiva",
+    "PREVIOUS_MONTH": "Mese precedente",
+    "NEXT_MONTH": "Mese successivo",
+    "PREVIOUS_YEARS": "Anni precedenti",
+    "NEXT_YEARS": "Anni successivi",
     "DESCRIPTION": "Descrizione",
     "NO_CURRENCIES_FOUND": "Nessuna valuta trovata",
     "WEEK_DAYS": [
@@ -346,6 +362,10 @@
     "TITLE": "Nuova Transazione",
     "EDIT_TITLE": "Modifica Transazione",
     "UPDATE": "Aggiorna",
+    "RECENT_LOAD_MORE": "Carica altre transazioni",
+    "RECENT_LOADING": "Caricamento…",
+    "RECENT_RETRY": "Riprova",
+    "RECENT_LOAD_ERROR": "Impossibile caricare le transazioni.",
     "RECENT_TRANSACTIONS_TITLE": "Ultime Transazioni"
   },
   "BALANCE": {
@@ -437,6 +457,8 @@
       "ALL_CATEGORIES": "Tutte le categorie",
       "ALL_SUBCATEGORIES": "Tutte le sottocategorie",
       "ACTIVE_COUNT": "Filtri attivi: {{count}}",
+      "ADD": "Aggiungi filtro",
+      "REMOVE": "Rimuovi filtro",
       "RESET": "Pulisci filtri"
     },
     "EXPORT": {
@@ -514,6 +536,9 @@
     "NO_DATA": "Nessun dato annuale"
   },
   "YEARLY_BALANCE_TREND": {
+    "LOADING": "Caricamento…",
+    "ERROR": "Impossibile caricare il bilancio annuale.",
+    "NO_DATA": "Nessun saldo disponibile per questo anno.",
     "MONTH_NAMES": [
       "GEN",
       "FEB",
@@ -610,7 +635,7 @@
         "ACCOUNTS": "Conti"
       },
       "IMPORT": {
-        "TITLE": "Importa transazioni",
+        "TITLE": "Importa dati",
         "DIALOG_TITLE": "Importa CSV",
         "TYPE_LABEL": "Tipo file CSV",
         "UPLOAD_FILE": "Seleziona o trascina qui il file CSV delle transazioni",

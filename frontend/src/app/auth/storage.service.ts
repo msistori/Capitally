@@ -12,33 +12,42 @@ type Prefs = Record<string, string>;
 
 @Injectable({ providedIn: 'root' })
 export class StorageService {
+  private accessToken: string | null = null;
+  private user: AuthUser | null = null;
+
+  constructor() {
+    localStorage.removeItem(KEYS.accessToken);
+    localStorage.removeItem(KEYS.user);
+  }
+
   private readonly defaultCurrencySubject = new BehaviorSubject<string>(this.readDefaultCurrency());
   private readonly balanceVisibilitySubject = new BehaviorSubject<boolean>(this.readBalanceVisibility());
   readonly defaultCurrency$ = this.defaultCurrencySubject.asObservable();
   readonly balanceVisibility$ = this.balanceVisibilitySubject.asObservable();
 
   setAccessToken(token: string): void {
-    localStorage.setItem(KEYS.accessToken, token);
+    this.accessToken = token;
   }
 
   getAccessToken(): string | null {
-    return localStorage.getItem(KEYS.accessToken);
+    return this.accessToken;
   }
 
   clearAuth(): void {
+    this.accessToken = null;
+    this.user = null;
     localStorage.removeItem(KEYS.accessToken);
     localStorage.removeItem(KEYS.user);
     this.balanceVisibilitySubject.next(false);
   }
 
   setUser(user: AuthUser): void {
-    localStorage.setItem(KEYS.user, JSON.stringify(user));
+    this.user = user;
     this.balanceVisibilitySubject.next(this.readBalanceVisibility());
   }
 
   getUser(): AuthUser | null {
-    const v = localStorage.getItem(KEYS.user);
-    return v ? (JSON.parse(v) as AuthUser) : null;
+    return this.user;
   }
 
   setPreference(key: string, value: string): void {

@@ -21,6 +21,12 @@ export class TransactionService {
     return this.http.get<TransactionModel[]>(`${this.apiUrl}`, { params });
   }
 
+  getRecentTransactions(page = 0): Observable<{ content: TransactionModel[]; last: boolean }> {
+    return this.http.get<{ content: TransactionModel[]; last: boolean }>(
+      `${this.apiUrl}/recent`, { params: new HttpParams().set('page', page) }
+    );
+  }
+
   postTransaction(transaction: TransactionModel): Observable<TransactionModel> {
     const { userId, ...payload } = transaction;
     return this.http.post<TransactionModel>(`${this.apiUrl}`, payload);

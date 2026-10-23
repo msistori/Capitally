@@ -13,6 +13,7 @@ import { AccountModel } from '../../../models/account.model';
 import { TranslateService } from '@ngx-translate/core';
 import { StorageService } from '../../../auth/storage.service';
 import { RefreshService } from 'src/app/services/refresh.service';
+import { GuestService } from '../../../services/guest.service';
 import { forkJoin } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
@@ -36,12 +37,25 @@ export class TransactionFormComponent implements OnInit, OnChanges {
   plus!: { name: string; icon: string };
   selectedCategory: string | null = null;
   private storage = inject(StorageService);
+  private guestService = inject(GuestService);
   readonly userId = Number(this.storage.getUserId() || 1);
-  weekDays: string[] = [];
-  matrixDate: (Date | null)[][] = [];
-  matrixRecurringEndDate: (Date | null)[][] = [];
+  readonly today = new Date();
+  readonly yesterday = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate() - 1);
+  lastTransactionDate: Date | null = null;
+  calendarOpen = false;
+  readonly calendarMonths = Array.from({ length: 12 }, (_, month) => new Date(2024, month, 1));
+  calendarViews: Record<string, Date> = { date: new Date(), recurringEndDate: new Date() };
+  calendarDays: Record<string, Date[]> = { date: [], recurringEndDate: [] };
+  yearPageStart = 2016;
+
+  get calendarYears(): number[] {
+    return Array.from({ length: 24 }, (_, index) => this.yearPageStart + index);
+  }
+
+  get calendarLocale(): string {
+    return this.translateService.currentLang === 'it' ? 'it-IT' : 'en-US';
+  }
   recurrencePeriods = Object.values(RecurrencePeriodEnum);
-  viewDate: Date = new Date();
 
   RecurrencePeriodEnum = RecurrencePeriodEnum;
 
@@ -68,7 +82,7 @@ export class TransactionFormComponent implements OnInit, OnChanges {
       currencyCode: [this.storage.getDefaultCurrency(), Validators.required],
       transactionType: [TransactionTypeEnum.EXPENSE, Validators.required],
       categoryId: [null],
-      date: [new Date()],
+      date: [new Date(), Validators.required],
       description: [''],
       isRecurring: [false],
       recurringPeriod: [null],
@@ -99,6 +113,11 @@ export class TransactionFormComponent implements OnInit, OnChanges {
       next: ({ categories, transactions, accounts }) => {
         this.categories = categories;
         this.accounts = this.getAccountsByRecentTransactions(accounts, transactions);
+        if (!this.transaction && !this.form.get('accountId')!.value) {
+          this.form.patchValue({ accountId: this.accounts[0]?.id ?? null });
+        }
+        const lastTransaction = this.getTransactionsByInsertionDate(transactions)[0];
+        this.lastTransactionDate = lastTransaction ? this.toFormDate(lastTransaction.date) : null;
         this.descriptionSuggestions = this.getUniqueDescriptions(transactions);
         this.filteredDescriptionSuggestions = this.getFilteredDescriptionSuggestions(
           this.form.get('description')!.value || ''
@@ -112,17 +131,8 @@ export class TransactionFormComponent implements OnInit, OnChanges {
     const base = './../../../../assets/icons';
     this.plus = { name: 'CATEGORY.OTHER', icon: `${base}/plus.svg` };
 
-    this.translateService.get('FORM.WEEK_DAYS').subscribe((days: string[]) => {
-      this.weekDays = days;
-    });
-
-    this.buildMonthMatrixDate(this.form.get('date')!.value);
-    this.form.get('date')!.valueChanges.subscribe(d => {
-      this.buildMonthMatrixDate(d);
-    });
-
-    this.viewDate = this.form.get('recurringEndDate')!.value ?? new Date();
-    this.buildMonthMatrixRecurringEndDate(this.viewDate);
+    this.updateCalendar('date', this.form.get('date')!.value);
+    this.updateCalendar('recurringEndDate', this.form.get('recurringEndDate')!.value ?? this.today);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -223,10 +233,10 @@ export class TransactionFormComponent implements OnInit, OnChanges {
       seenCategoryIds.add(categoryId);
       recentCategories.push(category);
 
-      if (recentCategories.length === 3) break;
+      if (recentCategories.length === 6) break;
     }
 
-    this.recentCategories = recentCategories.length ? recentCategories : this.categories.slice(0, 3);
+    this.recentCategories = recentCategories.length ? recentCategories : this.categories.slice(0, 6);
   }
 
   private getTransactionsByInsertionDate(transactions: TransactionModel[]): TransactionModel[] {
@@ -256,106 +266,83 @@ export class TransactionFormComponent implements OnInit, OnChanges {
     return [...recentAccounts, ...remainingAccounts];
   }
 
-  private buildMonthMatrixDate(d: Date) {
-    const y = d.getFullYear();
-    const m = d.getMonth();
-    const first = new Date(y, m, 1);
-    const startOff = (first.getDay() + 6) % 7;
-    const daysCount = new Date(y, m + 1, 0).getDate();
-    const cells: (Date | null)[] = [];
+  get showLastTransactionDate(): boolean {
+    return !!this.lastTransactionDate
+      && !this.sameDay(this.lastTransactionDate, this.today)
+      && !this.sameDay(this.lastTransactionDate, this.yesterday);
+  }
 
-    for (let i = startOff - 1; i >= 0; i--) {
-      const prevMonthDate = new Date(y, m, -i);
-      cells.push(prevMonthDate);
+  selectDay(date: Date | null, field: string): void {
+    if (!date) return;
+    this.form.get(field)!.setValue(date);
+    this.updateCalendar(field, date);
+    if (field === 'date') this.calendarOpen = false;
+  }
+
+  toggleCalendar(): void {
+    this.calendarOpen = !this.calendarOpen;
+    if (this.calendarOpen) this.updateCalendar('date', this.form.get('date')!.value);
+  }
+
+  private updateCalendar(field: string, date: Date): void {
+    this.calendarViews[field] = new Date(date);
+    const start = field === 'date'
+      ? new Date(date)
+      : new Date(date.getFullYear(), date.getMonth(), 1);
+    const offset = (start.getDay() + 6) % 7;
+    start.setDate(start.getDate() - offset);
+    const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+    const count = field === 'date' ? 7 : Math.ceil((offset + daysInMonth) / 7) * 7;
+    this.calendarDays[field] = Array.from({ length: count }, (_, index) => {
+      const day = new Date(start);
+      day.setDate(start.getDate() + index);
+      return day;
+    });
+  }
+
+  moveCalendar(field: string, direction: number): void {
+    const date = new Date(this.calendarViews[field]);
+    if (field === 'date') {
+      date.setDate(date.getDate() + direction * 7);
+    } else {
+      date.setDate(1);
+      date.setMonth(date.getMonth() + direction);
     }
-
-    for (let day = 1; day <= daysCount; day++) {
-      cells.push(new Date(y, m, day));
-    }
-
-    let nextDay = 1;
-    while (cells.length % 7) {
-      cells.push(new Date(y, m + 1, nextDay));
-      nextDay++;
-    }
-
-    this.matrixDate = [];
-    for (let i = 0; i < cells.length; i += 7) {
-      this.matrixDate.push(cells.slice(i, i + 7));
-    }
+    this.updateCalendar(field, date);
   }
 
-  isOutsideMonth(d: Date | null, field: string): boolean {
-    if (!d) return false;
-    const referenceDate: Date = this.form.get(field)!.value;
-    return d.getMonth() !== referenceDate.getMonth() ||
-      d.getFullYear() !== referenceDate.getFullYear();
+  chooseCalendarMonth(field: string, month: number): void {
+    const view = this.calendarViews[field];
+    this.changeCalendarPeriod(field, view.getFullYear(), month);
   }
 
-  get currentWeekDate(): (Date | null)[] {
-    const sel: Date = this.form.get('date')!.value;
-    return this.matrixDate.find(w => w.some(d => d && this.sameDay(d, sel))) || this.matrixDate[0];
+  chooseCalendarYear(field: string, year: number): void {
+    this.changeCalendarPeriod(field, year, this.calendarViews[field].getMonth());
   }
 
-  private buildMonthMatrixRecurringEndDate(d: Date) {
-    const y = d.getFullYear();
-    const m = d.getMonth();
-    const first = new Date(y, m, 1);
-    const startOff = (first.getDay() + 6) % 7;
-    const daysInMonth = new Date(y, m + 1, 0).getDate();
-    const totalCells = Math.ceil((startOff + daysInMonth) / 7) * 7;
-
-    const gridStart = new Date(y, m, 1 - startOff);
-    const cells: Date[] = [];
-    for (let i = 0; i < totalCells; i++) {
-      cells.push(new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + i));
-    }
-
-    this.matrixRecurringEndDate = [];
-    for (let i = 0; i < cells.length; i += 7) {
-      this.matrixRecurringEndDate.push(cells.slice(i, i + 7));
-    }
+  private changeCalendarPeriod(field: string, year: number, month: number): void {
+    const date = new Date(this.calendarViews[field]);
+    const day = date.getDate();
+    date.setDate(1);
+    date.setFullYear(year, month);
+    const endOfMonth = new Date(date);
+    endOfMonth.setMonth(month + 1, 0);
+    date.setDate(Math.min(day, endOfMonth.getDate()));
+    this.updateCalendar(field, date);
   }
 
-  prevWeek() {
-    const d: Date = this.form.get('date')!.value;
-    const prev = new Date(d);
-    prev.setDate(d.getDate() - 7);
-    this.form.get('date')!.setValue(prev);
+  openYearSelection(field: string): void {
+    this.yearPageStart = Math.max(1, Math.min(9976, Math.floor(this.calendarViews[field].getFullYear() / 24) * 24));
   }
 
-  nextWeek() {
-    const d: Date = this.form.get('date')!.value;
-    const nxt = new Date(d);
-    nxt.setDate(d.getDate() + 7);
-    this.form.get('date')!.setValue(nxt);
+  moveYearPage(direction: number, event: Event): void {
+    event.stopPropagation();
+    this.yearPageStart = Math.max(1, Math.min(9976, this.yearPageStart + direction * 24));
   }
 
-  prevMonth() {
-    this.viewDate = new Date(this.viewDate.getFullYear(), this.viewDate.getMonth() - 1, 1);
-    this.buildMonthMatrixRecurringEndDate(this.viewDate);
-  }
-
-  nextMonth() {
-    this.viewDate = new Date(this.viewDate.getFullYear(), this.viewDate.getMonth() + 1, 1);
-    this.buildMonthMatrixRecurringEndDate(this.viewDate);
-  }
-
-  isOutside(d: Date | null): boolean {
-    if (!d) return false;
-    return d.getMonth() !== this.viewDate.getMonth() || d.getFullYear() !== this.viewDate.getFullYear();
-  }
-
-  selectDay(d: Date | null, field: string) {
-    if (!d) return;
-    if (field === 'recurringEndDate' && this.isOutside(d)) return;
-    this.form.get(field)!.setValue(d);
-  }
-
-  isToday(d: Date | null): boolean {
-    if (!d) return false;
-    const now = new Date();
-    return this.sameDay(d, now);
+  isOutsideMonth(date: Date, field: string): boolean {
+    const view = this.calendarViews[field];
+    return date.getMonth() !== view.getMonth() || date.getFullYear() !== view.getFullYear();
   }
 
   isSelected(d: Date | null, field: string): boolean {
@@ -370,7 +357,9 @@ export class TransactionFormComponent implements OnInit, OnChanges {
   }
 
   recurringEndDateSelected(event: any) {
-    this.form.get('recurringEndDate')?.setValue(event.checked ? new Date() : null)
+    const date = event.checked ? new Date() : null;
+    this.form.get('recurringEndDate')?.setValue(date);
+    if (date) this.updateCalendar('recurringEndDate', date);
   }
 
   selectCategory(cat: any): void {
@@ -379,7 +368,6 @@ export class TransactionFormComponent implements OnInit, OnChanges {
   }
 
   openAllCategories(): void {
-    this.selectedCategory = this.plus.name;
     const ref = this.dialog.open(CategorySelectionDialogComponent, {
       panelClass: 'view-all-categories-modal-panel',
       data: {
@@ -396,11 +384,15 @@ export class TransactionFormComponent implements OnInit, OnChanges {
       this.selectedCategory = picked.category;
 
       this.categories = [picked, ...this.categories.filter(c => c.id !== picked.id)];
-      this.recentCategories = this.categories.slice(0, 3);
+      this.recentCategories = [picked, ...this.recentCategories.filter(c => c.id !== picked.id)].slice(0, 6);
     });
   }
 
   submit(): void {
+    if (this.guestService.isGuestUser()) {
+      this.guestService.showGuestRestriction();
+      return;
+    }
     if (this.form.invalid) return;
 
     const value = this.form.getRawValue();
@@ -452,9 +444,8 @@ export class TransactionFormComponent implements OnInit, OnChanges {
       recurringEndDate
     }, { emitEvent: false });
 
-    this.buildMonthMatrixDate(date);
-    this.viewDate = recurringEndDate ?? new Date();
-    this.buildMonthMatrixRecurringEndDate(this.viewDate);
+    this.updateCalendar('date', date);
+    this.updateCalendar('recurringEndDate', recurringEndDate ?? this.today);
     this.applySelectedCategoryLabel();
   }
 

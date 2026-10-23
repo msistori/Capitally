@@ -1,0 +1,75 @@
+$primary: #005f73;
+
+:host {
+  display: block;
+  color: $primary;
+}
+
+.session-unavailable-page {
+  padding: clamp(3rem, 7vw, 6rem) 1.25rem 4rem;
+}
+
+.session-unavailable-panel {
+  max-width: 38rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+h1 {
+  margin: 0;
+  color: $primary;
+  font-size: clamp(1.7rem, 3vw, 2.2rem);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+p {
+  margin: 1.5rem 0 2rem;
+  color: $primary;
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.session-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.session-actions a {
+  min-height: 52px;
+  padding-inline: 1.4rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.primary-action {
+  background: $primary;
+  color: #fff;
+  box-shadow: 0 10px 24px rgba($primary, .2);
+}
+
+.secondary-action {
+  background: rgba(255, 255, 255, .86);
+  color: $primary;
+  border: 2px solid rgba($primary, .72);
+}
+
+.session-actions a:focus-visible {
+  outline: 3px solid $primary;
+  outline-offset: 4px;
+}
+
+@media (max-width: 480px) {
+  .session-actions {
+    flex-direction: column;
+  }
+
+  .session-actions a {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges, OnInit, OnDestroy, signal } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
 import { ChartConfiguration } from 'chart.js';
 import { BalanceTrendResponseDTO } from './../../models/dashboard.model';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
@@ -14,8 +14,11 @@ type Dataset = ChartConfiguration<'line'>['data']['datasets'][number];
 export class BalanceTrendComponent implements OnInit, OnChanges, OnDestroy {
   @Input() items: BalanceTrendResponseDTO[] = [];
 
-  loading = signal(false);
-  error = signal<string | null>(null);
+  @Input() year = new Date().getFullYear();
+  @Input() loading = false;
+  @Input() error = false;
+  @Output() yearChange = new EventEmitter<number>();
+  readonly maxYear = new Date().getFullYear();
 
   labels: string[] = [];
   datasets: Dataset[] = [];
@@ -35,7 +38,13 @@ export class BalanceTrendComponent implements OnInit, OnChanges, OnDestroy {
         display: true,
         labels: { usePointStyle: true, pointStyle: 'roundedRect', padding: 16, color: '#005f73' }
       },
-      tooltip: { enabled: true }
+      tooltip: {
+        callbacks: {
+          label: context => new Intl.NumberFormat(this.translateService.currentLang || 'en', {
+            style: 'currency', currency: context.dataset.label || 'EUR'
+          }).format(Number(context.parsed.y))
+        }
+      }
     },
     scales: {
       x: {
@@ -54,7 +63,7 @@ export class BalanceTrendComponent implements OnInit, OnChanges, OnDestroy {
       }
     },
     elements: {
-      line: { tension: 0.25 },
+      line: { tension: 0 },
       point: { radius: 4, hitRadius: 12, backgroundColor: '#caf0f8', borderWidth: 0 }
     }
   };
@@ -62,20 +71,20 @@ export class BalanceTrendComponent implements OnInit, OnChanges, OnDestroy {
   constructor(private translateService: TranslateService) {}
 
   ngOnInit(): void {
-    this.monthNames = (this.translateService.instant('YEARLY_BALANCE_TREND.MONTH_NAMES') as string[]);
-    this.langSub = this.translateService.onLangChange.subscribe((_: LangChangeEvent) => {
-      const months = this.translateService.instant('YEARLY_BALANCE_TREND.MONTH_NAMES') as string[] | string;
-      this.monthNames = Array.isArray(months) ? months : this.monthNames;
-      if (this.items?.length) {
-        const year = this.detectYear(this.items);
-        const lastMonthIdx = this.findLastMonthIndex(this.items, year);
-        this.labels = this.buildMonthLabels(lastMonthIdx);
-      }
-    });
+    this.buildChart();
+    this.langSub = this.translateService.onLangChange.subscribe((_: LangChangeEvent) => this.buildChart());
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if ('items' in changes) this.buildChart();
+    if ('items' in changes || 'year' in changes) this.buildChart();
+  }
+
+  previousYear(): void {
+    if (this.year > 1) this.yearChange.emit(this.year - 1);
+  }
+
+  nextYear(): void {
+    if (this.year < this.maxYear) this.yearChange.emit(this.year + 1);
   }
 
   ngOnDestroy(): void {
@@ -88,56 +97,23 @@ export class BalanceTrendComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private buildChart(): void {
-    this.loading.set(true);
-    this.error.set(null);
+    const translated = this.translateService.instant('YEARLY_BALANCE_TREND.MONTH_NAMES');
+    this.monthNames = Array.isArray(translated) ? translated : Array.from({ length: 12 }, (_, month) =>
+      new Intl.DateTimeFormat(this.translateService.currentLang || 'en', { month: 'short' }).format(new Date(this.year, month, 1))
+    );
+    const monthsCount = 12;
+    this.labels = this.monthNames.slice(0, monthsCount);
+    this.labelStep = monthsCount > 8 ? 2 : 1;
 
-    try {
-      const year = this.detectYear(this.items);
-      const lastMonthIdx = this.findLastMonthIndex(this.items, year);
-      this.labels = this.buildMonthLabels(lastMonthIdx);
-      this.labelStep = this.computeLabelStep(this.labels.length);
-
-      this.currencies = Array.from(new Set(this.items.map(i => i.currency))).sort();
-
-      const dataForYear = this.items.filter(i => i.month.startsWith(String(year)));
-      const filtered = this.selectedCurrency === 'ALL' ? dataForYear : dataForYear.filter(i => i.currency === this.selectedCurrency);
-
-      const byCurrency = this.groupByCurrency(filtered);
-      this.datasets = this.toDatasets(byCurrency, this.labels.length);
-
-      this.loading.set(false);
-    } catch (e) {
-      this.error.set('Unable to build chart');
-      this.loading.set(false);
-      console.error(e);
+    const dataForYear = this.items.filter(item => item.month.startsWith(String(this.year).padStart(4, '0') + '-'));
+    this.currencies = Array.from(new Set(dataForYear.map(item => item.currency))).sort();
+    if (this.selectedCurrency !== 'ALL' && !this.currencies.includes(this.selectedCurrency)) {
+      this.selectedCurrency = 'ALL';
     }
-  }
-
-  private computeLabelStep(n: number): number {
-    if (n <= 8) return 1;
-    if (n <= 12) return 2;
-    return Math.ceil(n / 6);
-  }
-
-  private detectYear(items: BalanceTrendResponseDTO[]): number {
-    if (!items?.length) return new Date().getFullYear();
-    return Number(items[0].month.slice(0, 4));
-  }
-
-  private findLastMonthIndex(items: BalanceTrendResponseDTO[], year: number): number {
-    const months = items
-      .filter(i => i.month.startsWith(String(year)))
-      .map(i => Number(i.month.slice(5, 7)) - 1)
-      .filter(m => m >= 0 && m <= 11);
-    if (months.length === 0) {
-      const now = new Date();
-      return now.getFullYear() === year ? now.getMonth() : 11;
-    }
-    return Math.max(...months);
-  }
-
-  private buildMonthLabels(lastMonthIdx: number): string[] {
-    return this.monthNames.slice(0, lastMonthIdx + 1);
+    const filtered = this.selectedCurrency === 'ALL'
+      ? dataForYear
+      : dataForYear.filter(item => item.currency === this.selectedCurrency);
+    this.datasets = this.toDatasets(this.groupByCurrency(filtered), monthsCount);
   }
 
   private groupByCurrency(data: BalanceTrendResponseDTO[]): Map<string, Map<number, number>> {
@@ -145,7 +121,7 @@ export class BalanceTrendComponent implements OnInit, OnChanges, OnDestroy {
     data.forEach(item => {
       const mIdx = Number(item.month.slice(5, 7)) - 1;
       if (!map.has(item.currency)) map.set(item.currency, new Map<number, number>());
-      map.get(item.currency)!.set(mIdx, item.balance);
+      map.get(item.currency)!.set(mIdx, Number(item.balance));
     });
     return map;
   }
@@ -155,7 +131,7 @@ export class BalanceTrendComponent implements OnInit, OnChanges, OnDestroy {
     let colorIdx = 0;
 
     return Array.from(byCurrency.entries()).map(([currency, monthMap]) => {
-      const data = Array.from({ length: monthsCount }, (_, i) => monthMap.get(i) ?? 0);
+      const data = Array.from({ length: monthsCount }, (_, i) => monthMap.get(i) ?? null);
       const c = palette[colorIdx++ % palette.length];
       return {
         label: currency,
